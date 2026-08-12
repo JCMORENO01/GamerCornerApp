@@ -1,0 +1,64 @@
+<resources>
+    <string name="app_name">Gamer\'s Corner</string>
+
+    <!-- Pantalla de Login -->
+    <string name="welcome_back">Bienvenido de nuevo</string>
+    <string name="login_subtitle">Ingresa a tu cuenta y continúa compartiendo tus experiencias.</string>
+    <string name="email_or_user_hint">Correo electrónico o usuario</string>
+    <string name="password_hint">Contraseña</string>
+    <string name="forgot_password">¿Olvidaste tu contraseña?</string>
+    <string name="login_button">Iniciar sesión</string>
+    <string name="google_login">Continuar con Google</string>
+    <string name="no_account">¿No tienes una cuenta? </string>
+    <string name="create_account">Crear cuenta</string>
+
+    <!-- Componentes (Seguidores) -->
+    <string name="btn_follow">Seguir</string>
+    <string name="btn_following">Siguiendo</string>
+
+    <!-- Pantalla de Escribir Reseña -->
+    <string name="title_write_review">Escribir reseña</string>
+    <string name="game_title">Elden Ring</string>
+    <string name="game_subtitle">FromSoftware • 2022</string>
+    <string name="label_rating">Tu calificación</string>
+    <string name="label_opinion">Tu opinión</string>
+    <string name="opinion_placeholder">Comparte tu experiencia con la comunidad. ¿Qué te gustó? ¿Qué no te gustó? ¿Lo recomiendas?</string>
+    <string name="label_tags">Agregar etiquetas (opcional)</string>
+    <string name="tag_history">Historia</string>
+    <string name="tag_gameplay">Jugabilidad</string>
+    <string name="tag_graphics">Gráficos</string>
+    <string name="btn_publish_review">Publicar reseña</string>
+    <!-- Pantalla de Crear Cuenta -->
+    <string name="title_create_account">Crear cuenta</string>
+    <string name="subtitle_create_account">Únete a Gamer\'s Corner\ny forma parte de la comunidad.</string>
+    <string name="label_fullname">Nombre completo</string>
+    <string name="hint_fullname">Ej: Juan Pérez</string>
+    <string name="label_username">Nombre de usuario</string>
+    <string name="hint_username">Ej: JuanP_21</string>
+    <string name="hint_email">Ej: juanperez@gmail.com</string>
+    <string name="label_password">Contraseña</string>
+    <string name="hint_password">Mínimo 8 caracteres</string>
+    <string name="label_confirm_password">Confirmar contraseña</string>
+    <string name="hint_confirm_password">Repite tu contraseña</string>
+    <string name="label_birthdate">Fecha de nacimiento</string>
+    <string name="hint_birthdate">Selecciona tu fecha</string>
+    <string name="terms_checkbox">Acepto los </string>
+    <string name="terms_link">Términos y Condiciones</string>
+    <string name="privacy_connector"> y la </string>
+    <string name="privacy_link">Política de Privacidad</string>
+    <string name="btn_action_create_account">Crear cuenta</string>
+    <string name="has_account">¿Ya tienes una cuenta? </string>
+    <string name="login_link">Iniciar sesión</string>
+    <string name="label_email">Correo electrónico</string>
+
+    <!-- Pantalla de Seguidores -->
+    <string name="title_followers">Seguidores</string>
+    <string name="tab_followers">Seguidores</string>
+    <string name="tab_following">Siguiendo</string>
+
+    <!-- Barra de navegación inferior -->
+    <string name="nav_home">Inicio</string>
+    <string name="nav_explore">Explorar</string>
+    <string name="nav_notifications">Notificaciones</string>
+    <string name="nav_profile">Perfil</string>
+</resources>
