@@ -64,7 +64,7 @@ fun FollowersScreenContent(
         ) {
 
             Text(
-                text = "‹",
+                text = stringResource(id = R.string.back_arrow),
                 color = colorResource(id = R.color.white),
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
@@ -139,8 +139,8 @@ fun FollowersScreenContent(
         // Usuarios
 
         UserRow(
-            name = "Drakool",
-            handle = "@drakool_gamer",
+            name = stringResource(id = R.string.mock_user_drakool),
+            handle = stringResource(id = R.string.mock_handle_drakool),
             image = R.drawable.messi1,
             isFollowing = false
         )
@@ -150,8 +150,8 @@ fun FollowersScreenContent(
         )
 
         UserRow(
-            name = "LadyAki",
-            handle = "@ladyaki_x",
+            name = stringResource(id = R.string.mock_user_ladyaki),
+            handle = stringResource(id = R.string.mock_handle_ladyaki),
             image = R.drawable.messi1,
             isFollowing = true
         )
@@ -161,8 +161,8 @@ fun FollowersScreenContent(
         )
 
         UserRow(
-            name = "ShadowX",
-            handle = "@shadowx_99",
+            name = stringResource(id = R.string.mock_user_shadowx),
+            handle = stringResource(id = R.string.mock_handle_shadowx),
             image = R.drawable.messi2,
             isFollowing = false
         )
@@ -172,8 +172,8 @@ fun FollowersScreenContent(
         )
 
         UserRow(
-            name = "NeoGamer",
-            handle = "@neogamer_07",
+            name = stringResource(id = R.string.mock_user_neogamer),
+            handle = stringResource(id = R.string.mock_handle_neogamer),
             image = R.drawable.messi3,
             isFollowing = false
         )
@@ -183,8 +183,8 @@ fun FollowersScreenContent(
         )
 
         UserRow(
-            name = "PixelPro",
-            handle = "@pixelpro_gaming",
+            name = stringResource(id = R.string.mock_user_pixelpro),
+            handle = stringResource(id = R.string.mock_handle_pixelpro),
             image = R.drawable.messi4,
             isFollowing = false
         )
@@ -194,8 +194,8 @@ fun FollowersScreenContent(
         )
 
         UserRow(
-            name = "RogueMaster",
-            handle = "@roguemaster",
+            name = stringResource(id = R.string.mock_user_roguemaster),
+            handle = stringResource(id = R.string.mock_handle_roguemaster),
             image = R.drawable.messi1,
             isFollowing = false
         )

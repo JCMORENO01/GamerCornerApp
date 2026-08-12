@@ -9,8 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -269,7 +271,7 @@ fun UserRowItem(
             ) {
 
                 Text(
-                    text = "Siguiendo",
+                    text = stringResource(id = R.string.btn_following),
                     color = colorResource(
                         id = R.color.white
                     ),
@@ -318,7 +320,7 @@ fun UserRowItem(
                 ) {
 
                     Text(
-                        text = "Seguir",
+                        text = stringResource(id = R.string.btn_follow),
                         color = colorResource(
                             id = R.color.white
                         ),

@@ -11,6 +11,8 @@
     <string name="google_login">Continuar con Google</string>
     <string name="no_account">¿No tienes una cuenta? </string>
     <string name="create_account">Crear cuenta</string>
+    <string name="login_password_placeholder">Ingresa tu contraseña</string>
+    <string name="login_or_separator"> o </string>
 
     <!-- Componentes (Seguidores) -->
     <string name="btn_follow">Seguir</string>
@@ -61,4 +63,29 @@
     <string name="nav_explore">Explorar</string>
     <string name="nav_notifications">Notificaciones</string>
     <string name="nav_profile">Perfil</string>
+
+    <!-- Pantalla de Inicio (StartApp) -->
+    <string name="start_title">Divertido y llamativo.</string>
+    <string name="start_description">El control con colores transmite\ncomunidad, pasión y competencia.</string>
+    <string name="btn_continue">Continuar</string>
+    <string name="logo_content_description">Gamer\'s Corner Logo</string>
+    <string name="back_arrow">‹</string>
+    <string name="user_profile_photo_description">Foto de %1$s</string>
+
+    <!-- Mock Data Seguidores -->
+    <string name="mock_user_drakool">Drakool</string>
+    <string name="mock_handle_drakool">\@drakool_gamer</string>
+    <string name="mock_user_ladyaki">LadyAki</string>
+    <string name="mock_handle_ladyaki">\@ladyaki_x</string>
+    <string name="mock_user_shadowx">ShadowX</string>
+    <string name="mock_handle_shadowx">\@shadowx_99</string>
+    <string name="mock_user_neogamer">NeoGamer</string>
+    <string name="mock_handle_neogamer">\@neogamer_07</string>
+    <string name="mock_user_pixelpro">PixelPro</string>
+    <string name="mock_handle_pixelpro">\@pixelpro_gaming</string>
+    <string name="mock_user_roguemaster">RogueMaster</string>
+    <string name="mock_handle_roguemaster">\@roguemaster</string>
+    <string name="review_char_counter">%1$d/1000</string>
+    <string name="terms_complete_text">Acepto los Términos y Condiciones y la Política de Privacidad</string>
+    <string name="plus_sign">+</string>
 </resources>

@@ -72,7 +72,7 @@ fun RegisterScreenContent(
             ) {
 
                 Text(
-                    text = "‹",
+                    text = stringResource(id = R.string.back_arrow),
                     color = colorResource(id = R.color.white),
                     fontSize = 26.sp,
                     fontWeight = FontWeight.Bold
@@ -121,7 +121,7 @@ fun RegisterScreenContent(
                 label = stringResource(
                     id = R.string.label_fullname
                 ),
-                placeholder = "Ej: Juan Pérez"
+                placeholder = stringResource(id = R.string.hint_fullname)
             )
 
             Spacer(
@@ -136,7 +136,7 @@ fun RegisterScreenContent(
                 label = stringResource(
                     id = R.string.label_username
                 ),
-                placeholder = "Ej: JuanP_21"
+                placeholder = stringResource(id = R.string.hint_username)
             )
 
             Spacer(
@@ -151,7 +151,7 @@ fun RegisterScreenContent(
                 label = stringResource(
                     id = R.string.label_email
                 ),
-                placeholder = "Ej: juanperez@gmail.com"
+                placeholder = stringResource(id = R.string.hint_email)
             )
 
             Spacer(
@@ -166,7 +166,7 @@ fun RegisterScreenContent(
                 label = stringResource(
                     id = R.string.label_password
                 ),
-                placeholder = "Mínimo 8 caracteres",
+                placeholder = stringResource(id = R.string.hint_password),
             )
 
             Spacer(
@@ -181,7 +181,7 @@ fun RegisterScreenContent(
                 label = stringResource(
                     id = R.string.label_confirm_password
                 ),
-                placeholder = "Repite tu contraseña",
+                placeholder = stringResource(id = R.string.hint_confirm_password),
             )
 
             Spacer(
@@ -193,8 +193,8 @@ fun RegisterScreenContent(
             AppTextField(
                 value = birthDate,
                 onValueChange = { birthDate = it },
-                label = "Fecha de nacimiento",
-                placeholder = "Selecciona tu fecha"
+                label = stringResource(id = R.string.label_birthdate),
+                placeholder = stringResource(id = R.string.hint_birthdate)
             )
 
             Spacer(
@@ -232,7 +232,7 @@ fun RegisterScreenContent(
                 )
 
                 Text(
-                    text = "Acepto los Términos y Condiciones y la Política de Privacidad",
+                    text = stringResource(id = R.string.terms_complete_text),
                     color = colorResource(
                         id = R.color.text_secondary
                     ),

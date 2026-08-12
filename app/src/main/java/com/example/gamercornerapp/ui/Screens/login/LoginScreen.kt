@@ -62,7 +62,7 @@ fun LoginScreenContent(modifier: Modifier = Modifier) {
                 painter = painterResource(
                     id = R.drawable.logo_gamer
                 ),
-                contentDescription = "Gamer's Corner Logo",
+                contentDescription = stringResource(id = R.string.logo_content_description),
                 modifier = Modifier
                     .width(500.dp)
                     .height(200.dp)
@@ -107,7 +107,7 @@ fun LoginScreenContent(modifier: Modifier = Modifier) {
                 label = stringResource(
                     id = R.string.email_or_user_hint
                 ),
-                placeholder = "ejemplo@gamer.com"
+                placeholder = stringResource(id = R.string.hint_email)
             )
 
             Spacer(
@@ -122,7 +122,7 @@ fun LoginScreenContent(modifier: Modifier = Modifier) {
                 label = stringResource(
                     id = R.string.password_hint
                 ),
-                placeholder = "Ingresa tu contraseña",
+                placeholder = stringResource(id = R.string.login_password_placeholder),
             )
 
             Spacer(
@@ -181,7 +181,7 @@ fun LoginScreenContent(modifier: Modifier = Modifier) {
                 )
 
                 Text(
-                    text = " o ",
+                    text = stringResource(id = R.string.login_or_separator),
                     color = colorResource(
                         id = R.color.text_secondary
                     ),
@@ -221,14 +221,26 @@ fun LoginScreenContent(modifier: Modifier = Modifier) {
                 ),
                 border = null
             ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.logo_google),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
+                    )
 
-                Text(
-                    text = stringResource(
-                        id = R.string.google_login
-                    ),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium
-                )
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Text(
+                        text = stringResource(
+                            id = R.string.google_login
+                        ),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
             }
 
             Spacer(

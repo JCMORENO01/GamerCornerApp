@@ -278,7 +278,7 @@ fun ReviewScreenContent(
         ) {
 
             Text(
-                text = "0/1000",
+                text = stringResource(id = R.string.review_char_counter, 0),
                 color = colorResource(
                     id = R.color.text_secondary
                 ),

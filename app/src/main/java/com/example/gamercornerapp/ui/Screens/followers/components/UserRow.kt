@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,7 +47,7 @@ fun UserRow(
 
             Image(
                 painter = painterResource(id = image),
-                contentDescription = "Foto de $name",
+                contentDescription = stringResource(id = R.string.user_profile_photo_description, name),
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
@@ -94,9 +95,9 @@ fun UserRow(
 
             Text(
                 text = if (isFollowing) {
-                    "Siguiendo"
+                    stringResource(id = R.string.btn_following)
                 } else {
-                    "Seguir"
+                    stringResource(id = R.string.btn_follow)
                 },
                 color = colorResource(id = R.color.white),
                 fontSize = 12.sp,
