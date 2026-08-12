@@ -3,6 +3,7 @@ package com.example.gamercornerapp.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -23,17 +24,22 @@ import com.example.gamercornerapp.componentes.AppButton
 import com.example.gamercornerapp.componentes.AppTextField
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
+
 @Composable
 fun LoginScreen(modifier: Modifier = Modifier) {
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.brand_background))
+            .background(
+                colorResource(id = R.color.brand_background)
+            )
             .padding(24.dp)
     ) {
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -41,17 +47,24 @@ fun LoginScreen(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Logo superior oficial de la app
+
+            // Logo
             Image(
-                painter = painterResource(id = R.drawable.logo_gamer),
+                painter = painterResource(
+                    id = R.drawable.logo_gamer
+                ),
                 contentDescription = "Gamer's Corner Logo",
                 modifier = Modifier
-                    .width(160.dp)
-                    .height(90.dp)
+                    .width(500.dp)
+                    .height(200.dp)
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(
+                modifier = Modifier.height(20.dp)
+            )
 
+
+            // Titulo
             Text(
                 text = stringResource(id = R.string.welcome_back),
                 color = colorResource(id = R.color.white),
@@ -59,8 +72,12 @@ fun LoginScreen(modifier: Modifier = Modifier) {
                 fontWeight = FontWeight.Bold
             )
 
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(
+                modifier = Modifier.height(6.dp)
+            )
 
+
+            // Subtitulo
             Text(
                 text = stringResource(id = R.string.login_subtitle),
                 color = colorResource(id = R.color.text_secondary),
@@ -69,69 +86,116 @@ fun LoginScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
 
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(
+                modifier = Modifier.height(28.dp)
+            )
 
-            // Reutilizando el componente AppTextField para el correo o usuario
+
+            // Campo de correo
             AppTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = stringResource(id = R.string.email_or_user_hint),
+                label = stringResource(
+                    id = R.string.email_or_user_hint
+                ),
                 placeholder = "ejemplo@gamer.com"
             )
 
-            Spacer(modifier = Modifier.height(14.dp))
+            Spacer(
+                modifier = Modifier.height(14.dp)
+            )
 
-            // Reutilizando el componente AppTextField para la contraseña
+
+            // Campo de contraseña
             AppTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = stringResource(id = R.string.password_hint),
+                label = stringResource(
+                    id = R.string.password_hint
+                ),
                 placeholder = "Ingresa tu contraseña",
-                isPassword = true
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(
+                modifier = Modifier.height(10.dp)
+            )
 
+
+            // Olvide mi contraseña
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
+                horizontalArrangement = Arrangement.Center
             ) {
+
                 Text(
-                    text = stringResource(id = R.string.forgot_password),
-                    color = colorResource(id = R.color.brand_primary),
+                    text = stringResource(
+                        id = R.string.forgot_password
+                    ),
+                    color = colorResource(
+                        id = R.color.brand_primary
+                    ),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium
                 )
             }
 
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(
+                modifier = Modifier.height(28.dp)
+            )
 
-            // Reutilizando el componente AppButton con degradado oficial
+
+            // Boton de iniciar sesion
             AppButton(
-                text = stringResource(id = R.string.login_button),
+                text = stringResource(
+                    id = R.string.login_button
+                ),
                 onClick = { }
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(
+                modifier = Modifier.height(24.dp)
+            )
 
+
+            // Separador
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                HorizontalDivider(modifier = Modifier.weight(1f), color = colorResource(id = R.color.card_background))
+
+                HorizontalDivider(
+                    modifier = Modifier.weight(1f),
+                    color = colorResource(
+                        id = R.color.card_background
+                    )
+                )
+
                 Text(
                     text = " o ",
-                    color = colorResource(id = R.color.text_secondary),
+                    color = colorResource(
+                        id = R.color.text_secondary
+                    ),
                     fontSize = 12.sp,
-                    modifier = Modifier.padding(horizontal = 8.dp)
+                    modifier = Modifier.padding(
+                        horizontal = 8.dp
+                    )
                 )
-                HorizontalDivider(modifier = Modifier.weight(1f), color = colorResource(id = R.color.card_background))
+
+                HorizontalDivider(
+                    modifier = Modifier.weight(1f),
+                    color = colorResource(
+                        id = R.color.card_background
+                    )
+                )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(
+                modifier = Modifier.height(24.dp)
+            )
 
-            // Botón secundario (Continuar con Google)
+
+            // Boton de Google
             OutlinedButton(
                 onClick = { },
                 modifier = Modifier
@@ -139,32 +203,53 @@ fun LoginScreen(modifier: Modifier = Modifier) {
                     .height(50.dp),
                 shape = RoundedCornerShape(25.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = colorResource(id = R.color.white),
-                    containerColor = colorResource(id = R.color.card_background)
+                    contentColor = colorResource(
+                        id = R.color.white
+                    ),
+                    containerColor = colorResource(
+                        id = R.color.card_background
+                    )
                 ),
                 border = null
             ) {
+
                 Text(
-                    text = stringResource(id = R.string.google_login),
+                    text = stringResource(
+                        id = R.string.google_login
+                    ),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium
                 )
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(
+                modifier = Modifier.height(32.dp)
+            )
 
+
+            // Crear cuenta
             Row(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
             ) {
+
                 Text(
-                    text = stringResource(id = R.string.no_account),
-                    color = colorResource(id = R.color.text_secondary),
+                    text = stringResource(
+                        id = R.string.no_account
+                    ),
+                    color = colorResource(
+                        id = R.color.text_secondary
+                    ),
                     fontSize = 13.sp
                 )
+
                 Text(
-                    text = stringResource(id = R.string.create_account),
-                    color = colorResource(id = R.color.brand_primary),
+                    text = stringResource(
+                        id = R.string.create_account
+                    ),
+                    color = colorResource(
+                        id = R.color.brand_primary
+                    ),
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -173,9 +258,11 @@ fun LoginScreen(modifier: Modifier = Modifier) {
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
+
     GamerCornerAppTheme {
         LoginScreen()
     }
