@@ -29,7 +29,7 @@
 
 1. Clonar el repositorio:
    ```bash
-   git clone https://github.com/<usuario>/GamerCornerApp.git
+   git clone https://github.com/JCMORENO01/GamerCornerApp.git
    ```
 2. Abrir el proyecto en Android Studio.
 3. Esperar a que Gradle sincronice las dependencias.
