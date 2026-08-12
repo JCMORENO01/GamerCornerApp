@@ -16,7 +16,6 @@
 - **UI Toolkit**: Jetpack Compose (BOM 2026.02.01)
 - **Sistema de diseño**: Material 3
 - **Build system**: Gradle (Kotlin DSL) con AGP 9.3.1
-- **Testing**: JUnit, Espresso, Compose UI Test
 
 ## Requisitos
 
