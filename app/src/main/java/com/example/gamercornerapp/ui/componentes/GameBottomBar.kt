@@ -84,7 +84,6 @@ fun GamerBottomBar() {
 
 
             // 3. Espacio central (Hueco para el botón +)
-            // Usamos un weight ligeramente mayor para dar aire al botón central
             Spacer(modifier = Modifier.weight(1.1f))
 
 
@@ -103,7 +102,7 @@ fun GamerBottomBar() {
                     Text(
                         text = stringResource(id = R.string.nav_notifications),
                         color = colorResource(id = R.color.brand_primary),
-                        fontSize = 10.sp, // Un poco más pequeño para que quepa "Notificaciones"
+                        fontSize = 10.sp,
                         textAlign = TextAlign.Center,
                         maxLines = 1,
                         softWrap = false,

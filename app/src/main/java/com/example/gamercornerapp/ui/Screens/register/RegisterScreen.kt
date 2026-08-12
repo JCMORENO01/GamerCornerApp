@@ -7,7 +7,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -39,14 +39,6 @@ fun RegisterScreenContent(
     modifier: Modifier = Modifier
 ) {
 
-    var fullName by remember { mutableStateOf("") }
-    var username by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-    var birthDate by remember { mutableStateOf("") }
-    var termsAccepted by remember { mutableStateOf(false) }
-
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -72,8 +64,12 @@ fun RegisterScreenContent(
             ) {
 
                 Text(
-                    text = stringResource(id = R.string.back_arrow),
-                    color = colorResource(id = R.color.white),
+                    text = stringResource(
+                        id = R.string.back_arrow
+                    ),
+                    color = colorResource(
+                        id = R.color.white
+                    ),
                     fontSize = 26.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -89,7 +85,9 @@ fun RegisterScreenContent(
                 text = stringResource(
                     id = R.string.title_create_account
                 ),
-                color = colorResource(id = R.color.white),
+                color = colorResource(
+                    id = R.color.white
+                ),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -104,7 +102,9 @@ fun RegisterScreenContent(
                 text = stringResource(
                     id = R.string.subtitle_create_account
                 ),
-                color = colorResource(id = R.color.text_secondary),
+                color = colorResource(
+                    id = R.color.text_secondary
+                ),
                 fontSize = 12.sp,
                 textAlign = TextAlign.Center
             )
@@ -116,12 +116,14 @@ fun RegisterScreenContent(
 
             // Nombre completo
             AppTextField(
-                value = fullName,
-                onValueChange = { fullName = it },
+                value = "",
+                onValueChange = { },
                 label = stringResource(
                     id = R.string.label_fullname
                 ),
-                placeholder = stringResource(id = R.string.hint_fullname)
+                placeholder = stringResource(
+                    id = R.string.hint_fullname
+                )
             )
 
             Spacer(
@@ -131,12 +133,14 @@ fun RegisterScreenContent(
 
             // Nombre de usuario
             AppTextField(
-                value = username,
-                onValueChange = { username = it },
+                value = "",
+                onValueChange = { },
                 label = stringResource(
                     id = R.string.label_username
                 ),
-                placeholder = stringResource(id = R.string.hint_username)
+                placeholder = stringResource(
+                    id = R.string.hint_username
+                )
             )
 
             Spacer(
@@ -146,12 +150,14 @@ fun RegisterScreenContent(
 
             // Correo
             AppTextField(
-                value = email,
-                onValueChange = { email = it },
+                value = "",
+                onValueChange = { },
                 label = stringResource(
                     id = R.string.label_email
                 ),
-                placeholder = stringResource(id = R.string.hint_email)
+                placeholder = stringResource(
+                    id = R.string.hint_email
+                )
             )
 
             Spacer(
@@ -161,12 +167,14 @@ fun RegisterScreenContent(
 
             // Contraseña
             AppTextField(
-                value = password,
-                onValueChange = { password = it },
+                value = "",
+                onValueChange = { },
                 label = stringResource(
                     id = R.string.label_password
                 ),
-                placeholder = stringResource(id = R.string.hint_password),
+                placeholder = stringResource(
+                    id = R.string.hint_password
+                )
             )
 
             Spacer(
@@ -176,12 +184,14 @@ fun RegisterScreenContent(
 
             // Confirmar contraseña
             AppTextField(
-                value = confirmPassword,
-                onValueChange = { confirmPassword = it },
+                value = "",
+                onValueChange = { },
                 label = stringResource(
                     id = R.string.label_confirm_password
                 ),
-                placeholder = stringResource(id = R.string.hint_confirm_password),
+                placeholder = stringResource(
+                    id = R.string.hint_confirm_password
+                )
             )
 
             Spacer(
@@ -191,10 +201,14 @@ fun RegisterScreenContent(
 
             // Fecha de nacimiento
             AppTextField(
-                value = birthDate,
-                onValueChange = { birthDate = it },
-                label = stringResource(id = R.string.label_birthdate),
-                placeholder = stringResource(id = R.string.hint_birthdate)
+                value = "",
+                onValueChange = { },
+                label = stringResource(
+                    id = R.string.label_birthdate
+                ),
+                placeholder = stringResource(
+                    id = R.string.hint_birthdate
+                )
             )
 
             Spacer(
@@ -209,10 +223,8 @@ fun RegisterScreenContent(
             ) {
 
                 Checkbox(
-                    checked = termsAccepted,
-                    onCheckedChange = {
-                        termsAccepted = it
-                    },
+                    checked = false,
+                    onCheckedChange = { },
                     colors = CheckboxDefaults.colors(
                         checkedColor = colorResource(
                             id = R.color.brand_primary
@@ -232,7 +244,9 @@ fun RegisterScreenContent(
                 )
 
                 Text(
-                    text = stringResource(id = R.string.terms_complete_text),
+                    text = stringResource(
+                        id = R.string.terms_complete_text
+                    ),
                     color = colorResource(
                         id = R.color.text_secondary
                     ),

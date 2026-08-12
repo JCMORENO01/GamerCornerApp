@@ -8,7 +8,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -37,9 +37,6 @@ fun LoginScreen(modifier: Modifier = Modifier) {
 @Composable
 fun LoginScreenContent(modifier: Modifier = Modifier) {
 
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -62,7 +59,9 @@ fun LoginScreenContent(modifier: Modifier = Modifier) {
                 painter = painterResource(
                     id = R.drawable.logo_gamer
                 ),
-                contentDescription = stringResource(id = R.string.logo_content_description),
+                contentDescription = stringResource(
+                    id = R.string.logo_content_description
+                ),
                 modifier = Modifier
                     .width(500.dp)
                     .height(200.dp)
@@ -75,8 +74,12 @@ fun LoginScreenContent(modifier: Modifier = Modifier) {
 
             // Titulo
             Text(
-                text = stringResource(id = R.string.welcome_back),
-                color = colorResource(id = R.color.white),
+                text = stringResource(
+                    id = R.string.welcome_back
+                ),
+                color = colorResource(
+                    id = R.color.white
+                ),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -88,11 +91,17 @@ fun LoginScreenContent(modifier: Modifier = Modifier) {
 
             // Subtitulo
             Text(
-                text = stringResource(id = R.string.login_subtitle),
-                color = colorResource(id = R.color.text_secondary),
+                text = stringResource(
+                    id = R.string.login_subtitle
+                ),
+                color = colorResource(
+                    id = R.color.text_secondary
+                ),
                 fontSize = 13.sp,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(
+                    horizontal = 16.dp
+                )
             )
 
             Spacer(
@@ -102,12 +111,14 @@ fun LoginScreenContent(modifier: Modifier = Modifier) {
 
             // Campo de correo
             AppTextField(
-                value = email,
-                onValueChange = { email = it },
+                value = "",
+                onValueChange = { },
                 label = stringResource(
                     id = R.string.email_or_user_hint
                 ),
-                placeholder = stringResource(id = R.string.hint_email)
+                placeholder = stringResource(
+                    id = R.string.hint_email
+                )
             )
 
             Spacer(
@@ -117,12 +128,14 @@ fun LoginScreenContent(modifier: Modifier = Modifier) {
 
             // Campo de contraseña
             AppTextField(
-                value = password,
-                onValueChange = { password = it },
+                value = "",
+                onValueChange = { },
                 label = stringResource(
                     id = R.string.password_hint
                 ),
-                placeholder = stringResource(id = R.string.login_password_placeholder),
+                placeholder = stringResource(
+                    id = R.string.login_password_placeholder
+                ),
             )
 
             Spacer(
@@ -181,7 +194,9 @@ fun LoginScreenContent(modifier: Modifier = Modifier) {
                 )
 
                 Text(
-                    text = stringResource(id = R.string.login_or_separator),
+                    text = stringResource(
+                        id = R.string.login_or_separator
+                    ),
                     color = colorResource(
                         id = R.color.text_secondary
                     ),
@@ -221,17 +236,23 @@ fun LoginScreenContent(modifier: Modifier = Modifier) {
                 ),
                 border = null
             ) {
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
+
                     Image(
-                        painter = painterResource(id = R.drawable.logo_google),
+                        painter = painterResource(
+                            id = R.drawable.logo_google
+                        ),
                         contentDescription = null,
                         modifier = Modifier.size(24.dp)
                     )
 
-                    Spacer(modifier = Modifier.width(12.dp))
+                    Spacer(
+                        modifier = Modifier.width(12.dp)
+                    )
 
                     Text(
                         text = stringResource(
