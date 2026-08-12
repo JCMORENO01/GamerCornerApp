@@ -1,4 +1,4 @@
-package com.example.gamercornerapp.ui
+package com.example.gamercornerapp.ui.Screens.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,13 +20,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gamercornerapp.R
-import com.example.gamercornerapp.componentes.AppButton
-import com.example.gamercornerapp.componentes.AppTextField
+import com.example.gamercornerapp.ui.componentes.AppButton
+import com.example.gamercornerapp.ui.componentes.AppTextField
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
 @Composable
 fun LoginScreen(modifier: Modifier = Modifier) {
+
+    LoginScreenContent(
+        modifier = modifier
+    )
+}
+
+
+@Composable
+fun LoginScreenContent(modifier: Modifier = Modifier) {
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }

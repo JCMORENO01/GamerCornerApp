@@ -1,4 +1,4 @@
-package com.example.gamercornerapp.ui
+package com.example.gamercornerapp.ui.Screens.review
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,13 +20,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gamercornerapp.R
-import com.example.gamercornerapp.componentes.AppButton
-import com.example.gamercornerapp.componentes.AppChip
+import com.example.gamercornerapp.ui.componentes.AppButton
+import com.example.gamercornerapp.ui.componentes.AppChip
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
 @Composable
-fun ReviewScreen(modifier: Modifier = Modifier) {
+fun ReviewScreen(
+    modifier: Modifier = Modifier
+) {
+
+    ReviewScreenContent(
+        modifier = modifier
+    )
+}
+
+
+@Composable
+fun ReviewScreenContent(
+    modifier: Modifier = Modifier
+) {
 
     Column(
         modifier = modifier

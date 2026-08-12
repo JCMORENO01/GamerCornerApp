@@ -1,4 +1,4 @@
-package com.example.gamercornerapp.componentes
+package com.example.gamercornerapp.ui.componentes
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

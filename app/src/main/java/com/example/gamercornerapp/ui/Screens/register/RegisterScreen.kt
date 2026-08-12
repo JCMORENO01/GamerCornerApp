@@ -1,4 +1,4 @@
-package com.example.gamercornerapp.ui
+package com.example.gamercornerapp.ui.Screens.register
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,13 +18,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gamercornerapp.R
-import com.example.gamercornerapp.componentes.AppButton
-import com.example.gamercornerapp.componentes.AppTextField
+import com.example.gamercornerapp.ui.componentes.AppButton
+import com.example.gamercornerapp.ui.componentes.AppTextField
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
 @Composable
-fun RegisterScreen(modifier: Modifier = Modifier) {
+fun RegisterScreen(
+    modifier: Modifier = Modifier
+) {
+
+    RegisterScreenContent(
+        modifier = modifier
+    )
+}
+
+
+@Composable
+fun RegisterScreenContent(
+    modifier: Modifier = Modifier
+) {
 
     var fullName by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
