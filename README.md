@@ -29,7 +29,7 @@
 
 1. Clonar el repositorio:
    ```bash
-   git clone https://github.com/<usuario>/GamerCornerApp.git
+   git clone https://github.com/JCMORENO01/GamerCornerApp.git
    ```
 2. Abrir el proyecto en Android Studio.
 3. Esperar a que Gradle sincronice las dependencias.
@@ -37,23 +37,3 @@
    ```bash
    ./gradlew installDebug
    ```
-
-## Estructura del proyecto
-
-```
-app/src/main/java/com/example/gamercornerapp/
-├── MainActivity.kt                     # Punto de entrada de la app
-└── ui/
-    ├── Screens/
-    │   ├── startpage/                  # Pantalla de bienvenida (onboarding)
-    │   ├── login/                      # Inicio de sesión
-    │   ├── register/                   # Creación de cuenta
-    │   ├── review/                     # Escribir reseña de un juego
-    │   └── followers/                  # Seguidores / seguidos
-    │       └── components/             # Componentes específicos (UserRow, etc.)
-    ├── componentes/                    # Componentes UI reutilizables (barra inferior, etc.)
-    └── theme/                          # Colores, tipografía y tema de la app
-```
-
-
-
