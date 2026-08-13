@@ -1,21 +1,27 @@
 package com.example.gamercornerapp.ui.Screens.review.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gamercornerapp.R
 import com.example.gamercornerapp.ui.componentes.AppChip
+import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
+
 
 @Composable
 fun TagsSection() {
@@ -53,6 +59,29 @@ fun TagsSection() {
                     id = R.string.tag_gameplay
                 )
             )
+        }
+    }
+}
+
+
+@Preview(
+    showBackground = true,
+    name = "Tags Section"
+)
+@Composable
+fun TagsSectionPreview() {
+
+    GamerCornerAppTheme {
+
+        Box(
+            modifier = Modifier
+                .background(
+                    colorResource(id = R.color.brand_background)
+                )
+                .padding(16.dp)
+        ) {
+
+            TagsSection()
         }
     }
 }

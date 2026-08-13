@@ -1,10 +1,13 @@
 package com.example.gamercornerapp.ui.Screens.review.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -14,9 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gamercornerapp.R
+import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
+
 
 @Composable
 fun OpinionSection() {
@@ -38,7 +44,7 @@ fun OpinionSection() {
 
     OutlinedTextField(
         value = "",
-        onValueChange = {},
+        onValueChange = { },
 
         placeholder = {
 
@@ -60,6 +66,7 @@ fun OpinionSection() {
         shape = RoundedCornerShape(16.dp),
 
         colors = OutlinedTextFieldDefaults.colors(
+
             focusedBorderColor = colorResource(
                 id = R.color.brand_primary
             ),
@@ -105,5 +112,28 @@ fun OpinionSection() {
             ),
             fontSize = 11.sp
         )
+    }
+}
+
+
+@Preview(
+    showBackground = true,
+    name = "Opinion Section"
+)
+@Composable
+fun OpinionSectionPreview() {
+
+    GamerCornerAppTheme {
+
+        Box(
+            modifier = Modifier
+                .background(
+                    colorResource(id = R.color.brand_background)
+                )
+                .padding(16.dp)
+        ) {
+
+            OpinionSection()
+        }
     }
 }

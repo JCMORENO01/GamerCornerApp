@@ -1,7 +1,8 @@
 package com.example.gamercornerapp.ui.Screens.review.components
 
-
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,10 +18,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gamercornerapp.R
 import com.example.gamercornerapp.ui.model.Game
+import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
+
 
 @Composable
 fun GameInfoCard(
@@ -80,6 +84,38 @@ fun GameInfoCard(
                     id = R.color.text_secondary
                 ),
                 fontSize = 13.sp
+            )
+        }
+    }
+}
+
+
+@Preview(
+    showBackground = true,
+    name = "Game Info Card"
+)
+@Composable
+fun GameInfoCardPreview() {
+
+    val game = Game(
+        title = "Cyberpunk 2077",
+        developer = "CD Projekt Red",
+        year = 2020,
+        image = R.drawable.logo_gamer
+    )
+
+    GamerCornerAppTheme {
+
+        Box(
+            modifier = Modifier
+                .background(
+                    colorResource(id = R.color.brand_background)
+                )
+                .padding(16.dp)
+        ) {
+
+            GameInfoCard(
+                game = game
             )
         }
     }

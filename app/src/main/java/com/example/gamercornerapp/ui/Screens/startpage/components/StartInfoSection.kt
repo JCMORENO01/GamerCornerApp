@@ -1,0 +1,103 @@
+package com.example.gamercornerapp.ui.Screens.startpage.components
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.gamercornerapp.R
+import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
+
+
+@Composable
+fun StartInfoSection(
+    modifier: Modifier = Modifier
+) {
+
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        // Logo
+        Image(
+            painter = painterResource(
+                id = R.drawable.logo_gamer
+            ),
+            contentDescription = stringResource(
+                id = R.string.logo_content_description
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp)
+        )
+
+
+        Spacer(
+            modifier = Modifier.height(20.dp)
+        )
+
+
+        // Frase principal
+        Text(
+            text = stringResource(
+                id = R.string.start_title
+            ),
+            color = colorResource(
+                id = R.color.white
+            ),
+            fontSize = 19.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
+
+
+        Spacer(
+            modifier = Modifier.height(12.dp)
+        )
+
+
+        // Descripcion
+        Text(
+            text = stringResource(
+                id = R.string.start_description
+            ),
+            color = colorResource(
+                id = R.color.text_secondary
+            ),
+            fontSize = 15.sp,
+            textAlign = TextAlign.Center,
+            lineHeight = 24.sp
+        )
+    }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun StartInfoSectionPreview() {
+
+    GamerCornerAppTheme {
+
+        Box(
+            modifier = Modifier
+                .background(
+                    colorResource(id = R.color.brand_background)
+                )
+                .padding(28.dp)
+        ) {
+
+            StartInfoSection()
+        }
+    }
+}

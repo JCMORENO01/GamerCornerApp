@@ -114,7 +114,7 @@ fun ReviewScreenEldenRingPreview() {
                 title = "Elden Ring",
                 developer = "FromSoftware",
                 year = 2022,
-                image = R.drawable.elden_ring
+                image = R.drawable.messi
             )
         )
     }
@@ -135,7 +135,7 @@ fun ReviewScreenGodOfWarPreview() {
                 title = "God of War",
                 developer = "Santa Monica Studio",
                 year = 2018,
-                image = R.drawable.god_of_war
+                image = R.drawable.messi1
             )
         )
     }
@@ -156,7 +156,7 @@ fun ReviewScreenMinecraftPreview() {
                 title = "Minecraft",
                 developer = "Mojang",
                 year = 2011,
-                image = R.drawable.minecraft
+                image = R.drawable.messi2
             )
         )
     }

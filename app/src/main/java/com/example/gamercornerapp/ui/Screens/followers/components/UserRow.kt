@@ -21,33 +21,35 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gamercornerapp.R
+import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
 @Composable
 fun UserRow(
-    name: String,
-    handle: String,
-    image: Int,
-    isFollowing: Boolean
+    user: FollowerUser,
+    modifier: Modifier = Modifier
 ) {
 
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        // Imagen y informacion del usuario
+        // Imagen e informacion del usuario
         Row(
             modifier = Modifier.weight(1f),
             verticalAlignment = Alignment.CenterVertically
         ) {
 
             Image(
-                painter = painterResource(id = image),
-                contentDescription = stringResource(id = R.string.user_profile_photo_description, name),
+                painter = painterResource(
+                    id = user.image
+                ),
+                contentDescription = null,
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
@@ -60,15 +62,23 @@ fun UserRow(
             Column {
 
                 Text(
-                    text = name,
-                    color = colorResource(id = R.color.white),
+                    text = stringResource(
+                        id = user.name
+                    ),
+                    color = colorResource(
+                        id = R.color.white
+                    ),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
 
                 Text(
-                    text = handle,
-                    color = colorResource(id = R.color.text_secondary),
+                    text = stringResource(
+                        id = user.handle
+                    ),
+                    color = colorResource(
+                        id = R.color.text_secondary
+                    ),
                     fontSize = 14.sp
                 )
             }
@@ -79,10 +89,14 @@ fun UserRow(
         Box(
             modifier = Modifier
                 .background(
-                    color = if (isFollowing) {
-                        colorResource(id = R.color.card_background)
+                    color = if (user.isFollowing) {
+                        colorResource(
+                            id = R.color.card_background
+                        )
                     } else {
-                        colorResource(id = R.color.brand_primary)
+                        colorResource(
+                            id = R.color.brand_primary
+                        )
                     },
                     shape = RoundedCornerShape(20.dp)
                 )
@@ -94,14 +108,77 @@ fun UserRow(
         ) {
 
             Text(
-                text = if (isFollowing) {
-                    stringResource(id = R.string.btn_following)
+                text = if (user.isFollowing) {
+                    stringResource(
+                        id = R.string.btn_following
+                    )
                 } else {
-                    stringResource(id = R.string.btn_follow)
+                    stringResource(
+                        id = R.string.btn_follow
+                    )
                 },
-                color = colorResource(id = R.color.white),
+                color = colorResource(
+                    id = R.color.white
+                ),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
+
+@Preview(
+    showBackground = true,
+)
+@Composable
+fun UserRowNotFollowingPreview() {
+
+    GamerCornerAppTheme {
+
+        Box(
+            modifier = Modifier
+                .background(
+                    colorResource(id = R.color.brand_background)
+                )
+                .padding(16.dp)
+        ) {
+
+            UserRow(
+                user = FollowerUser(
+                    name = R.string.mock_user_drakool,
+                    handle = R.string.mock_handle_drakool,
+                    image = R.drawable.messi1,
+                    isFollowing = false
+                )
+            )
+        }
+    }
+}
+
+
+@Preview(
+    showBackground = true,
+)
+@Composable
+fun UserRowFollowingPreview() {
+
+    GamerCornerAppTheme {
+
+        Box(
+            modifier = Modifier
+                .background(
+                    colorResource(id = R.color.brand_background)
+                )
+                .padding(16.dp)
+        ) {
+
+            UserRow(
+                user = FollowerUser(
+                    name = R.string.mock_user_ladyaki,
+                    handle = R.string.mock_handle_ladyaki,
+                    image = R.drawable.messi1,
+                    isFollowing = true
+                )
             )
         }
     }
