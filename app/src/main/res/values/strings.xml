@@ -30,6 +30,7 @@
     <string name="tag_gameplay">Jugabilidad</string>
     <string name="tag_graphics">Gráficos</string>
     <string name="btn_publish_review">Publicar reseña</string>
+
     <!-- Pantalla de Crear Cuenta -->
     <string name="title_create_account">Crear cuenta</string>
     <string name="subtitle_create_account">Únete a Gamer\'s Corner\ny forma parte de la comunidad.</string>
@@ -86,6 +87,15 @@
     <string name="mock_user_roguemaster">RogueMaster</string>
     <string name="mock_handle_roguemaster">\@roguemaster</string>
     <string name="review_char_counter">%1$d/1000</string>
+
+    <!-- Pantalla de Descripción de videojuego -->
+    <string name="title_game_description">Descripción de videojuego</string>
+    <string name="content_description_back">Volver</string>
+    <string name="content_description_share">Compartir</string>
+    <string name="reviews_count_format">(%1$s reseñas)</string>
+    <string name="label_community_rating">Calificación de la comunidad</string>
+    <string name="btn_save">Guardar</string>
+    <string name="btn_write_review">Escribir reseña</string>
     <string name="terms_complete_text">Acepto los Términos y Condiciones y la Política de Privacidad</string>
     <string name="plus_sign">+</string>
 </resources>
