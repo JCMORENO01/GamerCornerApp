@@ -1,11 +1,11 @@
 package com.example.gamercornerapp.ui.Screens.feed.components
 
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -32,7 +32,8 @@ fun FeedTopBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 14.dp),
+            .height(90.dp)
+            .padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -48,7 +49,7 @@ fun FeedTopBar(
         Image(
             painter = painterResource(id = R.drawable.logo_gamer1),
             contentDescription = stringResource(id = R.string.logo_content_description),
-            modifier = Modifier.size(42.dp)
+            modifier = Modifier.size(120.dp)
         )
 
         Icon(

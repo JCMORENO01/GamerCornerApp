@@ -1,11 +1,9 @@
 package com.example.gamercornerapp.ui.Screens.feed.components
 
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,11 +26,13 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -42,8 +42,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gamercornerapp.R
-import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
+import com.example.gamercornerapp.ui.componentes.AppChip
 import com.example.gamercornerapp.ui.model.FeedPost
+import com.example.gamercornerapp.ui.model.Game
+import com.example.gamercornerapp.ui.model.UserProfile
+import com.example.gamercornerapp.ui.model.UserStats
+import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 @Composable
 fun FeedPostCard(
@@ -74,8 +78,8 @@ fun FeedPostCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
-                    painter = painterResource(id = post.userAvatarImage),
-                    contentDescription = "Foto de ${post.username}",
+                    painter = painterResource(id = post.author.profileImageId),
+                    contentDescription = "Foto de ${post.author.username}",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(44.dp)
@@ -86,7 +90,7 @@ fun FeedPostCard(
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = post.username,
+                        text = post.author.username,
                         color = colorResource(id = R.color.white),
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold
@@ -113,8 +117,8 @@ fun FeedPostCard(
             // Contenido: portada del juego + info de la reseña
             Row {
                 Image(
-                    painter = painterResource(id = post.gameImageId),
-                    contentDescription = "Portada de ${post.gameTitle}",
+                    painter = painterResource(id = post.game.image),
+                    contentDescription = "Portada de ${post.game.title}",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(width = 78.dp, height = 100.dp)
@@ -126,7 +130,7 @@ fun FeedPostCard(
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = post.gameTitle,
+                        text = post.game.title,
                         color = colorResource(id = R.color.white),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
@@ -171,7 +175,11 @@ fun FeedPostCard(
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             post.tags.forEach { tag ->
-                                FeedTagChip(text = tag)
+                                AppChip(
+                                    text = tag,
+                                    modifier = Modifier.height(30.dp),
+                                    backgroundColor = colorResource(id = R.color.brand_purple).copy(alpha = 0.35f)
+                                )
                             }
                         }
                     }
@@ -244,26 +252,6 @@ fun FeedPostCard(
     }
 }
 
-// Chip morado usado para las etiquetas del juego dentro del muro (RPG, Acción, etc.)
-@Composable
-private fun FeedTagChip(text: String) {
-    Box(
-        modifier = Modifier
-            .background(
-                colorResource(id = R.color.brand_purple).copy(alpha = 0.35f),
-                RoundedCornerShape(20.dp)
-            )
-            .padding(horizontal = 12.dp, vertical = 6.dp)
-    ) {
-        Text(
-            text = text,
-            color = colorResource(id = R.color.white),
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Medium
-        )
-    }
-}
-
 
 @Preview(showBackground = true, backgroundColor = 0xFF07090D)
 @Composable
@@ -272,13 +260,28 @@ fun FeedPostCardPreview() {
         FeedPostCard(
             post = FeedPost(
                 id = "1",
-                username = "NightHunter",
-                userAvatarImage = R.drawable.messi1,
+                author = UserProfile(
+                    username = "NightHunter",
+                    nickName = "@nighthunter_21",
+                    bio = "Vivo para los videojuegos 🎮",
+                    profileBackgroundId = R.drawable.background_maquinitas,
+                    profileBgDescription = "Imagen de monitores",
+                    profileImageId = R.drawable.messi1,
+                    stats = UserStats(
+                        reviewsCount = 128,
+                        followersCount = 342,
+                        followingCount = 176
+                    )
+                ),
                 relativeTime = "Hace 2 horas",
-                gameTitle = "Elden Ring",
+                game = Game(
+                    title = "Elden Ring",
+                    developer = "FromSoftware",
+                    year = 2022,
+                    image = R.drawable.mini_elden
+                ),
                 rating = 4.8,
                 description = "Simplemente una obra maestra. El mundo, la historia, los jefes... Todo aquí te reta y te recompensa. Inolvidable.",
-                gameImageId = R.drawable.mini_elden,
                 tags = listOf("RPG", "Mundo Abierto"),
                 likesCount = 256,
                 commentsCount = 42

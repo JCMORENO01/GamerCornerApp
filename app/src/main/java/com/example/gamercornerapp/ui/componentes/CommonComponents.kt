@@ -153,14 +153,16 @@ fun AppButton(
 @Composable
 fun AppChip(
     text: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    backgroundColor: Color = colorResource(id = R.color.card_background),
+    textColor: Color = colorResource(id = R.color.white)
 ) {
 
     Box(
         modifier = modifier
             .height(36.dp)
             .background(
-                colorResource(id = R.color.card_background),
+                backgroundColor,
                 RoundedCornerShape(20.dp)
             )
             .padding(horizontal = 14.dp),
@@ -170,7 +172,7 @@ fun AppChip(
 
         Text(
             text = text,
-            color = colorResource(id = R.color.white),
+            color = textColor,
             fontSize = 13.sp
         )
     }
