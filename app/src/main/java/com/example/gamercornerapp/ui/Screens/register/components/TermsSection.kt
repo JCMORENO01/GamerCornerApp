@@ -1,7 +1,13 @@
 package com.example.gamercornerapp.ui.Screens.register.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Text
@@ -20,6 +26,7 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 @Composable
 fun TermsSection(
     checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -30,7 +37,7 @@ fun TermsSection(
 
         Checkbox(
             checked = checked,
-            onCheckedChange = { },
+            onCheckedChange = onCheckedChange,
             colors = CheckboxDefaults.colors(
                 checkedColor = colorResource(
                     id = R.color.brand_primary
@@ -67,6 +74,7 @@ fun TermsSection(
 // Escenario 1
 @Preview(
     showBackground = true,
+    name = "Terminos no aceptados"
 )
 @Composable
 fun TermsUncheckedPreview() {
@@ -82,7 +90,8 @@ fun TermsUncheckedPreview() {
         ) {
 
             TermsSection(
-                checked = false
+                checked = false,
+                onCheckedChange = { }
             )
         }
     }
@@ -92,6 +101,7 @@ fun TermsUncheckedPreview() {
 // Escenario 2
 @Preview(
     showBackground = true,
+    name = "Terminos aceptados"
 )
 @Composable
 fun TermsCheckedPreview() {
@@ -107,7 +117,8 @@ fun TermsCheckedPreview() {
         ) {
 
             TermsSection(
-                checked = true
+                checked = true,
+                onCheckedChange = { }
             )
         }
     }

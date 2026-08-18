@@ -1,6 +1,7 @@
 package com.example.gamercornerapp.ui.Screens.review.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,9 +23,15 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
 @Composable
-fun RatingSection() {
+fun RatingSection(
+    rating: Int,
+    onRatingChange: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
 
-    Column {
+    Column(
+        modifier = modifier
+    ) {
 
         Text(
             text = stringResource(
@@ -45,45 +52,34 @@ fun RatingSection() {
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
 
-            Text(
-                text = "★",
-                color = colorResource(
-                    id = R.color.brand_primary
-                ),
-                fontSize = 32.sp
-            )
+            repeat(5) { index ->
 
-            Text(
-                text = "★",
-                color = colorResource(
-                    id = R.color.brand_primary
-                ),
-                fontSize = 32.sp
-            )
+                val star = index + 1
 
-            Text(
-                text = "★",
-                color = colorResource(
-                    id = R.color.brand_primary
-                ),
-                fontSize = 32.sp
-            )
+                Text(
+                    text = if (star <= rating) {
+                        "★"
+                    } else {
+                        "☆"
+                    },
 
-            Text(
-                text = "★",
-                color = colorResource(
-                    id = R.color.brand_primary
-                ),
-                fontSize = 32.sp
-            )
+                    color = if (star <= rating) {
+                        colorResource(
+                            id = R.color.brand_primary
+                        )
+                    } else {
+                        colorResource(
+                            id = R.color.text_secondary
+                        )
+                    },
 
-            Text(
-                text = "☆",
-                color = colorResource(
-                    id = R.color.text_secondary
-                ),
-                fontSize = 32.sp
-            )
+                    fontSize = 32.sp,
+
+                    modifier = Modifier.clickable {
+                        onRatingChange(star)
+                    }
+                )
+            }
         }
     }
 }
@@ -106,7 +102,10 @@ fun RatingSectionPreview() {
                 .padding(16.dp)
         ) {
 
-            RatingSection()
+            RatingSection(
+                rating = 4,
+                onRatingChange = { }
+            )
         }
     }
 }

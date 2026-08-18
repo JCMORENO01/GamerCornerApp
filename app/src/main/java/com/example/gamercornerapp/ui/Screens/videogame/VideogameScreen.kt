@@ -122,7 +122,7 @@ fun VideogameScreenPreview() {
                 title = "Elden Ring",
                 developer = "FromSoftware",
                 year = 2022,
-                image = R.drawable.elden,
+                image = R.drawable.messi1,
                 rating = 4.8,
                 reviewsCount = 1200,
                 tags = listOf("RPG", "Mundo Abierto", "Fantasía"),

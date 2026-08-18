@@ -9,6 +9,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -31,8 +35,34 @@ fun ReviewScreen(
     modifier: Modifier = Modifier
 ) {
 
+    // Estado de la calificacion
+    var rating by remember {
+        mutableStateOf(5)
+    }
+
+
+    // Estado de la opinion
+    var opinion by remember {
+        mutableStateOf("")
+    }
+
+
     ReviewScreenContent(
         game = game,
+
+        rating = rating,
+        opinion = opinion,
+
+        onRatingChange = {
+            rating = it
+        },
+
+        onOpinionChange = {
+            opinion = it
+        },
+
+        onPublishClick = { },
+
         modifier = modifier
     )
 }
@@ -41,6 +71,15 @@ fun ReviewScreen(
 @Composable
 fun ReviewScreenContent(
     game: Game,
+
+    rating: Int,
+    opinion: String,
+
+    onRatingChange: (Int) -> Unit,
+    onOpinionChange: (String) -> Unit,
+
+    onPublishClick: () -> Unit,
+
     modifier: Modifier = Modifier
 ) {
 
@@ -62,39 +101,55 @@ fun ReviewScreenContent(
             modifier = Modifier.height(8.dp)
         )
 
+
         ReviewTitle()
+
 
         GameInfoCard(
             game = game
         )
 
-        Spacer(
-            modifier = Modifier.height(24.dp)
-        )
-
-        RatingSection()
 
         Spacer(
             modifier = Modifier.height(24.dp)
         )
 
-        OpinionSection()
+
+        RatingSection(
+            rating = rating,
+            onRatingChange = onRatingChange
+        )
+
+
+        Spacer(
+            modifier = Modifier.height(24.dp)
+        )
+
+
+        OpinionSection(
+            opinion = opinion,
+            onOpinionChange = onOpinionChange
+        )
+
 
         Spacer(
             modifier = Modifier.height(16.dp)
         )
 
+
         TagsSection()
+
 
         Spacer(
             modifier = Modifier.height(145.dp)
         )
 
+
         AppButton(
             text = stringResource(
                 id = R.string.btn_publish_review
             ),
-            onClick = {}
+            onClick = onPublishClick
         )
     }
 }

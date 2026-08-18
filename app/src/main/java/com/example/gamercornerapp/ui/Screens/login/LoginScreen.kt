@@ -10,6 +10,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -29,7 +33,39 @@ fun LoginScreen(
     modifier: Modifier = Modifier
 ) {
 
+    // Estados
+    var email by remember {
+        mutableStateOf("")
+    }
+
+    var password by remember {
+        mutableStateOf("")
+    }
+
+    var showPassword by remember {
+        mutableStateOf(false)
+    }
+
+
     LoginScreenContent(
+        email = email,
+        password = password,
+        showPassword = showPassword,
+
+        onEmailChange = {
+            email = it
+        },
+
+        onPasswordChange = {
+            password = it
+        },
+
+        onShowPasswordChange = {
+            showPassword = !showPassword
+        },
+
+        onLoginClick = { },
+
         modifier = modifier
     )
 }
@@ -37,6 +73,13 @@ fun LoginScreen(
 
 @Composable
 fun LoginScreenContent(
+    email: String,
+    password: String,
+    showPassword: Boolean,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onShowPasswordChange: () -> Unit,
+    onLoginClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -65,7 +108,16 @@ fun LoginScreenContent(
             )
 
 
-            LoginForm()
+            LoginForm(
+                email = email,
+                password = password,
+                showPassword = showPassword,
+                onEmailChange = onEmailChange,
+                onPasswordChange = onPasswordChange,
+                onShowPasswordChange = onShowPasswordChange,
+                onLoginClick = onLoginClick
+            )
+
 
             Spacer(
                 modifier = Modifier.height(24.dp)
@@ -74,12 +126,14 @@ fun LoginScreenContent(
 
             LoginDivider()
 
+
             Spacer(
                 modifier = Modifier.height(24.dp)
             )
 
 
             GoogleLoginButton()
+
 
             Spacer(
                 modifier = Modifier.height(32.dp)

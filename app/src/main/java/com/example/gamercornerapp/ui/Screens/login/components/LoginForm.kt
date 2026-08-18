@@ -1,6 +1,7 @@
 package com.example.gamercornerapp.ui.Screens.login.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,15 +17,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.layout.Arrangement
 import com.example.gamercornerapp.R
 import com.example.gamercornerapp.ui.componentes.AppButton
+import com.example.gamercornerapp.ui.componentes.AppPasswordField
 import com.example.gamercornerapp.ui.componentes.AppTextField
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
 @Composable
 fun LoginForm(
+    email: String,
+    password: String,
+    showPassword: Boolean,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onShowPasswordChange: () -> Unit,
+    onLoginClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -34,8 +42,8 @@ fun LoginForm(
 
         // Campo de correo
         AppTextField(
-            value = "",
-            onValueChange = { },
+            value = email,
+            onValueChange = onEmailChange,
             label = stringResource(
                 id = R.string.email_or_user_hint
             ),
@@ -50,15 +58,17 @@ fun LoginForm(
 
 
         // Campo de contraseña
-        AppTextField(
-            value = "",
-            onValueChange = { },
+        AppPasswordField(
+            value = password,
+            onValueChange = onPasswordChange,
             label = stringResource(
                 id = R.string.password_hint
             ),
             placeholder = stringResource(
                 id = R.string.login_password_placeholder
-            )
+            ),
+            showPassword = showPassword,
+            onShowPasswordChange = onShowPasswordChange
         )
 
         Spacer(
@@ -94,7 +104,7 @@ fun LoginForm(
             text = stringResource(
                 id = R.string.login_button
             ),
-            onClick = { }
+            onClick = onLoginClick
         )
     }
 }
@@ -114,7 +124,15 @@ fun LoginFormPreview() {
                 .padding(24.dp)
         ) {
 
-            LoginForm()
+            LoginForm(
+                email = "juan@gmail.com",
+                password = "123456",
+                showPassword = false,
+                onEmailChange = { },
+                onPasswordChange = { },
+                onShowPasswordChange = { },
+                onLoginClick = { }
+            )
         }
     }
 }

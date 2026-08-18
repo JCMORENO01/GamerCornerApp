@@ -18,6 +18,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gamercornerapp.R
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+
 
 // Campo de texto reutilizable
 @Composable
@@ -332,5 +340,106 @@ fun UserRowItem(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun AppPasswordField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    placeholder: String,
+    showPassword: Boolean,
+    onShowPasswordChange: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+
+    Column(
+        modifier = modifier.fillMaxWidth()
+    ) {
+
+        Text(
+            text = label,
+            color = colorResource(id = R.color.white),
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium
+        )
+
+        Spacer(
+            modifier = Modifier.height(8.dp)
+        )
+
+        OutlinedTextField(
+            value = value,
+            onValueChange = onValueChange,
+
+            placeholder = {
+                Text(
+                    text = placeholder,
+                    color = colorResource(
+                        id = R.color.text_secondary
+                    ),
+                    fontSize = 13.sp
+                )
+            },
+
+            trailingIcon = {
+
+                IconButton(
+                    onClick = onShowPasswordChange
+                ) {
+
+                    Icon(
+                        imageVector = if (showPassword) {
+                            Icons.Default.Visibility
+                        } else {
+                            Icons.Default.VisibilityOff
+                        },
+                        contentDescription = null,
+                        tint = colorResource(
+                            id = R.color.text_secondary
+                        )
+                    )
+                }
+            },
+
+            visualTransformation = if (showPassword) {
+                VisualTransformation.None
+            } else {
+                PasswordVisualTransformation()
+            },
+
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(58.dp),
+
+            shape = RoundedCornerShape(16.dp),
+
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = colorResource(
+                    id = R.color.brand_primary
+                ),
+
+                unfocusedBorderColor = colorResource(
+                    id = R.color.card_background
+                ),
+
+                focusedContainerColor = colorResource(
+                    id = R.color.card_background
+                ),
+
+                unfocusedContainerColor = colorResource(
+                    id = R.color.card_background
+                ),
+
+                focusedTextColor = colorResource(
+                    id = R.color.white
+                ),
+
+                unfocusedTextColor = colorResource(
+                    id = R.color.white
+                )
+            )
+        )
     }
 }

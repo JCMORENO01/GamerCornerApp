@@ -1,7 +1,11 @@
 package com.example.gamercornerapp.ui.Screens.register.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -9,12 +13,33 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.gamercornerapp.R
+import com.example.gamercornerapp.ui.componentes.AppPasswordField
 import com.example.gamercornerapp.ui.componentes.AppTextField
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
 @Composable
 fun RegisterForm(
+    fullName: String,
+    username: String,
+    email: String,
+    password: String,
+    confirmPassword: String,
+    birthDate: String,
+
+    showPassword: Boolean,
+    showConfirmPassword: Boolean,
+
+    onFullNameChange: (String) -> Unit,
+    onUsernameChange: (String) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onConfirmPasswordChange: (String) -> Unit,
+    onBirthDateChange: (String) -> Unit,
+
+    onShowPasswordChange: () -> Unit,
+    onShowConfirmPasswordChange: () -> Unit,
+
     modifier: Modifier = Modifier
 ) {
 
@@ -24,8 +49,8 @@ fun RegisterForm(
 
         // Nombre completo
         AppTextField(
-            value = "",
-            onValueChange = { },
+            value = fullName,
+            onValueChange = onFullNameChange,
             label = stringResource(
                 id = R.string.label_fullname
             ),
@@ -42,8 +67,8 @@ fun RegisterForm(
 
         // Nombre de usuario
         AppTextField(
-            value = "",
-            onValueChange = { },
+            value = username,
+            onValueChange = onUsernameChange,
             label = stringResource(
                 id = R.string.label_username
             ),
@@ -60,8 +85,8 @@ fun RegisterForm(
 
         // Correo
         AppTextField(
-            value = "",
-            onValueChange = { },
+            value = email,
+            onValueChange = onEmailChange,
             label = stringResource(
                 id = R.string.label_email
             ),
@@ -77,15 +102,17 @@ fun RegisterForm(
 
 
         // Contraseña
-        AppTextField(
-            value = "",
-            onValueChange = { },
+        AppPasswordField(
+            value = password,
+            onValueChange = onPasswordChange,
             label = stringResource(
                 id = R.string.label_password
             ),
             placeholder = stringResource(
                 id = R.string.hint_password
-            )
+            ),
+            showPassword = showPassword,
+            onShowPasswordChange = onShowPasswordChange
         )
 
 
@@ -95,15 +122,17 @@ fun RegisterForm(
 
 
         // Confirmar contraseña
-        AppTextField(
-            value = "",
-            onValueChange = { },
+        AppPasswordField(
+            value = confirmPassword,
+            onValueChange = onConfirmPasswordChange,
             label = stringResource(
                 id = R.string.label_confirm_password
             ),
             placeholder = stringResource(
                 id = R.string.hint_confirm_password
-            )
+            ),
+            showPassword = showConfirmPassword,
+            onShowPasswordChange = onShowConfirmPasswordChange
         )
 
 
@@ -114,8 +143,8 @@ fun RegisterForm(
 
         // Fecha de nacimiento
         AppTextField(
-            value = "",
-            onValueChange = { },
+            value = birthDate,
+            onValueChange = onBirthDateChange,
             label = stringResource(
                 id = R.string.label_birthdate
             ),
@@ -141,7 +170,27 @@ fun RegisterFormPreview() {
                 .padding(16.dp)
         ) {
 
-            RegisterForm()
+            RegisterForm(
+                fullName = "Juan Romero",
+                username = "juanromero",
+                email = "juan@gmail.com",
+                password = "123456",
+                confirmPassword = "123456",
+                birthDate = "10/05/2005",
+
+                showPassword = false,
+                showConfirmPassword = false,
+
+                onFullNameChange = { },
+                onUsernameChange = { },
+                onEmailChange = { },
+                onPasswordChange = { },
+                onConfirmPasswordChange = { },
+                onBirthDateChange = { },
+
+                onShowPasswordChange = { },
+                onShowConfirmPasswordChange = { }
+            )
         }
     }
 }

@@ -1,13 +1,12 @@
 package com.example.gamercornerapp.ui.Screens.feed
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -18,62 +17,86 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.gamercornerapp.R
+import com.example.gamercornerapp.ui.model.local.LocalDataProvider
 import com.example.gamercornerapp.ui.Screens.feed.components.FeedPostCard
 import com.example.gamercornerapp.ui.Screens.feed.components.FeedTabs
 import com.example.gamercornerapp.ui.Screens.feed.components.FeedTopBar
-import com.example.gamercornerapp.ui.componentes.GamerBottomBar
 import com.example.gamercornerapp.ui.model.FeedPost
-import com.example.gamercornerapp.ui.model.Game
-import com.example.gamercornerapp.ui.model.UserProfile
-import com.example.gamercornerapp.ui.model.UserStats
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
+
 
 @Composable
 fun FeedScreen(
     posts: List<FeedPost>,
     modifier: Modifier = Modifier
 ) {
-    Scaffold(
-        modifier = modifier,
-        containerColor = colorResource(id = R.color.brand_background),
-        bottomBar = {
-            GamerBottomBar(selectedTab = 0)
-        }
-    ) { innerPadding ->
-        FeedScreenContent(
-            posts = posts,
-            modifier = Modifier.padding(innerPadding)
-        )
+
+    // Estado de la pestaña seleccionada
+    var selectedTabIndex by remember {
+        mutableIntStateOf(0)
     }
+
+    FeedScreenContent(
+        posts = posts,
+        selectedTabIndex = selectedTabIndex,
+
+        onTabSelected = {
+            selectedTabIndex = it
+        },
+
+        modifier = modifier
+    )
 }
+
 
 @Composable
 fun FeedScreenContent(
     posts: List<FeedPost>,
+    selectedTabIndex: Int,
+    onTabSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
     onPostClick: (FeedPost) -> Unit = {}
 ) {
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
 
     Column(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
+            .background(
+                colorResource(id = R.color.brand_background)
+            )
     ) {
+
+        // Barra superior
         FeedTopBar()
 
+
+        // Pestañas
         FeedTabs(
             selectedTabIndex = selectedTabIndex,
-            onTabSelected = { selectedTabIndex = it }
+            onTabSelected = onTabSelected
         )
 
+
+        // Lista de publicaciones
         LazyColumn(
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+            contentPadding = PaddingValues(
+                horizontal = 16.dp,
+                vertical = 16.dp
+            ),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.fillMaxSize()
         ) {
-            items(posts, key = { it.id }) { post ->
+
+            items(
+                items = posts,
+                key = { it.id }
+            ) { post ->
+
                 FeedPostCard(
                     post = post,
-                    onCardClick = { onPostClick(post) }
+                    onCardClick = {
+                        onPostClick(post)
+                    }
                 )
             }
         }
@@ -81,69 +104,14 @@ fun FeedScreenContent(
 }
 
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun FeedScreenPreview() {
-    GamerCornerAppTheme {
-        val samplePosts = listOf(
-            FeedPost(
-                id = "1",
-                author = UserProfile(
-                    username = "NightHunter",
-                    nickName = "@nighthunter_21",
-                    bio = "Vivo para los videojuegos 🎮",
-                    profileBackgroundId = R.drawable.background_maquinitas,
-                    profileBgDescription = "Imagen de monitores",
-                    profileImageId = R.drawable.messi1,
-                    stats = UserStats(
-                        reviewsCount = 128,
-                        followersCount = 342,
-                        followingCount = 176
-                    )
-                ),
-                relativeTime = "Hace 2 horas",
-                game = Game(
-                    title = "Elden Ring",
-                    developer = "FromSoftware",
-                    year = 2022,
-                    image = R.drawable.mini_elden
-                ),
-                rating = 4.8,
-                description = "Simplemente una obra maestra. El mundo, la historia, los jefes... Todo aquí te reta y te recompensa. Inolvidable.",
-                tags = listOf("RPG", "Mundo Abierto"),
-                likesCount = 256,
-                commentsCount = 42
-            ),
-            FeedPost(
-                id = "2",
-                author = UserProfile(
-                    username = "KatanaGamer",
-                    nickName = "@katana_gamer",
-                    bio = "Fan de los souls-like 🗡️",
-                    profileBackgroundId = R.drawable.background_maquinitas,
-                    profileBgDescription = "Imagen de monitores",
-                    profileImageId = R.drawable.messi2,
-                    stats = UserStats(
-                        reviewsCount = 64,
-                        followersCount = 210,
-                        followingCount = 98
-                    )
-                ),
-                relativeTime = "Hace 4 horas",
-                game = Game(
-                    title = "God of War",
-                    developer = "Santa Monica Studio",
-                    year = 2022,
-                    image = R.drawable.cyberpunk
-                ),
-                rating = 4.7,
-                description = "Una secuela épica. Combate brutal, historia increíble y personajes que te marcan.",
-                tags = listOf("Acción", "Aventura"),
-                likesCount = 198,
-                commentsCount = 31
-            )
-        )
 
-        FeedScreen(posts = samplePosts)
+    GamerCornerAppTheme {
+
+        FeedScreen(
+            posts = LocalDataProvider.posts
+        )
     }
 }

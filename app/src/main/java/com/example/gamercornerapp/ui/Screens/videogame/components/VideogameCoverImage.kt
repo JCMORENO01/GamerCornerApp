@@ -59,7 +59,7 @@ fun VideogameCoverImagePreview() {
                 title = "Elden Ring",
                 developer = "FromSoftware",
                 year = 2022,
-                image = R.drawable.elden
+                image = R.drawable.messi1
             ),
             modifier = Modifier.padding(16.dp)
         )

@@ -5,6 +5,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -25,7 +29,99 @@ fun RegisterScreen(
     modifier: Modifier = Modifier
 ) {
 
+    // Estados del formulario
+    var fullName by remember {
+        mutableStateOf("")
+    }
+
+    var username by remember {
+        mutableStateOf("")
+    }
+
+    var email by remember {
+        mutableStateOf("")
+    }
+
+    var password by remember {
+        mutableStateOf("")
+    }
+
+    var confirmPassword by remember {
+        mutableStateOf("")
+    }
+
+    var birthDate by remember {
+        mutableStateOf("")
+    }
+
+
+    // Estados para mostrar las contraseñas
+    var showPassword by remember {
+        mutableStateOf(false)
+    }
+
+    var showConfirmPassword by remember {
+        mutableStateOf(false)
+    }
+
+
+    // Estado de terminos y condiciones
+    var termsAccepted by remember {
+        mutableStateOf(false)
+    }
+
+
     RegisterScreenContent(
+        fullName = fullName,
+        username = username,
+        email = email,
+        password = password,
+        confirmPassword = confirmPassword,
+        birthDate = birthDate,
+
+        showPassword = showPassword,
+        showConfirmPassword = showConfirmPassword,
+
+        termsAccepted = termsAccepted,
+
+        onFullNameChange = {
+            fullName = it
+        },
+
+        onUsernameChange = {
+            username = it
+        },
+
+        onEmailChange = {
+            email = it
+        },
+
+        onPasswordChange = {
+            password = it
+        },
+
+        onConfirmPasswordChange = {
+            confirmPassword = it
+        },
+
+        onBirthDateChange = {
+            birthDate = it
+        },
+
+        onShowPasswordChange = {
+            showPassword = !showPassword
+        },
+
+        onShowConfirmPasswordChange = {
+            showConfirmPassword = !showConfirmPassword
+        },
+
+        onTermsChange = {
+            termsAccepted = it
+        },
+
+        onRegisterClick = { },
+
         modifier = modifier
     )
 }
@@ -33,6 +129,32 @@ fun RegisterScreen(
 
 @Composable
 fun RegisterScreenContent(
+    fullName: String,
+    username: String,
+    email: String,
+    password: String,
+    confirmPassword: String,
+    birthDate: String,
+
+    showPassword: Boolean,
+    showConfirmPassword: Boolean,
+
+    termsAccepted: Boolean,
+
+    onFullNameChange: (String) -> Unit,
+    onUsernameChange: (String) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onConfirmPasswordChange: (String) -> Unit,
+    onBirthDateChange: (String) -> Unit,
+
+    onShowPasswordChange: () -> Unit,
+    onShowConfirmPasswordChange: () -> Unit,
+
+    onTermsChange: (Boolean) -> Unit,
+
+    onRegisterClick: () -> Unit,
+
     modifier: Modifier = Modifier
 ) {
 
@@ -64,7 +186,27 @@ fun RegisterScreenContent(
 
 
             // Formulario
-            RegisterForm()
+            RegisterForm(
+                fullName = fullName,
+                username = username,
+                email = email,
+                password = password,
+                confirmPassword = confirmPassword,
+                birthDate = birthDate,
+
+                showPassword = showPassword,
+                showConfirmPassword = showConfirmPassword,
+
+                onFullNameChange = onFullNameChange,
+                onUsernameChange = onUsernameChange,
+                onEmailChange = onEmailChange,
+                onPasswordChange = onPasswordChange,
+                onConfirmPasswordChange = onConfirmPasswordChange,
+                onBirthDateChange = onBirthDateChange,
+
+                onShowPasswordChange = onShowPasswordChange,
+                onShowConfirmPasswordChange = onShowConfirmPasswordChange
+            )
 
 
             Spacer(
@@ -74,7 +216,8 @@ fun RegisterScreenContent(
 
             // Terminos y condiciones
             TermsSection(
-                checked = false
+                checked = termsAccepted,
+                onCheckedChange = onTermsChange
             )
 
 
@@ -88,7 +231,7 @@ fun RegisterScreenContent(
                 text = stringResource(
                     id = R.string.btn_action_create_account
                 ),
-                onClick = { }
+                onClick = onRegisterClick
             )
 
 
