@@ -10,12 +10,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,12 +40,11 @@ fun OpinionSection(
             text = stringResource(
                 id = R.string.label_opinion
             ),
-            color = colorResource(
-                id = R.color.white
-            ),
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 15.sp,
             fontWeight = FontWeight.Medium
         )
+
 
         Spacer(
             modifier = Modifier.height(10.dp)
@@ -62,9 +61,7 @@ fun OpinionSection(
                     text = stringResource(
                         id = R.string.opinion_placeholder
                     ),
-                    color = colorResource(
-                        id = R.color.text_secondary
-                    ),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 13.sp
                 )
             },
@@ -77,29 +74,26 @@ fun OpinionSection(
 
             colors = OutlinedTextFieldDefaults.colors(
 
-                focusedBorderColor = colorResource(
-                    id = R.color.brand_primary
-                ),
+                focusedBorderColor =
+                    MaterialTheme.colorScheme.primary,
 
-                unfocusedBorderColor = colorResource(
-                    id = R.color.card_background
-                ),
+                unfocusedBorderColor =
+                    MaterialTheme.colorScheme.surface,
 
-                focusedContainerColor = colorResource(
-                    id = R.color.card_background
-                ),
+                focusedContainerColor =
+                    MaterialTheme.colorScheme.surface,
 
-                unfocusedContainerColor = colorResource(
-                    id = R.color.card_background
-                ),
+                unfocusedContainerColor =
+                    MaterialTheme.colorScheme.surface,
 
-                focusedTextColor = colorResource(
-                    id = R.color.white
-                ),
+                focusedTextColor =
+                    MaterialTheme.colorScheme.onSurface,
 
-                unfocusedTextColor = colorResource(
-                    id = R.color.white
-                )
+                unfocusedTextColor =
+                    MaterialTheme.colorScheme.onSurface,
+
+                cursorColor =
+                    MaterialTheme.colorScheme.primary
             )
         )
 
@@ -119,9 +113,7 @@ fun OpinionSection(
                     id = R.string.review_char_counter,
                     opinion.length
                 ),
-                color = colorResource(
-                    id = R.color.text_secondary
-                ),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 11.sp
             )
         }
@@ -136,12 +128,14 @@ fun OpinionSection(
 @Composable
 fun OpinionSectionPreview() {
 
-    GamerCornerAppTheme {
+    GamerCornerAppTheme(
+        darkTheme = true
+    ) {
 
         Box(
             modifier = Modifier
                 .background(
-                    colorResource(id = R.color.brand_background)
+                    MaterialTheme.colorScheme.background
                 )
                 .padding(16.dp)
         ) {

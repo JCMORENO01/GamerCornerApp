@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -35,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,6 +45,7 @@ import com.example.gamercornerapp.R
 import com.example.gamercornerapp.ui.model.ReviewItem
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
+
 @Composable
 fun ProfileReviewsSection(
     reviews: List<ReviewItem>,
@@ -52,8 +53,16 @@ fun ProfileReviewsSection(
     onSeeAllClick: () -> Unit = {},
     onReviewClick: (ReviewItem) -> Unit = {}
 ) {
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
-    val tabs = listOf("Reseñas", "Guardados")
+
+    var selectedTabIndex by remember {
+        mutableIntStateOf(0)
+    }
+
+    val tabs = listOf(
+        "Reseñas",
+        "Guardados"
+    )
+
 
     Column(
         modifier = modifier.fillMaxWidth()
@@ -62,37 +71,64 @@ fun ProfileReviewsSection(
         PrimaryTabRow(
             selectedTabIndex = selectedTabIndex,
             containerColor = Color.Transparent,
-            contentColor = colorResource(id = R.color.brand_primary),
+            contentColor = MaterialTheme.colorScheme.primary,
             divider = {},
+
             indicator = {
+
                 TabRowDefaults.SecondaryIndicator(
-                    modifier = Modifier.tabIndicatorOffset(selectedTabIndex),
+                    modifier = Modifier.tabIndicatorOffset(
+                        selectedTabIndex
+                    ),
                     height = 3.dp,
-                    color = colorResource(id = R.color.brand_primary)
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         ) {
+
             tabs.forEachIndexed { index, title ->
-                val isSelected = selectedTabIndex == index
+
+                val isSelected =
+                    selectedTabIndex == index
+
+
                 val textColor by animateColorAsState(
-                    targetValue = if (isSelected) colorResource(id = R.color.brand_primary)
-                    else colorResource(id = R.color.text_secondary),
+                    targetValue = if (isSelected) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
                     label = "tabTextColor"
                 )
 
+
                 Tab(
                     selected = isSelected,
-                    onClick = { selectedTabIndex = index },
+
+                    onClick = {
+                        selectedTabIndex = index
+                    },
+
                     modifier = Modifier.background(
-                        //TODO- Revisar colores
-                        if (isSelected) colorResource(id = R.color.brand_primary).copy(alpha = 0.15f)
-                        else Color.Transparent
+                        if (isSelected) {
+                            MaterialTheme.colorScheme.primary.copy(
+                                alpha = 0.15f
+                            )
+                        } else {
+                            Color.Transparent
+                        }
                     ),
+
                     text = {
+
                         Text(
                             text = title,
                             fontSize = 15.sp,
-                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                            fontWeight = if (isSelected) {
+                                FontWeight.Bold
+                            } else {
+                                FontWeight.Medium
+                            },
                             color = textColor
                         )
                     }
@@ -100,51 +136,74 @@ fun ProfileReviewsSection(
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+
+        Spacer(
+            modifier = Modifier.height(20.dp)
+        )
+
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
+
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             Text(
-                text = if (selectedTabIndex == 0) "RESEÑAS RECIENTES" else "GUARDADOS RECIENTES",
+                text = if (selectedTabIndex == 0) {
+                    "RESEÑAS RECIENTES"
+                } else {
+                    "GUARDADOS RECIENTES"
+                },
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.white),
+                color = MaterialTheme.colorScheme.onBackground,
                 letterSpacing = 0.8.sp,
                 fontSize = 12.sp
             )
 
+
             Text(
                 text = "Ver todas",
                 style = MaterialTheme.typography.labelMedium,
-                color = colorResource(id = R.color.text_secondary),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 12.sp,
-                modifier = Modifier.clickable { onSeeAllClick() }
+                modifier = Modifier.clickable {
+                    onSeeAllClick()
+                }
             )
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
 
-        //por cada review aparecerá una tarjetica
+        Spacer(
+            modifier = Modifier.height(12.dp)
+        )
+
+
+        // Por cada review aparece una tarjeta
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
+
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+
             reviews.forEach { review ->
+
                 ReviewCardItem(
                     review = review,
-                    onClick = { onReviewClick(review) }
+                    onClick = {
+                        onReviewClick(review)
+                    }
                 )
             }
         }
     }
 }
+
 
 @Composable
 private fun ReviewCardItem(
@@ -152,78 +211,118 @@ private fun ReviewCardItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick() },
+            .clickable {
+                onClick()
+            },
+
         colors = CardDefaults.cardColors(
-            containerColor = colorResource(id = R.color.card_background)
+            containerColor = MaterialTheme.colorScheme.surface
         ),
+
         shape = RoundedCornerShape(18.dp)
     ) {
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp),
+
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             Image(
-                painter = painterResource(id = review.gameImageId),
+                painter = painterResource(
+                    id = review.gameImageId
+                ),
                 contentDescription = "Portada de ${review.gameTitle}",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(width = 60.dp, height = 64.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(colorResource(R.color.brand_background))
+                    .size(
+                        width = 60.dp,
+                        height = 64.dp
+                    )
+                    .clip(
+                        RoundedCornerShape(12.dp)
+                    )
+                    .background(
+                        MaterialTheme.colorScheme.background
+                    )
             )
 
-            Spacer(modifier = Modifier.width(14.dp))
 
-            //info juego
+            Spacer(
+                modifier = Modifier.width(14.dp)
+            )
+
+
+            // Informacion del juego
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.Center
             ) {
+
                 Text(
                     text = review.gameTitle,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = colorResource(id = R.color.white),
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 15.sp
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
 
-                //las estrellitas mostradas están sujetas a la calificación
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Spacer(
+                    modifier = Modifier.height(4.dp)
+                )
+
+
+                // Calificacion
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
                     Text(
                         text = review.rating.toString(),
                         fontWeight = FontWeight.Bold,
-                        color = colorResource(id = R.color.brand_yellow), // #F3C430
+                        color = MaterialTheme.colorScheme.tertiary,
                         fontSize = 14.sp
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+
+
+                    Spacer(
+                        modifier = Modifier.width(4.dp)
+                    )
+
+
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+
                         repeat(review.rating) {
+
                             Icon(
                                 imageVector = Icons.Default.Star,
                                 contentDescription = "Puntuación",
-                                tint = colorResource(id = R.color.brand_primary), // #E83FB8
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(15.dp)
                             )
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(4.dp))
 
-                //TODO - Arreglar el formato de la fecha
+                Spacer(
+                    modifier = Modifier.height(4.dp)
+                )
+
+
                 Text(
                     text = review.relativeDate,
                     style = MaterialTheme.typography.bodySmall,
-                    color = colorResource(id = R.color.text_secondary),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 12.sp
                 )
             }
@@ -232,7 +331,7 @@ private fun ReviewCardItem(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = "Ir a detalle",
-                tint = colorResource(id = R.color.text_secondary),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(20.dp)
             )
         }
@@ -240,29 +339,50 @@ private fun ReviewCardItem(
 }
 
 
-@Preview(showBackground = true, backgroundColor = 0xFF07090D)
+@Preview(
+    showBackground = true,
+    name = "Profile Reviews Dark"
+)
 @Composable
 fun ProfileReviewsSectionPreview() {
-    GamerCornerAppTheme {
-        val mockReviews = listOf(
-            ReviewItem(
-                id = "1",
-                gameTitle = "Elden Ring",
-                rating = 5,
-                relativeDate = "Hace 2 días",
-                gameImageId = R.drawable.mini_elden,
-                description = "Un juego increible..."
-            ),
-            ReviewItem(
-                id = "2",
-                gameTitle = "Cyberpunk",
-                rating = 4,
-                relativeDate = "Hace 1 semana",
-                gameImageId = R.drawable.cyberpunk,
-                description = "Una gran historia..."
-            )
-        )
 
-        ProfileReviewsSection(reviews = mockReviews)
+    GamerCornerAppTheme(
+        darkTheme = true
+    ) {
+
+        Box(
+            modifier = Modifier
+                .background(
+                    MaterialTheme.colorScheme.background
+                )
+                .padding(vertical = 16.dp)
+        ) {
+
+            val mockReviews = listOf(
+
+                ReviewItem(
+                    id = "1",
+                    gameTitle = "Elden Ring",
+                    rating = 5,
+                    relativeDate = "Hace 2 días",
+                    gameImageId = R.drawable.mini_elden,
+                    description = "Un juego increible..."
+                ),
+
+                ReviewItem(
+                    id = "2",
+                    gameTitle = "Cyberpunk",
+                    rating = 4,
+                    relativeDate = "Hace 1 semana",
+                    gameImageId = R.drawable.cyberpunk,
+                    description = "Una gran historia..."
+                )
+            )
+
+
+            ProfileReviewsSection(
+                reviews = mockReviews
+            )
+        }
     }
 }

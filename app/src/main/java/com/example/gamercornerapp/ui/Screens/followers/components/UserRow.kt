@@ -12,12 +12,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -55,9 +55,11 @@ fun UserRow(
                     .clip(CircleShape)
             )
 
+
             Spacer(
                 modifier = Modifier.width(12.dp)
             )
+
 
             Column {
 
@@ -65,20 +67,17 @@ fun UserRow(
                     text = stringResource(
                         id = user.name
                     ),
-                    color = colorResource(
-                        id = R.color.white
-                    ),
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
+
 
                 Text(
                     text = stringResource(
                         id = user.handle
                     ),
-                    color = colorResource(
-                        id = R.color.text_secondary
-                    ),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 14.sp
                 )
             }
@@ -90,36 +89,41 @@ fun UserRow(
             modifier = Modifier
                 .background(
                     color = if (user.isFollowing) {
-                        colorResource(
-                            id = R.color.card_background
-                        )
+                        MaterialTheme.colorScheme.surface
                     } else {
-                        colorResource(
-                            id = R.color.brand_primary
-                        )
+                        MaterialTheme.colorScheme.primary
                     },
+
                     shape = RoundedCornerShape(20.dp)
                 )
                 .padding(
                     horizontal = 18.dp,
                     vertical = 8.dp
                 ),
+
             contentAlignment = Alignment.Center
         ) {
 
             Text(
                 text = if (user.isFollowing) {
+
                     stringResource(
                         id = R.string.btn_following
                     )
+
                 } else {
+
                     stringResource(
                         id = R.string.btn_follow
                     )
                 },
-                color = colorResource(
-                    id = R.color.white
-                ),
+
+                color = if (user.isFollowing) {
+                    MaterialTheme.colorScheme.onSurface
+                } else {
+                    MaterialTheme.colorScheme.onPrimary
+                },
+
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -127,18 +131,22 @@ fun UserRow(
     }
 }
 
+
 @Preview(
     showBackground = true,
+    name = "No siguiendo"
 )
 @Composable
 fun UserRowNotFollowingPreview() {
 
-    GamerCornerAppTheme {
+    GamerCornerAppTheme(
+        darkTheme = true
+    ) {
 
         Box(
             modifier = Modifier
                 .background(
-                    colorResource(id = R.color.brand_background)
+                    MaterialTheme.colorScheme.background
                 )
                 .padding(16.dp)
         ) {
@@ -158,16 +166,19 @@ fun UserRowNotFollowingPreview() {
 
 @Preview(
     showBackground = true,
+    name = "Siguiendo"
 )
 @Composable
 fun UserRowFollowingPreview() {
 
-    GamerCornerAppTheme {
+    GamerCornerAppTheme(
+        darkTheme = true
+    ) {
 
         Box(
             modifier = Modifier
                 .background(
-                    colorResource(id = R.color.brand_background)
+                    MaterialTheme.colorScheme.background
                 )
                 .padding(16.dp)
         ) {

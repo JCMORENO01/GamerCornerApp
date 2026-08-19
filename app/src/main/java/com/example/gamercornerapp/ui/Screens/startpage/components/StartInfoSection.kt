@@ -2,12 +2,17 @@ package com.example.gamercornerapp.ui.Screens.startpage.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,9 +58,7 @@ fun StartInfoSection(
             text = stringResource(
                 id = R.string.start_title
             ),
-            color = colorResource(
-                id = R.color.white
-            ),
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 19.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
@@ -72,9 +75,7 @@ fun StartInfoSection(
             text = stringResource(
                 id = R.string.start_description
             ),
-            color = colorResource(
-                id = R.color.text_secondary
-            ),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 15.sp,
             textAlign = TextAlign.Center,
             lineHeight = 24.sp
@@ -83,16 +84,21 @@ fun StartInfoSection(
 }
 
 
-@Preview(showBackground = true)
+@Preview(
+    showBackground = true,
+    name = "Start Info Dark"
+)
 @Composable
 fun StartInfoSectionPreview() {
 
-    GamerCornerAppTheme {
+    GamerCornerAppTheme(
+        darkTheme = true
+    ) {
 
         Box(
             modifier = Modifier
                 .background(
-                    colorResource(id = R.color.brand_background)
+                    MaterialTheme.colorScheme.background
                 )
                 .padding(28.dp)
         ) {

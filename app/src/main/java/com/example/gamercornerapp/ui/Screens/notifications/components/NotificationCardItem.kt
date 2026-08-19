@@ -16,8 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
@@ -35,77 +33,122 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 @Composable
 fun NotificationCardItem(
     notification: NotificationItem,
-    onClick: () -> Unit = {},
+    onClick: () -> Unit = { },
     modifier: Modifier = Modifier
 ) {
+
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick() },
+            .clickable {
+                onClick()
+            },
+
         colors = CardDefaults.cardColors(
-            containerColor = colorResource(id = R.color.card_background)
+            containerColor = MaterialTheme.colorScheme.surface
         ),
+
         shape = RoundedCornerShape(16.dp)
     ) {
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(14.dp),
+
             verticalAlignment = Alignment.Top
         ) {
-            // Avatar con badge flotante
+
+            // Avatar con badge
             UserAvatarWithBadge(
                 avatarRes = notification.userAvatarImage,
                 type = notification.type
             )
 
-            Spacer(modifier = Modifier.width(12.dp))
 
-            // Texto de la notificación
-            Column(modifier = Modifier.weight(1f)) {
+            Spacer(
+                modifier = Modifier.width(12.dp)
+            )
+
+
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+
+                val primaryTextColor =
+                    MaterialTheme.colorScheme.onSurface
+
+
                 val annotatedText = buildAnnotatedString {
-                    //nombre de usuario en negrita
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, color = Color.White)) {
+
+                    // Nombre de usuario
+                    withStyle(
+                        style = SpanStyle(
+                            fontWeight = FontWeight.Bold,
+                            color = primaryTextColor
+                        )
+                    ) {
                         append(notification.username)
                     }
+
                     append(" ")
                     append(notification.actionText)
 
-                    //solo si es de un juego se agrega su nombre
+
+                    // Nombre del juego si aplica
                     notification.targetTitle?.let { title ->
+
                         append(" ")
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, color = Color.White)) {
+
+                        withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.Bold,
+                                color = primaryTextColor
+                            )
+                        ) {
                             append(title)
                         }
                     }
+
                     append(".")
                 }
+
 
                 Text(
                     text = annotatedText,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = colorResource(id = R.color.white),
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 13.sp
                 )
 
-                // Cita del comentario (si aplica)
+
+                // Cita del comentario
                 notification.commentQuote?.let { quote ->
-                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Spacer(
+                        modifier = Modifier.height(6.dp)
+                    )
+
+
                     Text(
                         text = "\"$quote\"",
                         style = MaterialTheme.typography.bodySmall,
                         fontStyle = FontStyle.Italic,
-                        color = colorResource(id = R.color.text_secondary),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 12.sp
                     )
                 }
 
-                Spacer(modifier = Modifier.height(6.dp))
+
+                Spacer(
+                    modifier = Modifier.height(6.dp)
+                )
+
 
                 Text(
                     text = notification.relativeTime,
                     style = MaterialTheme.typography.labelSmall,
-                    color = colorResource(id = R.color.text_secondary),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 11.sp
                 )
             }
@@ -114,14 +157,16 @@ fun NotificationCardItem(
 }
 
 
-
-
-@Preview()
+@Preview(showBackground = true)
 @Composable
-fun NotificationCardItemPreview (){
-    GamerCornerAppTheme (){
+fun NotificationCardItemPreview() {
+
+    GamerCornerAppTheme(
+        darkTheme = true
+    ) {
+
         NotificationCardItem(
-            NotificationItem(
+            notification = NotificationItem(
                 id = "1",
                 username = "Drakool",
                 userAvatarImage = R.drawable.messi1,

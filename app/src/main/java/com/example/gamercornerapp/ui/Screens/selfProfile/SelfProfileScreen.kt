@@ -7,32 +7,33 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.gamercornerapp.R
-import com.example.gamercornerapp.ui.model.UserProfile
-import com.example.gamercornerapp.ui.model.UserStats
-import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
-import androidx.compose.ui.res.colorResource
 import com.example.gamercornerapp.ui.Screens.selfProfile.components.ProfileHeaderSection
 import com.example.gamercornerapp.ui.Screens.selfProfile.components.ProfileReviewsSection
 import com.example.gamercornerapp.ui.Screens.selfProfile.components.ProfileStatsSection
-import com.example.gamercornerapp.ui.componentes.GamerBottomBar
 import com.example.gamercornerapp.ui.model.ReviewItem
+import com.example.gamercornerapp.ui.model.UserProfile
+import com.example.gamercornerapp.ui.model.UserStats
+import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
+
 
 @Composable
-fun SelfProfileScreen (
+fun SelfProfileScreen(
     userProfile: UserProfile,
     reviews: List<ReviewItem>,
     modifier: Modifier = Modifier
 ) {
+
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(
-                colorResource(id = R.color.brand_background)
+                MaterialTheme.colorScheme.background
             )
             .padding(
                 start = 16.dp,
@@ -41,44 +42,69 @@ fun SelfProfileScreen (
                 bottom = 0.dp
             )
     ) {
-        Column() {
-            SelfProfileScreenContent(userProfile, reviews)
-            Spacer(modifier = Modifier.height(35.dp))
-            GamerBottomBar()
+
+        Column {
+
+            SelfProfileScreenContent(
+                userProfile = userProfile,
+                reviews = reviews
+            )
         }
     }
 }
 
 
-
-
-
 @Composable
-fun SelfProfileScreenContent (
+fun SelfProfileScreenContent(
     userProfile: UserProfile,
     reviews: List<ReviewItem>,
     modifier: Modifier = Modifier
-){
+) {
+
     Column(
         modifier = modifier
     ) {
-        ProfileHeaderSection(userProfile)
-        Spacer(modifier = Modifier.height(20.dp))
-        ProfileStatsSection(userProfile.stats)
-        Spacer(modifier = Modifier.height(30.dp))
-        ProfileReviewsSection(reviews)
+
+        ProfileHeaderSection(
+            userProfile = userProfile
+        )
+
+
+        Spacer(
+            modifier = Modifier.height(20.dp)
+        )
+
+
+        ProfileStatsSection(
+            stats = userProfile.stats
+        )
+
+
+        Spacer(
+            modifier = Modifier.height(30.dp)
+        )
+
+
+        ProfileReviewsSection(
+            reviews = reviews
+        )
     }
 }
 
 
-
-
-@Preview()
+@Preview(
+    showBackground = true,
+    name = "Self Profile Dark"
+)
 @Composable
-fun SelfProfileScreenPreview (){
-    GamerCornerAppTheme() {
+fun SelfProfileScreenPreview() {
+
+    GamerCornerAppTheme(
+        darkTheme = true
+    ) {
+
         SelfProfileScreen(
-            userProfile = UserProfile (
+            userProfile = UserProfile(
                 username = "NightHunter",
                 nickName = "@nighthunter_21",
                 bio = "Vivo para los videojuegos 🎮",
@@ -92,7 +118,8 @@ fun SelfProfileScreenPreview (){
                 )
             ),
 
-            listOf(
+            reviews = listOf(
+
                 ReviewItem(
                     id = "1",
                     gameTitle = "Elden Ring",
@@ -101,6 +128,7 @@ fun SelfProfileScreenPreview (){
                     gameImageId = R.drawable.mini_elden,
                     description = "Un juego increible..."
                 ),
+
                 ReviewItem(
                     id = "2",
                     gameTitle = "Cyberpunk",

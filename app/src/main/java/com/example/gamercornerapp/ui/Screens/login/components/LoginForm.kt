@@ -8,10 +8,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,6 +52,7 @@ fun LoginForm(
             )
         )
 
+
         Spacer(
             modifier = Modifier.height(14.dp)
         )
@@ -71,6 +72,7 @@ fun LoginForm(
             onShowPasswordChange = onShowPasswordChange
         )
 
+
         Spacer(
             modifier = Modifier.height(10.dp)
         )
@@ -86,13 +88,12 @@ fun LoginForm(
                 text = stringResource(
                     id = R.string.forgot_password
                 ),
-                color = colorResource(
-                    id = R.color.brand_primary
-                ),
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Medium
             )
         }
+
 
         Spacer(
             modifier = Modifier.height(28.dp)
@@ -114,12 +115,14 @@ fun LoginForm(
 @Composable
 fun LoginFormPreview() {
 
-    GamerCornerAppTheme {
+    GamerCornerAppTheme(
+        darkTheme = true
+    ) {
 
         Column(
             modifier = Modifier
                 .background(
-                    colorResource(id = R.color.brand_background)
+                    MaterialTheme.colorScheme.background
                 )
                 .padding(24.dp)
         ) {

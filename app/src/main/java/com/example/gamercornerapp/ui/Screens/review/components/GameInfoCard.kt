@@ -11,11 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,9 +37,7 @@ fun GameInfoCard(
         shape = RoundedCornerShape(16.dp),
 
         colors = CardDefaults.cardColors(
-            containerColor = colorResource(
-                id = R.color.card_background
-            )
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
 
@@ -61,28 +59,28 @@ fun GameInfoCard(
                     .height(120.dp)
             )
 
+
             Spacer(
                 modifier = Modifier.height(12.dp)
             )
 
+
             Text(
                 text = game.title,
-                color = colorResource(
-                    id = R.color.white
-                ),
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
+
 
             Spacer(
                 modifier = Modifier.height(4.dp)
             )
 
+
             Text(
                 text = "${game.developer} · ${game.year}",
-                color = colorResource(
-                    id = R.color.text_secondary
-                ),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 13.sp
             )
         }
@@ -104,12 +102,15 @@ fun GameInfoCardPreview() {
         image = R.drawable.logo_gamer
     )
 
-    GamerCornerAppTheme {
+
+    GamerCornerAppTheme(
+        darkTheme = true
+    ) {
 
         Box(
             modifier = Modifier
                 .background(
-                    colorResource(id = R.color.brand_background)
+                    MaterialTheme.colorScheme.background
                 )
                 .padding(16.dp)
         ) {

@@ -1,6 +1,7 @@
 package com.example.gamercornerapp.ui.Screens.selfProfile.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -43,23 +43,31 @@ fun ProfileHeaderSection(
     modifier: Modifier = Modifier,
     onSettingsClick: () -> Unit = {}
 ) {
+
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.BottomCenter
         ) {
+
             Image(
-                painter = painterResource(id = userProfile.profileBackgroundId),
+                painter = painterResource(
+                    id = userProfile.profileBackgroundId
+                ),
                 contentDescription = userProfile.profileBgDescription,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(150.dp)
-                    .clip(RoundedCornerShape(24.dp))
+                    .clip(
+                        RoundedCornerShape(24.dp)
+                    )
             )
+
 
             IconButton(
                 onClick = onSettingsClick,
@@ -68,24 +76,30 @@ fun ProfileHeaderSection(
                     .padding(16.dp)
                     .size(36.dp)
             ) {
+
                 Icon(
                     imageVector = Icons.Outlined.Settings,
                     contentDescription = "Ajustes",
-                    tint = colorResource(id = R.color.white)
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
 
-            //fondo de perfil
+
+            // Foto de perfil
             Image(
-                painter = painterResource(id = userProfile.profileImageId),
+                painter = painterResource(
+                    id = userProfile.profileImageId
+                ),
                 contentDescription = "Foto de perfil de ${userProfile.username}",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(110.dp)
-                    .offset(y = 45.dp) //mitad del background
+                    .offset(
+                        y = 45.dp
+                    )
                     .border(
                         width = 3.dp,
-                        color = colorResource(id = R.color.brand_primary),
+                        color = MaterialTheme.colorScheme.primary,
                         shape = CircleShape
                     )
                     .clip(CircleShape)
@@ -93,62 +107,91 @@ fun ProfileHeaderSection(
         }
 
 
-        Spacer(modifier = Modifier.height(52.dp))
+        Spacer(
+            modifier = Modifier.height(52.dp)
+        )
+
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
+
             Text(
                 text = userProfile.username,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.white)
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
 
-        Spacer(modifier = Modifier.height(2.dp))
 
-        //nickname
+        Spacer(
+            modifier = Modifier.height(2.dp)
+        )
+
+
+        // Nickname
         Text(
             text = userProfile.nickName,
             style = MaterialTheme.typography.bodyMedium,
-            color = colorResource(id = R.color.text_secondary)
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
 
-        //bio
+        Spacer(
+            modifier = Modifier.height(8.dp)
+        )
+
+
+        // Bio
         Text(
             text = userProfile.bio,
             style = MaterialTheme.typography.bodySmall,
             textAlign = TextAlign.Center,
-            color = colorResource(id = R.color.white),
-            modifier = Modifier.padding(horizontal = 24.dp)
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.padding(
+                horizontal = 24.dp
+            )
         )
     }
 }
 
 
-
-@Preview ()
+@Preview(
+    showBackground = true,
+    name = "Profile Header Dark"
+)
 @Composable
-fun ProfileHeaderSectionPreview (){
-    GamerCornerAppTheme() {
-        ProfileHeaderSection(
-            userProfile = UserProfile (
-                username = "NightHunter",
-                nickName = "@nighthunter_21",
-                bio = "Vivo para los videojuegos 🎮",
-                profileBackgroundId = R.drawable.background_maquinitas,
-                profileBgDescription = "Imagen de monitores",
-                profileImageId = R.drawable.messi1,
-                stats = UserStats(
-                    reviewsCount = 128,
-                    followersCount = 342,
-                    followingCount = 176
+fun ProfileHeaderSectionPreview() {
+
+    GamerCornerAppTheme(
+        darkTheme = true
+    ) {
+
+        Box(
+            modifier = Modifier
+                .background(
+                    MaterialTheme.colorScheme.background
+                )
+                .padding(16.dp)
+        ) {
+
+            ProfileHeaderSection(
+                userProfile = UserProfile(
+                    username = "NightHunter",
+                    nickName = "@nighthunter_21",
+                    bio = "Vivo para los videojuegos 🎮",
+                    profileBackgroundId = R.drawable.background_maquinitas,
+                    profileBgDescription = "Imagen de monitores",
+                    profileImageId = R.drawable.messi1,
+                    stats = UserStats(
+                        reviewsCount = 128,
+                        followersCount = 342,
+                        followingCount = 176
+                    )
                 )
             )
-        )
+        }
     }
 }

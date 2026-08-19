@@ -32,9 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -49,136 +47,219 @@ import com.example.gamercornerapp.ui.model.UserProfile
 import com.example.gamercornerapp.ui.model.UserStats
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
+
 @Composable
 fun FeedPostCard(
     post: FeedPost,
-    onLikeClick: () -> Unit = {},
-    onCommentClick: () -> Unit = {},
-    onShareClick: () -> Unit = {},
-    onBookmarkClick: () -> Unit = {},
-    onMoreClick: () -> Unit = {},
-    onCardClick: () -> Unit = {},
+    onLikeClick: () -> Unit = { },
+    onCommentClick: () -> Unit = { },
+    onShareClick: () -> Unit = { },
+    onBookmarkClick: () -> Unit = { },
+    onMoreClick: () -> Unit = { },
+    onCardClick: () -> Unit = { },
     modifier: Modifier = Modifier
 ) {
+
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onCardClick() },
+            .clickable {
+                onCardClick()
+            },
+
         colors = CardDefaults.cardColors(
-            containerColor = colorResource(id = R.color.card_background)
+            containerColor = MaterialTheme.colorScheme.surface
         ),
+
         shape = RoundedCornerShape(18.dp)
     ) {
+
         Column(
             modifier = Modifier.padding(14.dp)
         ) {
 
-            // Encabezado: avatar, usuario, tiempo y menú de opciones
+            // Encabezado: avatar, usuario, tiempo y menu
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
+
                 Image(
-                    painter = painterResource(id = post.author.profileImageId),
-                    contentDescription = "Foto de ${post.author.username}",
+                    painter = painterResource(
+                        id = post.author.profileImageId
+                    ),
+
+                    contentDescription =
+                        "Foto de ${post.author.username}",
+
                     contentScale = ContentScale.Crop,
+
                     modifier = Modifier
                         .size(44.dp)
                         .clip(CircleShape)
                 )
 
-                Spacer(modifier = Modifier.width(10.dp))
 
-                Column(modifier = Modifier.weight(1f)) {
+                Spacer(
+                    modifier = Modifier.width(10.dp)
+                )
+
+
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+
                     Text(
                         text = post.author.username,
-                        color = colorResource(id = R.color.white),
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold
                     )
+
+
                     Text(
                         text = post.relativeTime,
-                        color = colorResource(id = R.color.text_secondary),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 12.sp
                     )
                 }
 
+
                 Icon(
                     imageVector = Icons.Default.MoreVert,
                     contentDescription = "Más opciones",
-                    tint = colorResource(id = R.color.text_secondary),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+
                     modifier = Modifier
                         .size(20.dp)
-                        .clickable { onMoreClick() }
+                        .clickable {
+                            onMoreClick()
+                        }
                 )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
 
-            // Contenido: portada del juego + info de la reseña
+            Spacer(
+                modifier = Modifier.height(12.dp)
+            )
+
+
+            // Contenido: portada del juego + informacion
             Row {
+
                 Image(
-                    painter = painterResource(id = post.game.image),
-                    contentDescription = "Portada de ${post.game.title}",
+                    painter = painterResource(
+                        id = post.game.image
+                    ),
+
+                    contentDescription =
+                        "Portada de ${post.game.title}",
+
                     contentScale = ContentScale.Crop,
+
                     modifier = Modifier
-                        .size(width = 78.dp, height = 100.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(colorResource(id = R.color.brand_background))
+                        .size(
+                            width = 78.dp,
+                            height = 100.dp
+                        )
+                        .clip(
+                            RoundedCornerShape(10.dp)
+                        )
+                        .background(
+                            MaterialTheme.colorScheme.background
+                        )
                 )
 
-                Spacer(modifier = Modifier.width(12.dp))
 
-                Column(modifier = Modifier.weight(1f)) {
+                Spacer(
+                    modifier = Modifier.width(12.dp)
+                )
+
+
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+
                     Text(
                         text = post.game.title,
-                        color = colorResource(id = R.color.white),
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
 
-                    Spacer(modifier = Modifier.height(4.dp))
 
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Spacer(
+                        modifier = Modifier.height(4.dp)
+                    )
+
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
                         Text(
                             text = post.rating.toString(),
-                            color = colorResource(id = R.color.brand_yellow),
+                            color = MaterialTheme.colorScheme.tertiary,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold
                         )
-                        Spacer(modifier = Modifier.width(4.dp))
+
+
+                        Spacer(
+                            modifier = Modifier.width(4.dp)
+                        )
+
+
                         Row {
+
                             repeat(5) {
+
                                 Icon(
                                     imageVector = Icons.Default.Star,
                                     contentDescription = null,
-                                    tint = colorResource(id = R.color.brand_primary),
+                                    tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(14.dp)
                                 )
                             }
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Spacer(
+                        modifier = Modifier.height(6.dp)
+                    )
+
 
                     Text(
                         text = post.description,
-                        color = colorResource(id = R.color.text_secondary),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 13.sp,
                         maxLines = 3,
                         overflow = TextOverflow.Ellipsis,
                         lineHeight = 17.sp
                     )
 
+
                     if (post.tags.isNotEmpty()) {
-                        Spacer(modifier = Modifier.height(10.dp))
+
+                        Spacer(
+                            modifier = Modifier.height(10.dp)
+                        )
+
+
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            horizontalArrangement =
+                                Arrangement.spacedBy(8.dp)
                         ) {
+
                             post.tags.forEach { tag ->
+
                                 AppChip(
                                     text = tag,
                                     modifier = Modifier.height(30.dp),
-                                    backgroundColor = colorResource(id = R.color.brand_purple).copy(alpha = 0.35f)
+
+                                    backgroundColor =
+                                        MaterialTheme.colorScheme.secondary
+                                            .copy(alpha = 0.35f)
                                 )
                             }
                         }
@@ -186,66 +267,119 @@ fun FeedPostCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(14.dp))
+
+            Spacer(
+                modifier = Modifier.height(14.dp)
+            )
+
 
             // Acciones: like, comentarios, compartir y guardar
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+
                 Icon(
-                    imageVector = if (post.isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    imageVector = if (post.isLiked) {
+                        Icons.Default.Favorite
+                    } else {
+                        Icons.Default.FavoriteBorder
+                    },
+
                     contentDescription = "Me gusta",
-                    tint = colorResource(id = R.color.brand_primary),
+
+                    tint = MaterialTheme.colorScheme.primary,
+
                     modifier = Modifier
                         .size(20.dp)
-                        .clickable { onLikeClick() }
+                        .clickable {
+                            onLikeClick()
+                        }
                 )
-                Spacer(modifier = Modifier.width(6.dp))
+
+
+                Spacer(
+                    modifier = Modifier.width(6.dp)
+                )
+
+
                 Text(
                     text = post.likesCount.toString(),
-                    color = colorResource(id = R.color.brand_primary),
+                    color = MaterialTheme.colorScheme.primary,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium
                 )
 
-                Spacer(modifier = Modifier.width(20.dp))
+
+                Spacer(
+                    modifier = Modifier.width(20.dp)
+                )
+
 
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.Chat,
                     contentDescription = "Comentarios",
-                    tint = colorResource(id = R.color.text_secondary),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+
                     modifier = Modifier
                         .size(18.dp)
-                        .clickable { onCommentClick() }
+                        .clickable {
+                            onCommentClick()
+                        }
                 )
-                Spacer(modifier = Modifier.width(6.dp))
+
+
+                Spacer(
+                    modifier = Modifier.width(6.dp)
+                )
+
+
                 Text(
                     text = post.commentsCount.toString(),
-                    color = colorResource(id = R.color.text_secondary),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 13.sp
                 )
 
-                Spacer(modifier = Modifier.width(20.dp))
+
+                Spacer(
+                    modifier = Modifier.width(20.dp)
+                )
+
 
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.Send,
                     contentDescription = "Compartir",
-                    tint = colorResource(id = R.color.text_secondary),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+
                     modifier = Modifier
                         .size(18.dp)
-                        .clickable { onShareClick() }
+                        .clickable {
+                            onShareClick()
+                        }
                 )
 
-                Spacer(modifier = Modifier.weight(1f))
+
+                Spacer(
+                    modifier = Modifier.weight(1f)
+                )
+
 
                 Icon(
-                    imageVector = if (post.isBookmarked) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                    imageVector = if (post.isBookmarked) {
+                        Icons.Default.Bookmark
+                    } else {
+                        Icons.Default.BookmarkBorder
+                    },
+
                     contentDescription = "Guardar",
-                    tint = colorResource(id = R.color.text_secondary),
+
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+
                     modifier = Modifier
                         .size(20.dp)
-                        .clickable { onBookmarkClick() }
+                        .clickable {
+                            onBookmarkClick()
+                        }
                 )
             }
         }
@@ -253,39 +387,63 @@ fun FeedPostCard(
 }
 
 
-@Preview(showBackground = true, backgroundColor = 0xFF07090D)
+@Preview(
+    showBackground = true,
+    name = "Feed Post Card"
+)
 @Composable
 fun FeedPostCardPreview() {
-    GamerCornerAppTheme {
+
+    GamerCornerAppTheme(
+        darkTheme = true
+    ) {
+
         FeedPostCard(
             post = FeedPost(
+
                 id = "1",
+
                 author = UserProfile(
                     username = "NightHunter",
                     nickName = "@nighthunter_21",
                     bio = "Vivo para los videojuegos 🎮",
-                    profileBackgroundId = R.drawable.background_maquinitas,
-                    profileBgDescription = "Imagen de monitores",
-                    profileImageId = R.drawable.messi1,
+                    profileBackgroundId =
+                        R.drawable.background_maquinitas,
+                    profileBgDescription =
+                        "Imagen de monitores",
+                    profileImageId =
+                        R.drawable.messi1,
+
                     stats = UserStats(
                         reviewsCount = 128,
                         followersCount = 342,
                         followingCount = 176
                     )
                 ),
+
                 relativeTime = "Hace 2 horas",
+
                 game = Game(
                     title = "Elden Ring",
                     developer = "FromSoftware",
                     year = 2022,
                     image = R.drawable.mini_elden
                 ),
+
                 rating = 4.8,
-                description = "Simplemente una obra maestra. El mundo, la historia, los jefes... Todo aquí te reta y te recompensa. Inolvidable.",
-                tags = listOf("RPG", "Mundo Abierto"),
+
+                description =
+                    "Simplemente una obra maestra. El mundo, la historia, los jefes... Todo aquí te reta y te recompensa. Inolvidable.",
+
+                tags = listOf(
+                    "RPG",
+                    "Mundo Abierto"
+                ),
+
                 likesCount = 256,
                 commentsCount = 42
             ),
+
             modifier = Modifier.padding(16.dp)
         )
     }

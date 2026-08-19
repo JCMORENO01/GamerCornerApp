@@ -1,6 +1,6 @@
 package com.example.gamercornerapp.ui.Screens.videogame.components
 
-
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -12,11 +12,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,11 +47,12 @@ fun VideogameActionBar(
             shape = RoundedCornerShape(25.dp),
 
             colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = colorResource(id = R.color.white)
+                contentColor = MaterialTheme.colorScheme.onBackground
             ),
 
-            border = ButtonDefaults.outlinedButtonBorder(enabled = true).copy(
-                width = 1.dp
+            border = BorderStroke(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outline
             )
         ) {
 
@@ -61,16 +62,24 @@ fun VideogameActionBar(
                 modifier = Modifier.height(18.dp)
             )
 
+
             Text(
-                text = stringResource(id = R.string.btn_save),
+                text = stringResource(
+                    id = R.string.btn_save
+                ),
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 8.dp)
+                modifier = Modifier.padding(
+                    start = 8.dp
+                )
             )
         }
 
+
         AppButton(
-            text = stringResource(id = R.string.btn_write_review),
+            text = stringResource(
+                id = R.string.btn_write_review
+            ),
             onClick = onWriteReviewClick,
             modifier = Modifier.weight(1f)
         )
@@ -78,15 +87,22 @@ fun VideogameActionBar(
 }
 
 
-@Preview(showBackground = true)
+@Preview(
+    showBackground = true,
+    name = "Videogame Action Bar Dark"
+)
 @Composable
 fun VideogameActionBarPreview() {
 
-    GamerCornerAppTheme {
+    GamerCornerAppTheme(
+        darkTheme = true
+    ) {
 
         VideogameActionBar(
             modifier = Modifier
-                .background(colorResource(id = R.color.brand_background))
+                .background(
+                    MaterialTheme.colorScheme.background
+                )
                 .padding(16.dp)
         )
     }

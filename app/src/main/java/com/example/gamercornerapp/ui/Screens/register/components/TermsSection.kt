@@ -10,11 +10,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,17 +38,13 @@ fun TermsSection(
         Checkbox(
             checked = checked,
             onCheckedChange = onCheckedChange,
+
             colors = CheckboxDefaults.colors(
-                checkedColor = colorResource(
-                    id = R.color.brand_primary
-                ),
-                uncheckedColor = colorResource(
-                    id = R.color.text_secondary
-                ),
-                checkmarkColor = colorResource(
-                    id = R.color.white
-                )
+                checkedColor = MaterialTheme.colorScheme.primary,
+                uncheckedColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                checkmarkColor = MaterialTheme.colorScheme.onPrimary
             ),
+
             modifier = Modifier.size(20.dp)
         )
 
@@ -62,9 +58,7 @@ fun TermsSection(
             text = stringResource(
                 id = R.string.terms_complete_text
             ),
-            color = colorResource(
-                id = R.color.text_secondary
-            ),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 10.sp
         )
     }
@@ -79,12 +73,14 @@ fun TermsSection(
 @Composable
 fun TermsUncheckedPreview() {
 
-    GamerCornerAppTheme {
+    GamerCornerAppTheme(
+        darkTheme = true
+    ) {
 
         Box(
             modifier = Modifier
                 .background(
-                    colorResource(id = R.color.brand_background)
+                    MaterialTheme.colorScheme.background
                 )
                 .padding(16.dp)
         ) {
@@ -106,12 +102,14 @@ fun TermsUncheckedPreview() {
 @Composable
 fun TermsCheckedPreview() {
 
-    GamerCornerAppTheme {
+    GamerCornerAppTheme(
+        darkTheme = true
+    ) {
 
         Box(
             modifier = Modifier
                 .background(
-                    colorResource(id = R.color.brand_background)
+                    MaterialTheme.colorScheme.background
                 )
                 .padding(16.dp)
         ) {

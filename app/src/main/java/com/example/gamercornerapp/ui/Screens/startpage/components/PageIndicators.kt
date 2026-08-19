@@ -1,15 +1,19 @@
 package com.example.gamercornerapp.ui.Screens.startpage.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.gamercornerapp.R
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
@@ -20,7 +24,7 @@ fun PageIndicators(
 
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.Center,
+        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
 
@@ -29,9 +33,7 @@ fun PageIndicators(
             modifier = Modifier
                 .size(10.dp)
                 .background(
-                    colorResource(
-                        id = R.color.brand_primary
-                    ),
+                    MaterialTheme.colorScheme.primary,
                     CircleShape
                 )
         )
@@ -47,9 +49,7 @@ fun PageIndicators(
             modifier = Modifier
                 .size(10.dp)
                 .background(
-                    colorResource(
-                        id = R.color.card_background
-                    ),
+                    MaterialTheme.colorScheme.surface,
                     CircleShape
                 )
         )
@@ -65,9 +65,7 @@ fun PageIndicators(
             modifier = Modifier
                 .size(10.dp)
                 .background(
-                    colorResource(
-                        id = R.color.card_background
-                    ),
+                    MaterialTheme.colorScheme.surface,
                     CircleShape
                 )
         )
@@ -75,16 +73,21 @@ fun PageIndicators(
 }
 
 
-@Preview(showBackground = true)
+@Preview(
+    showBackground = true,
+    name = "Page Indicators Dark"
+)
 @Composable
 fun PageIndicatorsPreview() {
 
-    GamerCornerAppTheme {
+    GamerCornerAppTheme(
+        darkTheme = true
+    ) {
 
         Box(
             modifier = Modifier
                 .background(
-                    colorResource(id = R.color.brand_background)
+                    MaterialTheme.colorScheme.background
                 )
                 .padding(28.dp)
         ) {

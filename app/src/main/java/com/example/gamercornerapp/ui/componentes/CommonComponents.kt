@@ -4,27 +4,22 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gamercornerapp.R
-
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 
 
 // Campo de texto reutilizable
@@ -45,7 +40,7 @@ fun AppTextField(
 
             Text(
                 text = label,
-                color = colorResource(id = R.color.white),
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(
@@ -55,17 +50,20 @@ fun AppTextField(
             )
         }
 
+
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
 
             placeholder = {
+
                 if (placeholder.isNotEmpty()) {
+
                     Text(
                         text = placeholder,
-                        color = colorResource(
-                            id = R.color.text_secondary
-                        ).copy(alpha = 0.6f),
+                        color = MaterialTheme.colorScheme
+                            .onSurfaceVariant
+                            .copy(alpha = 0.6f),
                         fontSize = 13.sp
                     )
                 }
@@ -80,24 +78,27 @@ fun AppTextField(
             singleLine = true,
 
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = colorResource(
-                    id = R.color.brand_primary
-                ),
-                unfocusedBorderColor = colorResource(
-                    id = R.color.card_background
-                ),
-                focusedContainerColor = colorResource(
-                    id = R.color.card_background
-                ),
-                unfocusedContainerColor = colorResource(
-                    id = R.color.card_background
-                ),
-                focusedTextColor = colorResource(
-                    id = R.color.white
-                ),
-                unfocusedTextColor = colorResource(
-                    id = R.color.white
-                )
+
+                focusedBorderColor =
+                    MaterialTheme.colorScheme.primary,
+
+                unfocusedBorderColor =
+                    MaterialTheme.colorScheme.surface,
+
+                focusedContainerColor =
+                    MaterialTheme.colorScheme.surface,
+
+                unfocusedContainerColor =
+                    MaterialTheme.colorScheme.surface,
+
+                focusedTextColor =
+                    MaterialTheme.colorScheme.onSurface,
+
+                unfocusedTextColor =
+                    MaterialTheme.colorScheme.onSurface,
+
+                cursorColor =
+                    MaterialTheme.colorScheme.primary
             )
         )
     }
@@ -114,10 +115,11 @@ fun AppButton(
 
     val gradientButton = Brush.horizontalGradient(
         colors = listOf(
-            colorResource(id = R.color.brand_primary),
-            colorResource(id = R.color.brand_purple)
+            MaterialTheme.colorScheme.primary,
+            MaterialTheme.colorScheme.secondary
         )
     )
+
 
     Button(
         onClick = onClick,
@@ -148,7 +150,7 @@ fun AppButton(
 
             Text(
                 text = text,
-                color = colorResource(id = R.color.white),
+                color = MaterialTheme.colorScheme.onPrimary,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -162,15 +164,31 @@ fun AppButton(
 fun AppChip(
     text: String,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = colorResource(id = R.color.card_background),
-    textColor: Color = colorResource(id = R.color.white)
+    backgroundColor: Color = Color.Unspecified,
+    textColor: Color = Color.Unspecified
 ) {
+
+    val finalBackgroundColor =
+        if (backgroundColor == Color.Unspecified) {
+            MaterialTheme.colorScheme.surface
+        } else {
+            backgroundColor
+        }
+
+
+    val finalTextColor =
+        if (textColor == Color.Unspecified) {
+            MaterialTheme.colorScheme.onSurface
+        } else {
+            textColor
+        }
+
 
     Box(
         modifier = modifier
             .height(36.dp)
             .background(
-                backgroundColor,
+                finalBackgroundColor,
                 RoundedCornerShape(20.dp)
             )
             .padding(horizontal = 14.dp),
@@ -180,7 +198,7 @@ fun AppChip(
 
         Text(
             text = text,
-            color = textColor,
+            color = finalTextColor,
             fontSize = 13.sp
         )
     }
@@ -218,41 +236,40 @@ fun UserRowItem(
                 modifier = Modifier
                     .size(48.dp)
                     .background(
-                        colorResource(
-                            id = R.color.card_background
-                        ),
+                        MaterialTheme.colorScheme.surface,
                         CircleShape
                     )
             )
+
 
             Spacer(
                 modifier = Modifier.width(12.dp)
             )
 
+
             Column {
 
                 Text(
                     text = name,
-                    color = colorResource(
-                        id = R.color.white
-                    ),
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold
                 )
+
 
                 Spacer(
                     modifier = Modifier.height(2.dp)
                 )
 
+
                 Text(
                     text = handle,
-                    color = colorResource(
-                        id = R.color.text_secondary
-                    ),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 12.sp
                 )
             }
         }
+
 
         Spacer(
             modifier = Modifier.width(8.dp)
@@ -272,19 +289,17 @@ fun UserRowItem(
                 shape = RoundedCornerShape(18.dp),
 
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(
-                        id = R.color.card_background
-                    )
+                    containerColor = MaterialTheme.colorScheme.surface
                 ),
 
                 contentPadding = PaddingValues(0.dp)
             ) {
 
                 Text(
-                    text = stringResource(id = R.string.btn_following),
-                    color = colorResource(
-                        id = R.color.white
+                    text = stringResource(
+                        id = R.string.btn_following
                     ),
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 12.sp
                 )
             }
@@ -293,14 +308,11 @@ fun UserRowItem(
 
             val gradientButton = Brush.horizontalGradient(
                 colors = listOf(
-                    colorResource(
-                        id = R.color.brand_primary
-                    ),
-                    colorResource(
-                        id = R.color.brand_purple
-                    )
+                    MaterialTheme.colorScheme.primary,
+                    MaterialTheme.colorScheme.secondary
                 )
             )
+
 
             Button(
                 onClick = onFollowClick,
@@ -330,10 +342,10 @@ fun UserRowItem(
                 ) {
 
                     Text(
-                        text = stringResource(id = R.string.btn_follow),
-                        color = colorResource(
-                            id = R.color.white
+                        text = stringResource(
+                            id = R.string.btn_follow
                         ),
+                        color = MaterialTheme.colorScheme.onPrimary,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -343,6 +355,8 @@ fun UserRowItem(
     }
 }
 
+
+// Campo de contraseña reutilizable
 @Composable
 fun AppPasswordField(
     value: String,
@@ -360,25 +374,26 @@ fun AppPasswordField(
 
         Text(
             text = label,
-            color = colorResource(id = R.color.white),
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium
         )
 
+
         Spacer(
             modifier = Modifier.height(8.dp)
         )
+
 
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
 
             placeholder = {
+
                 Text(
                     text = placeholder,
-                    color = colorResource(
-                        id = R.color.text_secondary
-                    ),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 13.sp
                 )
             },
@@ -395,10 +410,10 @@ fun AppPasswordField(
                         } else {
                             Icons.Default.VisibilityOff
                         },
+
                         contentDescription = null,
-                        tint = colorResource(
-                            id = R.color.text_secondary
-                        )
+
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             },
@@ -415,30 +430,30 @@ fun AppPasswordField(
 
             shape = RoundedCornerShape(16.dp),
 
+            singleLine = true,
+
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = colorResource(
-                    id = R.color.brand_primary
-                ),
 
-                unfocusedBorderColor = colorResource(
-                    id = R.color.card_background
-                ),
+                focusedBorderColor =
+                    MaterialTheme.colorScheme.primary,
 
-                focusedContainerColor = colorResource(
-                    id = R.color.card_background
-                ),
+                unfocusedBorderColor =
+                    MaterialTheme.colorScheme.surface,
 
-                unfocusedContainerColor = colorResource(
-                    id = R.color.card_background
-                ),
+                focusedContainerColor =
+                    MaterialTheme.colorScheme.surface,
 
-                focusedTextColor = colorResource(
-                    id = R.color.white
-                ),
+                unfocusedContainerColor =
+                    MaterialTheme.colorScheme.surface,
 
-                unfocusedTextColor = colorResource(
-                    id = R.color.white
-                )
+                focusedTextColor =
+                    MaterialTheme.colorScheme.onSurface,
+
+                unfocusedTextColor =
+                    MaterialTheme.colorScheme.onSurface,
+
+                cursorColor =
+                    MaterialTheme.colorScheme.primary
             )
         )
     }

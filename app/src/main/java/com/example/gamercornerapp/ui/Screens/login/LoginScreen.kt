@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,10 +17,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.gamercornerapp.R
 import com.example.gamercornerapp.ui.Screens.login.components.CreateAccountSection
 import com.example.gamercornerapp.ui.Screens.login.components.GoogleLoginButton
 import com.example.gamercornerapp.ui.Screens.login.components.LoginDivider
@@ -33,15 +32,19 @@ fun LoginScreen(
     modifier: Modifier = Modifier
 ) {
 
-    // Estados
+    // Estado del correo
     var email by remember {
         mutableStateOf("")
     }
 
+
+    // Estado de la contraseña
     var password by remember {
         mutableStateOf("")
     }
 
+
+    // Estado para mostrar u ocultar la contraseña
     var showPassword by remember {
         mutableStateOf(false)
     }
@@ -87,7 +90,7 @@ fun LoginScreenContent(
         modifier = modifier
             .fillMaxSize()
             .background(
-                colorResource(id = R.color.brand_background)
+                MaterialTheme.colorScheme.background
             )
             .padding(24.dp)
     ) {
@@ -102,6 +105,7 @@ fun LoginScreenContent(
         ) {
 
             LoginHeader()
+
 
             Spacer(
                 modifier = Modifier.height(28.dp)
@@ -146,11 +150,17 @@ fun LoginScreenContent(
 }
 
 
-@Preview(showBackground = true)
+@Preview(
+    showBackground = true,
+    name = "Login Dark"
+)
 @Composable
 fun LoginScreenPreview() {
 
-    GamerCornerAppTheme {
+    GamerCornerAppTheme(
+        darkTheme = true
+    ) {
+
         LoginScreen()
     }
 }

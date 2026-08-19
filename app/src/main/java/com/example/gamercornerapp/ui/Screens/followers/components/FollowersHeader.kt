@@ -3,11 +3,11 @@ package com.example.gamercornerapp.ui.Screens.followers.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,9 +31,7 @@ fun FollowersHeader(
             text = stringResource(
                 id = R.string.back_arrow
             ),
-            color = colorResource(
-                id = R.color.white
-            ),
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(
@@ -41,13 +39,12 @@ fun FollowersHeader(
             )
         )
 
+
         Text(
             text = stringResource(
                 id = R.string.title_followers
             ),
-            color = colorResource(
-                id = R.color.white
-            ),
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
@@ -59,12 +56,14 @@ fun FollowersHeader(
 @Composable
 fun FollowersHeaderPreview() {
 
-    GamerCornerAppTheme {
+    GamerCornerAppTheme(
+        darkTheme = true
+    ) {
 
         Row(
             modifier = Modifier
                 .background(
-                    colorResource(id = R.color.brand_background)
+                    MaterialTheme.colorScheme.background
                 )
                 .padding(16.dp)
         ) {
@@ -73,6 +72,7 @@ fun FollowersHeaderPreview() {
         }
     }
 }
+
 
 data class FollowerUser(
     val name: Int,
