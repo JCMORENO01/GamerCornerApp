@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.gamercornerapp.R
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
+import com.example.gamercornerapp.ui.theme.LocalGamerThemeIsDark
 
 
 @Composable
@@ -31,6 +32,14 @@ fun FeedTopBar(
     onSettingsClick: () -> Unit = { },
     modifier: Modifier = Modifier
 ) {
+    // Ahora le preguntamos al Tema, no al sistema directamente
+    val isDarkTheme = LocalGamerThemeIsDark.current
+    
+    val logoResId = if (isDarkTheme) {
+        R.drawable.logo_gamer // Asumimos que este es el logo para modo oscuro
+    } else {
+        R.drawable.logo_gamer1 // Asumimos que este es el logo para modo claro
+    }
 
     androidx.compose.foundation.layout.Row(
         modifier = modifier
@@ -56,7 +65,7 @@ fun FeedTopBar(
 
         Image(
             painter = painterResource(
-                id = R.drawable.logo_gamer1
+                id = logoResId
             ),
             contentDescription = stringResource(
                 id = R.string.logo_content_description

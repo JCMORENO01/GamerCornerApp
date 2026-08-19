@@ -5,6 +5,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
+
+// Creamos un Local para que toda la app sepa si estamos en modo oscuro según el Tema
+val LocalGamerThemeIsDark = staticCompositionLocalOf { false }
 
 
 private val DarkColorScheme = darkColorScheme(
@@ -70,7 +75,11 @@ fun GamerCornerAppTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+        typography = Typography
+    ) {
+        // Proveemos el valor de darkTheme a todos los componentes hijos
+        CompositionLocalProvider(LocalGamerThemeIsDark provides darkTheme) {
+            content()
+        }
+    }
 }
