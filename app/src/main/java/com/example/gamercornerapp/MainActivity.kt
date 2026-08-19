@@ -3,6 +3,13 @@ package com.example.gamercornerapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import com.example.gamercornerapp.ui.Screens.feed.FeedScreen
 import com.example.gamercornerapp.ui.Screens.followers.FollowersScreen
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
@@ -20,6 +27,7 @@ import com.example.gamercornerapp.ui.model.NotificationItem
 import com.example.gamercornerapp.ui.model.ReviewItem
 import com.example.gamercornerapp.ui.model.UserProfile
 import com.example.gamercornerapp.ui.model.UserStats
+import com.example.gamercornerapp.ui.componentes.GamerBottomBar
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -211,7 +219,36 @@ class MainActivity : ComponentActivity() {
                     )
                 )
 
-                VideogameScreen(game = game)
+                var selectedTab by remember { mutableIntStateOf(0) }
+
+                Scaffold(
+                    bottomBar = {
+                        GamerBottomBar(
+                            selectedTab = selectedTab,
+                            onTabSelected = { selectedTab = it }
+                        )
+                    }
+                ) { innerPadding ->
+                    when (selectedTab) {
+                        0 -> FeedScreen(
+                            posts = samplePosts,
+                            modifier = Modifier.padding(innerPadding)
+                        )
+                        2 -> NotificationsScreen(
+                            notifications = sampleNotifications,
+                            modifier = Modifier.padding(innerPadding)
+                        )
+                        3 -> SelfProfileScreen(
+                            userProfile = userProfile,
+                            reviews = reviewItem,
+                            modifier = Modifier.padding(innerPadding)
+                        )
+                        else -> FeedScreen(
+                            posts = samplePosts,
+                            modifier = Modifier.padding(innerPadding)
+                        )
+                    }
+                }
             }
         }
     }

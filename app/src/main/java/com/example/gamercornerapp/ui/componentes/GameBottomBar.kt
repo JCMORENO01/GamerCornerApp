@@ -1,5 +1,6 @@
 package com.example.gamercornerapp.ui.componentes
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -28,7 +29,8 @@ import com.example.gamercornerapp.R
 
 @Composable
 fun GamerBottomBar(
-    selectedTab: Int = 3
+    selectedTab: Int = 3,
+    onTabSelected: (Int) -> Unit = {}
 ) {
 
     // Gradiente en diagonal para el boton flotante
@@ -91,7 +93,8 @@ fun GamerBottomBar(
                     id = R.string.nav_home
                 ),
                 isSelected = selectedTab == 0,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onClick = { onTabSelected(0) }
             )
 
 
@@ -102,7 +105,8 @@ fun GamerBottomBar(
                     id = R.string.nav_explore
                 ),
                 isSelected = selectedTab == 1,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onClick = { onTabSelected(1) }
             )
 
 
@@ -117,7 +121,8 @@ fun GamerBottomBar(
                 iconRes = R.drawable.campana_button,
                 label = "Comunidad",
                 isSelected = selectedTab == 2,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onClick = { onTabSelected(2) }
             )
 
 
@@ -128,7 +133,8 @@ fun GamerBottomBar(
                     id = R.string.nav_profile
                 ),
                 isSelected = selectedTab == 3,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onClick = { onTabSelected(3) }
             )
         }
 
@@ -178,7 +184,8 @@ private fun BottomNavItem(
     iconRes: Int,
     label: String,
     isSelected: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
 
     val tintColor = if (isSelected) {
@@ -189,7 +196,7 @@ private fun BottomNavItem(
 
 
     Column(
-        modifier = modifier,
+        modifier = modifier.clickable { onClick() },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
