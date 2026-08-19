@@ -11,7 +11,9 @@ import com.example.gamercornerapp.ui.Screens.notifications.NotificationsScreen
 import com.example.gamercornerapp.ui.Screens.notifications.enums.NotificationType
 import com.example.gamercornerapp.ui.Screens.register.RegisterScreen
 import com.example.gamercornerapp.ui.Screens.review.ReviewScreen
+import com.example.gamercornerapp.ui.Screens.selfProfile.SelfProfileScreen
 import com.example.gamercornerapp.ui.Screens.startpage.StartApp
+import com.example.gamercornerapp.ui.Screens.videogame.VideogameScreen
 import com.example.gamercornerapp.ui.model.FeedPost
 import com.example.gamercornerapp.ui.model.Game
 import com.example.gamercornerapp.ui.model.NotificationItem
@@ -209,7 +211,7 @@ class MainActivity : ComponentActivity() {
                     )
                 )
 
-                FeedScreen(posts = samplePosts)
+                VideogameScreen(game = game)
             }
         }
     }

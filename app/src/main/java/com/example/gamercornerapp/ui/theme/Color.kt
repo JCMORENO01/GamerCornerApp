@@ -20,5 +20,7 @@ val DarkTextSecondary = Color(0xFF94A3B8)
 // Tema claro
 val LightBackground = Color(0xFFF7F7FA)
 val LightSurface = Color(0xFFFFFFFF)
+val LightSurfaceVariant = Color(0xFFE8E8EF)
+
 val LightTextPrimary = Color(0xFF07090D)
 val LightTextSecondary = Color(0xFF5F6673)
