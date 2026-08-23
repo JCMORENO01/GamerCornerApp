@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.example.gamercornerapp.ui.Screens.explore.ExploreScreen
 import com.example.gamercornerapp.ui.Screens.feed.FeedScreen
 import com.example.gamercornerapp.ui.Screens.followers.FollowersScreen
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
@@ -24,6 +25,7 @@ import com.example.gamercornerapp.ui.Screens.videogame.VideogameScreen
 import com.example.gamercornerapp.ui.model.FeedPost
 import com.example.gamercornerapp.ui.model.Game
 import com.example.gamercornerapp.ui.model.NotificationItem
+import com.example.gamercornerapp.ui.model.local.LocalDataProvider
 import com.example.gamercornerapp.ui.model.ReviewItem
 import com.example.gamercornerapp.ui.model.UserProfile
 import com.example.gamercornerapp.ui.model.UserStats
@@ -232,6 +234,12 @@ class MainActivity : ComponentActivity() {
                     when (selectedTab) {
                         0 -> FeedScreen(
                             posts = samplePosts,
+                            modifier = Modifier.padding(innerPadding)
+                        )
+                        1 -> ExploreScreen(
+                            popularGames = LocalDataProvider.popularGames,
+                            categories = LocalDataProvider.exploreCategories,
+                            resultGames = LocalDataProvider.exploreResults,
                             modifier = Modifier.padding(innerPadding)
                         )
                         2 -> NotificationsScreen(
