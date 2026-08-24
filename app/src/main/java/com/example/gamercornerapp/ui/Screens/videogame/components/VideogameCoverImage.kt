@@ -44,7 +44,7 @@ fun VideogameCoverImage(
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(180.dp)
+                .height(240.dp)
         )
     }
 }

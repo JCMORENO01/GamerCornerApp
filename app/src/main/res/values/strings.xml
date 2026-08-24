@@ -98,4 +98,19 @@
     <string name="btn_write_review">Escribir reseña</string>
     <string name="terms_complete_text">Acepto los Términos y Condiciones y la Política de Privacidad</string>
     <string name="plus_sign">+</string>
+
+    <!-- Pantalla de Explorar -->
+    <string name="explore_eyebrow">Descubre juegos</string>
+    <string name="explore_title">Explorar</string>
+    <string name="content_description_filters">Filtros</string>
+    <string name="search_placeholder">Buscar videojuegos, géneros...</string>
+    <string name="content_description_search">Buscar</string>
+    <string name="title_popular_this_week">Populares esta semana</string>
+    <string name="title_categories">Categorías</string>
+    <string name="btn_see_all">Ver todas</string>
+    <string name="title_result">Resultado</string>
+    <string name="btn_add_filters">Agregar filtros</string>
+    <string name="content_description_favorite">Favorito</string>
+    <string name="reviews_count_parentheses">(%1$s)</string>
+    <string name="game_developer_format">%1$s</string>
 </resources>
