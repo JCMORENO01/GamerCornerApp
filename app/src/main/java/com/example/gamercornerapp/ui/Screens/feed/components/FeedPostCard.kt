@@ -41,10 +41,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gamercornerapp.R
 import com.example.gamercornerapp.ui.componentes.AppChip
-import com.example.gamercornerapp.ui.model.FeedPost
-import com.example.gamercornerapp.ui.model.Game
-import com.example.gamercornerapp.ui.model.UserProfile
-import com.example.gamercornerapp.ui.model.UserStats
+import com.example.gamercornerapp.data.FeedPost
+import com.example.gamercornerapp.data.Game
+import com.example.gamercornerapp.data.UserProfile
+import com.example.gamercornerapp.data.UserStats
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 

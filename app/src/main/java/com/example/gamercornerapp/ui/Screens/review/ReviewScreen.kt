@@ -25,7 +25,7 @@ import com.example.gamercornerapp.ui.Screens.review.components.RatingSection
 import com.example.gamercornerapp.ui.Screens.review.components.ReviewTitle
 import com.example.gamercornerapp.ui.Screens.review.components.TagsSection
 import com.example.gamercornerapp.ui.componentes.AppButton
-import com.example.gamercornerapp.ui.model.Game
+import com.example.gamercornerapp.data.Game
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 

@@ -1,4 +1,4 @@
-package com.example.gamercornerapp.ui.model
+package com.example.gamercornerapp.data
 
 import com.example.gamercornerapp.ui.Screens.notifications.enums.NotificationType
 

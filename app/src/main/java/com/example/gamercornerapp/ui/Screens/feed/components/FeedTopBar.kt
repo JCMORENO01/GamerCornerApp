@@ -3,6 +3,7 @@ package com.example.gamercornerapp.ui.Screens.feed.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -54,10 +55,15 @@ fun FeedTopBar(
         )
 
 
+        val isDark = isSystemInDarkTheme()
+        val logoRes = if (isDark) {
+            R.drawable.logo_gamer1      // Logo para tema negro
+        } else {
+            R.drawable.logo_fondo_claro // Logo para tema blanco
+        }
+
         Image(
-            painter = painterResource(
-                id = R.drawable.logo_gamer1
-            ),
+            painter = painterResource(id = logoRes),
             contentDescription = stringResource(
                 id = R.string.logo_content_description
             ),

@@ -16,21 +16,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.gamercornerapp.data.FeedPost
+import com.example.gamercornerapp.data.local.LocalDataProvider
 import com.example.gamercornerapp.ui.Screens.feed.components.FeedPostCard
 import com.example.gamercornerapp.ui.Screens.feed.components.FeedTabs
 import com.example.gamercornerapp.ui.Screens.feed.components.FeedTopBar
-import com.example.gamercornerapp.ui.model.FeedPost
-import com.example.gamercornerapp.ui.model.local.LocalDataProvider
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
 @Composable
 fun FeedScreen(
-    posts: List<FeedPost>,
     modifier: Modifier = Modifier
 ) {
 
-    // Estado de la pestaña seleccionada
+    val posts = LocalDataProvider.posts
+
     var selectedTabIndex by remember {
         mutableIntStateOf(0)
     }
@@ -66,18 +66,14 @@ fun FeedScreenContent(
             )
     ) {
 
-        // Barra superior
         FeedTopBar()
 
-
-        // Pestañas
         FeedTabs(
             selectedTabIndex = selectedTabIndex,
             onTabSelected = onTabSelected
         )
 
 
-        // Lista de publicaciones
         LazyColumn(
             contentPadding = PaddingValues(
                 horizontal = 16.dp,
@@ -115,8 +111,6 @@ fun FeedScreenPreview() {
         darkTheme = true
     ) {
 
-        FeedScreen(
-            posts = LocalDataProvider.posts
-        )
+        FeedScreen()
     }
 }

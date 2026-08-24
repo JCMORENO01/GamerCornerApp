@@ -9,25 +9,37 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.gamercornerapp.R
+import com.example.gamercornerapp.data.ReviewItem
+import com.example.gamercornerapp.data.UserProfile
+import com.example.gamercornerapp.data.local.LocalDataProvider
 import com.example.gamercornerapp.ui.Screens.selfProfile.components.ProfileHeaderSection
 import com.example.gamercornerapp.ui.Screens.selfProfile.components.ProfileReviewsSection
 import com.example.gamercornerapp.ui.Screens.selfProfile.components.ProfileStatsSection
-import com.example.gamercornerapp.ui.model.ReviewItem
-import com.example.gamercornerapp.ui.model.UserProfile
-import com.example.gamercornerapp.ui.model.UserStats
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
 @Composable
 fun SelfProfileScreen(
-    userProfile: UserProfile,
-    reviews: List<ReviewItem>,
     modifier: Modifier = Modifier
 ) {
+
+    // Datos que vienen del LocalDataProvider
+    val userProfile = LocalDataProvider.userProfile
+    val reviews = LocalDataProvider.reviews
+
+
+    // Estado de la pestaña seleccionada
+    var selectedTabIndex by remember {
+        mutableIntStateOf(0)
+    }
+
 
     Box(
         modifier = modifier
@@ -47,7 +59,13 @@ fun SelfProfileScreen(
 
             SelfProfileScreenContent(
                 userProfile = userProfile,
-                reviews = reviews
+                reviews = reviews,
+
+                selectedTabIndex = selectedTabIndex,
+
+                onTabSelected = {
+                    selectedTabIndex = it
+                }
             )
         }
     }
@@ -58,6 +76,10 @@ fun SelfProfileScreen(
 fun SelfProfileScreenContent(
     userProfile: UserProfile,
     reviews: List<ReviewItem>,
+
+    selectedTabIndex: Int,
+    onTabSelected: (Int) -> Unit,
+
     modifier: Modifier = Modifier
 ) {
 
@@ -86,7 +108,9 @@ fun SelfProfileScreenContent(
 
 
         ProfileReviewsSection(
-            reviews = reviews
+            reviews = reviews,
+            selectedTabIndex = selectedTabIndex,
+            onTabSelected = onTabSelected
         )
     }
 }
@@ -103,41 +127,6 @@ fun SelfProfileScreenPreview() {
         darkTheme = true
     ) {
 
-        SelfProfileScreen(
-            userProfile = UserProfile(
-                username = "NightHunter",
-                nickName = "@nighthunter_21",
-                bio = "Vivo para los videojuegos 🎮",
-                profileBackgroundId = R.drawable.background_maquinitas,
-                profileBgDescription = "Imagen de monitores",
-                profileImageId = R.drawable.messi1,
-                stats = UserStats(
-                    reviewsCount = 128,
-                    followersCount = 342,
-                    followingCount = 176
-                )
-            ),
-
-            reviews = listOf(
-
-                ReviewItem(
-                    id = "1",
-                    gameTitle = "Elden Ring",
-                    rating = 5,
-                    relativeDate = "Hace 2 días",
-                    gameImageId = R.drawable.mini_elden,
-                    description = "Un juego increible..."
-                ),
-
-                ReviewItem(
-                    id = "2",
-                    gameTitle = "Cyberpunk",
-                    rating = 4,
-                    relativeDate = "Hace 1 semana",
-                    gameImageId = R.drawable.cyberpunk,
-                    description = "Una gran historia..."
-                )
-            )
-        )
+        SelfProfileScreen()
     }
 }

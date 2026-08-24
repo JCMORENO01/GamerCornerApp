@@ -13,18 +13,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.gamercornerapp.R
+import com.example.gamercornerapp.data.NotificationItem
+import com.example.gamercornerapp.data.local.LocalDataProvider
 import com.example.gamercornerapp.ui.Screens.notifications.components.NotificationCardItem
 import com.example.gamercornerapp.ui.Screens.notifications.components.NotificationsHeader
 import com.example.gamercornerapp.ui.Screens.notifications.enums.NotificationType
-import com.example.gamercornerapp.ui.model.NotificationItem
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
 @Composable
 fun NotificationsScreen(
-    notifications: List<NotificationItem>,
     modifier: Modifier = Modifier
 ) {
+
+    val notifications = LocalDataProvider.notifications
 
     NotificationScreenContent(
         notifications = notifications,
@@ -49,7 +51,6 @@ fun NotificationScreenContent(
     ) {
 
         NotificationsHeader()
-
 
         LazyColumn(
             contentPadding = PaddingValues(
@@ -144,8 +145,7 @@ fun NotificationsScreenPreview() {
             )
         )
 
-
-        NotificationsScreen(
+        NotificationScreenContent(
             notifications = sampleNotifications
         )
     }

@@ -21,8 +21,8 @@ import com.example.gamercornerapp.ui.Screens.videogame.components.VideogameHeade
 import com.example.gamercornerapp.ui.Screens.videogame.components.VideogameRatingSection
 import com.example.gamercornerapp.ui.Screens.videogame.components.VideogameSynopsis
 import com.example.gamercornerapp.ui.Screens.videogame.components.VideogameTopBar
-import com.example.gamercornerapp.ui.model.Game
-import com.example.gamercornerapp.ui.model.GameRatingBar
+import com.example.gamercornerapp.data.Game
+import com.example.gamercornerapp.data.GameRatingBar
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
@@ -163,7 +163,7 @@ fun VideogameScreenPreview() {
                 title = "Elden Ring",
                 developer = "FromSoftware",
                 year = 2022,
-                image = R.drawable.messi1,
+                image = R.drawable.cyberpunk,
                 rating = 4.8,
                 reviewsCount = 1200,
                 tags = listOf(

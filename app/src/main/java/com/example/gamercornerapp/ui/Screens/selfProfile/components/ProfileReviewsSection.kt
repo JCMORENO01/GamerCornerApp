@@ -28,9 +28,6 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,21 +39,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gamercornerapp.R
-import com.example.gamercornerapp.ui.model.ReviewItem
+import com.example.gamercornerapp.data.ReviewItem
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
 @Composable
 fun ProfileReviewsSection(
     reviews: List<ReviewItem>,
+    selectedTabIndex: Int,
+    onTabSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
     onSeeAllClick: () -> Unit = {},
     onReviewClick: (ReviewItem) -> Unit = {}
 ) {
-
-    var selectedTabIndex by remember {
-        mutableIntStateOf(0)
-    }
 
     val tabs = listOf(
         "Reseñas",
@@ -106,7 +101,7 @@ fun ProfileReviewsSection(
                     selected = isSelected,
 
                     onClick = {
-                        selectedTabIndex = index
+                        onTabSelected(index)
                     },
 
                     modifier = Modifier.background(
@@ -381,7 +376,9 @@ fun ProfileReviewsSectionPreview() {
 
 
             ProfileReviewsSection(
-                reviews = mockReviews
+                reviews = mockReviews,
+                selectedTabIndex = 0,
+                onTabSelected = { }
             )
         }
     }

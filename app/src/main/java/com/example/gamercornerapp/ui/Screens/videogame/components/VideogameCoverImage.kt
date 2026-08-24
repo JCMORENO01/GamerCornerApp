@@ -16,7 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.gamercornerapp.R
-import com.example.gamercornerapp.ui.model.Game
+import com.example.gamercornerapp.data.Game
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
