@@ -170,6 +170,7 @@ fun VideogameHeaderInfoPreview() {
 
             VideogameHeaderInfo(
                 game = Game(
+                    id = 3,
                     title = "Elden Ring",
                     developer = "FromSoftware",
                     year = 2022,

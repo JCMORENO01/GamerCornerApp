@@ -1,6 +1,7 @@
 package com.example.gamercornerapp.ui.Screens.selfProfile.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 @Composable
 fun ProfileStatsSection(
     stats: UserStats,
+    onFollowersClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -56,18 +58,29 @@ fun ProfileStatsSection(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
+
+            // Reseñas
             StatItem(
                 count = stats.reviewsCount,
                 label = "RESEÑAS"
             )
 
 
-            StatItem(
-                count = stats.followersCount,
-                label = "SEGUIDORES"
-            )
+            // Seguidores
+            Box(
+                modifier = Modifier.clickable {
+                    onFollowersClick()
+                }
+            ) {
+
+                StatItem(
+                    count = stats.followersCount,
+                    label = "SEGUIDORES"
+                )
+            }
 
 
+            // Siguiendo
             StatItem(
                 count = stats.followingCount,
                 label = "SIGUIENDO"
@@ -138,7 +151,8 @@ fun ProfileStatsSectionPreview() {
 
 
             ProfileStatsSection(
-                stats = sampleStats
+                stats = sampleStats,
+                onFollowersClick = { }
             )
         }
     }

@@ -2,6 +2,7 @@ package com.example.gamercornerapp.ui.Screens.startpage.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -29,6 +30,13 @@ fun StartInfoSection(
     modifier: Modifier = Modifier
 ) {
 
+    val isDark = isSystemInDarkTheme()
+    val logoRes = if (isDark) {
+        R.drawable.logo_gamer1      // Blanco para modo oscuro
+    } else {
+        R.drawable.logo_fondo_claro // Negro para modo claro
+    }
+
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -37,7 +45,7 @@ fun StartInfoSection(
         // Logo
         Image(
             painter = painterResource(
-                id = R.drawable.logo_gamer
+                id = logoRes
             ),
             contentDescription = stringResource(
                 id = R.string.logo_content_description
@@ -93,6 +101,30 @@ fun StartInfoSectionPreview() {
 
     GamerCornerAppTheme(
         darkTheme = true
+    ) {
+
+        Box(
+            modifier = Modifier
+                .background(
+                    MaterialTheme.colorScheme.background
+                )
+                .padding(28.dp)
+        ) {
+
+            StartInfoSection()
+        }
+    }
+}
+
+@Preview(
+    showBackground = true,
+    name = "Start Info Light"
+)
+@Composable
+fun StartInfoSectionLightPreview() {
+
+    GamerCornerAppTheme(
+        darkTheme = false
     ) {
 
         Box(

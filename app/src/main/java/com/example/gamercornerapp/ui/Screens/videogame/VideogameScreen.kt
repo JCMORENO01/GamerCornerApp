@@ -15,14 +15,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.gamercornerapp.R
+import com.example.gamercornerapp.data.Game
+import com.example.gamercornerapp.data.GameRatingBar
 import com.example.gamercornerapp.ui.Screens.videogame.components.VideogameActionBar
 import com.example.gamercornerapp.ui.Screens.videogame.components.VideogameCoverImage
 import com.example.gamercornerapp.ui.Screens.videogame.components.VideogameHeaderInfo
 import com.example.gamercornerapp.ui.Screens.videogame.components.VideogameRatingSection
 import com.example.gamercornerapp.ui.Screens.videogame.components.VideogameSynopsis
 import com.example.gamercornerapp.ui.Screens.videogame.components.VideogameTopBar
-import com.example.gamercornerapp.data.Game
-import com.example.gamercornerapp.data.GameRatingBar
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
@@ -160,35 +160,44 @@ fun VideogameScreenPreview() {
 
         VideogameScreen(
             game = Game(
+                id = 1,
                 title = "Elden Ring",
                 developer = "FromSoftware",
                 year = 2022,
                 image = R.drawable.cyberpunk,
                 rating = 4.8,
                 reviewsCount = 1200,
+
                 tags = listOf(
                     "RPG",
                     "Mundo Abierto",
                     "Fantasía"
                 ),
+
                 description = "Una obra maestra. Un vasto mundo lleno de secretos, jefes épicos y una historia profunda que te atrapa desde el primer momento.",
+
                 ratingDistribution = listOf(
+
                     GameRatingBar(
                         stars = 5,
                         percentage = 0.9f
                     ),
+
                     GameRatingBar(
                         stars = 4,
                         percentage = 0.35f
                     ),
+
                     GameRatingBar(
                         stars = 3,
                         percentage = 0.15f
                     ),
+
                     GameRatingBar(
                         stars = 2,
                         percentage = 0.05f
                     ),
+
                     GameRatingBar(
                         stars = 1,
                         percentage = 0.05f

@@ -57,9 +57,9 @@ fun FeedTopBar(
 
         val isDark = isSystemInDarkTheme()
         val logoRes = if (isDark) {
-            R.drawable.logo_gamer1      // Logo para tema negro
+            R.drawable.logo_gamer1      // Blanco para modo oscuro
         } else {
-            R.drawable.logo_fondo_claro // Logo para tema blanco
+            R.drawable.logo_fondo_claro // Negro para modo claro
         }
 
         Image(

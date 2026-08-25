@@ -96,6 +96,7 @@ fun GameInfoCard(
 fun GameInfoCardPreview() {
 
     val game = Game(
+        id = 4,
         title = "Cyberpunk 2077",
         developer = "CD Projekt Red",
         year = 2020,

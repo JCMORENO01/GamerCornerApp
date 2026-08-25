@@ -18,8 +18,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gamercornerapp.R
-import com.example.gamercornerapp.ui.model.Game
-import com.example.gamercornerapp.ui.model.local.LocalDataProvider
+import com.example.gamercornerapp.data.Game
+import com.example.gamercornerapp.data.local.LocalDataProvider
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 

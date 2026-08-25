@@ -19,19 +19,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.gamercornerapp.R
+import com.example.gamercornerapp.data.Game
 import com.example.gamercornerapp.ui.Screens.review.components.GameInfoCard
 import com.example.gamercornerapp.ui.Screens.review.components.OpinionSection
 import com.example.gamercornerapp.ui.Screens.review.components.RatingSection
 import com.example.gamercornerapp.ui.Screens.review.components.ReviewTitle
 import com.example.gamercornerapp.ui.Screens.review.components.TagsSection
 import com.example.gamercornerapp.ui.componentes.AppButton
-import com.example.gamercornerapp.data.Game
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
 @Composable
 fun ReviewScreen(
     game: Game,
+    onPublishClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -61,7 +62,7 @@ fun ReviewScreen(
             opinion = it
         },
 
-        onPublishClick = { },
+        onPublishClick = onPublishClick,
 
         modifier = modifier
     )
@@ -166,11 +167,14 @@ fun ReviewScreenEldenRingPreview() {
 
         ReviewScreen(
             game = Game(
+                id = 1,
                 title = "Elden Ring",
                 developer = "FromSoftware",
                 year = 2022,
                 image = R.drawable.messi
-            )
+            ),
+
+            onPublishClick = { }
         )
     }
 }
@@ -189,11 +193,14 @@ fun ReviewScreenGodOfWarPreview() {
 
         ReviewScreen(
             game = Game(
+                id = 2,
                 title = "God of War",
                 developer = "Santa Monica Studio",
                 year = 2018,
                 image = R.drawable.messi1
-            )
+            ),
+
+            onPublishClick = { }
         )
     }
 }
@@ -212,11 +219,14 @@ fun ReviewScreenMinecraftPreview() {
 
         ReviewScreen(
             game = Game(
+                id = 6,
                 title = "Minecraft",
                 developer = "Mojang",
                 year = 2011,
                 image = R.drawable.messi2
-            )
+            ),
+
+            onPublishClick = { }
         )
     }
 }

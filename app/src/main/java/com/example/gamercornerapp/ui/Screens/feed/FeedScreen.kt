@@ -26,10 +26,12 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 @Composable
 fun FeedScreen(
+    onGameClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
     val posts = LocalDataProvider.posts
+
 
     var selectedTabIndex by remember {
         mutableIntStateOf(0)
@@ -38,11 +40,14 @@ fun FeedScreen(
 
     FeedScreenContent(
         posts = posts,
+
         selectedTabIndex = selectedTabIndex,
 
         onTabSelected = {
             selectedTabIndex = it
         },
+
+        onGameClick = onGameClick,
 
         modifier = modifier
     )
@@ -54,8 +59,8 @@ fun FeedScreenContent(
     posts: List<FeedPost>,
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit,
-    modifier: Modifier = Modifier,
-    onPostClick: (FeedPost) -> Unit = {}
+    onGameClick: (Int) -> Unit,
+    modifier: Modifier = Modifier
 ) {
 
     Column(
@@ -68,6 +73,7 @@ fun FeedScreenContent(
 
         FeedTopBar()
 
+
         FeedTabs(
             selectedTabIndex = selectedTabIndex,
             onTabSelected = onTabSelected
@@ -79,19 +85,29 @@ fun FeedScreenContent(
                 horizontal = 16.dp,
                 vertical = 16.dp
             ),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+
+            verticalArrangement = Arrangement.spacedBy(
+                16.dp
+            ),
+
             modifier = Modifier.fillMaxSize()
         ) {
 
             items(
                 items = posts,
-                key = { it.id }
+                key = {
+                    it.id
+                }
             ) { post ->
 
                 FeedPostCard(
                     post = post,
+
                     onCardClick = {
-                        onPostClick(post)
+
+                        onGameClick(
+                            post.game.id
+                        )
                     }
                 )
             }
@@ -111,6 +127,8 @@ fun FeedScreenPreview() {
         darkTheme = true
     ) {
 
-        FeedScreen()
+        FeedScreen(
+            onGameClick = { }
+        )
     }
 }

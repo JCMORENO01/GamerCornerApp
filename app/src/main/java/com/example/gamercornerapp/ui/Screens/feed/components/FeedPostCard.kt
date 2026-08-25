@@ -424,6 +424,7 @@ fun FeedPostCardPreview() {
                 relativeTime = "Hace 2 horas",
 
                 game = Game(
+                    id = 2,
                     title = "Elden Ring",
                     developer = "FromSoftware",
                     year = 2022,

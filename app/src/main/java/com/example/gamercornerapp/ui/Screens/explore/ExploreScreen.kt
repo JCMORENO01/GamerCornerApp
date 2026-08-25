@@ -18,37 +18,48 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.gamercornerapp.data.Game
+import com.example.gamercornerapp.data.GameCategory
+import com.example.gamercornerapp.data.local.LocalDataProvider
 import com.example.gamercornerapp.ui.Screens.explore.components.CategoryChipsSection
 import com.example.gamercornerapp.ui.Screens.explore.components.ExploreSearchBar
 import com.example.gamercornerapp.ui.Screens.explore.components.ExploreTopBar
 import com.example.gamercornerapp.ui.Screens.explore.components.PopularGamesSection
 import com.example.gamercornerapp.ui.Screens.explore.components.ResultGameCard
 import com.example.gamercornerapp.ui.Screens.explore.components.ResultsHeader
-import com.example.gamercornerapp.ui.model.Game
-import com.example.gamercornerapp.ui.model.GameCategory
-import com.example.gamercornerapp.ui.model.local.LocalDataProvider
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
 @Composable
 fun ExploreScreen(
-    popularGames: List<Game>,
-    categories: List<GameCategory>,
-    resultGames: List<Game>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    popularGames: List<Game> = LocalDataProvider.popularGames,
+    categories: List<GameCategory> = LocalDataProvider.exploreCategories,
+    resultGames: List<Game> = LocalDataProvider.exploreResults,
+    onFiltersClick: () -> Unit = { },
+    onSearchClick: () -> Unit = { },
+    onSeeAllCategoriesClick: () -> Unit = { },
+    onAddFiltersClick: () -> Unit = { },
+    onPopularGameClick: (Game) -> Unit = { },
+    onResultGameClick: (Game) -> Unit = { }
 ) {
+
 
     // Estado de busqueda
     var searchQuery by remember {
         mutableStateOf("")
     }
 
+
     // Estado de la categoria seleccionada
     var selectedCategory by remember {
-        mutableStateOf(categories.firstOrNull()?.name ?: "")
+        mutableStateOf(
+            categories.firstOrNull()?.name ?: ""
+        )
     }
 
-    // Estado de los juegos marcados como favoritos (por titulo)
+
+    // Estado de los juegos favoritos
     var favoriteGameTitles by remember {
         mutableStateOf(setOf<String>())
     }
@@ -72,14 +83,23 @@ fun ExploreScreen(
         favoriteGameTitles = favoriteGameTitles,
         onFavoriteClick = { game ->
 
-            favoriteGameTitles = if (
-                favoriteGameTitles.contains(game.title)
-            ) {
-                favoriteGameTitles - game.title
-            } else {
-                favoriteGameTitles + game.title
-            }
+            favoriteGameTitles =
+                if (favoriteGameTitles.contains(game.title)) {
+
+                    favoriteGameTitles - game.title
+
+                } else {
+
+                    favoriteGameTitles + game.title
+                }
         },
+
+        onFiltersClick = onFiltersClick,
+        onSearchClick = onSearchClick,
+        onSeeAllCategoriesClick = onSeeAllCategoriesClick,
+        onAddFiltersClick = onAddFiltersClick,
+        onPopularGameClick = onPopularGameClick,
+        onResultGameClick = onResultGameClick,
 
         modifier = modifier
     )
@@ -102,7 +122,9 @@ fun ExploreScreenContent(
     onFavoriteClick: (Game) -> Unit,
 
     modifier: Modifier = Modifier,
+
     onFiltersClick: () -> Unit = { },
+    onSearchClick: () -> Unit = { },
     onSeeAllCategoriesClick: () -> Unit = { },
     onAddFiltersClick: () -> Unit = { },
     onPopularGameClick: (Game) -> Unit = { },
@@ -128,8 +150,13 @@ fun ExploreScreenContent(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
 
+
         // Encabezado
-        item(span = { GridItemSpan(maxLineSpan) }) {
+        item(
+            span = {
+                GridItemSpan(maxLineSpan)
+            }
+        ) {
 
             ExploreTopBar(
                 onFiltersClick = onFiltersClick
@@ -138,62 +165,95 @@ fun ExploreScreenContent(
 
 
         // Barra de busqueda
-        item(span = { GridItemSpan(maxLineSpan) }) {
+        item(
+            span = {
+                GridItemSpan(maxLineSpan)
+            }
+        ) {
 
             ExploreSearchBar(
                 query = searchQuery,
                 onQueryChange = onSearchQueryChange,
-                modifier = Modifier.padding(bottom = 8.dp)
+                onSearchClick = onSearchClick,
+                modifier = Modifier.padding(
+                    bottom = 8.dp
+                )
             )
         }
 
 
-        // Populares esta semana
-        item(span = { GridItemSpan(maxLineSpan) }) {
+        // Juegos populares
+        item(
+            span = {
+                GridItemSpan(maxLineSpan)
+            }
+        ) {
 
             PopularGamesSection(
                 games = popularGames,
                 onGameClick = onPopularGameClick,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.padding(
+                    bottom = 8.dp
+                )
             )
         }
 
 
         // Categorias
-        item(span = { GridItemSpan(maxLineSpan) }) {
+        item(
+            span = {
+                GridItemSpan(maxLineSpan)
+            }
+        ) {
 
             CategoryChipsSection(
                 categories = categories,
                 selectedCategory = selectedCategory,
                 onCategorySelected = onCategorySelected,
                 onSeeAllClick = onSeeAllCategoriesClick,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.padding(
+                    bottom = 8.dp
+                )
             )
         }
 
 
         // Encabezado de resultados
-        item(span = { GridItemSpan(maxLineSpan) }) {
+        item(
+            span = {
+                GridItemSpan(maxLineSpan)
+            }
+        ) {
 
             ResultsHeader(
                 onAddFiltersClick = onAddFiltersClick,
-                modifier = Modifier.padding(bottom = 4.dp)
+                modifier = Modifier.padding(
+                    bottom = 4.dp
+                )
             )
         }
 
 
-        // Cuadricula de resultados
+        // Resultados
         items(
             items = resultGames,
-            key = { it.title }
+            key = {
+                it.title
+            }
         ) { game ->
 
             ResultGameCard(
                 game = game,
-                isFavorite = favoriteGameTitles.contains(game.title),
+
+                isFavorite =
+                    favoriteGameTitles.contains(
+                        game.title
+                    ),
+
                 onClick = {
                     onResultGameClick(game)
                 },
+
                 onFavoriteClick = {
                     onFavoriteClick(game)
                 }
@@ -214,10 +274,6 @@ fun ExploreScreenPreview() {
         darkTheme = true
     ) {
 
-        ExploreScreen(
-            popularGames = LocalDataProvider.popularGames,
-            categories = LocalDataProvider.exploreCategories,
-            resultGames = LocalDataProvider.exploreResults
-        )
+        ExploreScreen()
     }
 }

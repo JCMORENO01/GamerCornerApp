@@ -23,10 +23,9 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 @Composable
 fun NotificationsScreen(
+    notifications: List<NotificationItem> = LocalDataProvider.notifications,
     modifier: Modifier = Modifier
 ) {
-
-    val notifications = LocalDataProvider.notifications
 
     NotificationScreenContent(
         notifications = notifications,

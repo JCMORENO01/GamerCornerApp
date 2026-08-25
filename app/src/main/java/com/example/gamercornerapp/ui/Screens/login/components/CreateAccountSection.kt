@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.clickable
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +22,7 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 @Composable
 fun CreateAccountSection(
+    onCreateAccountClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -44,7 +46,12 @@ fun CreateAccountSection(
             ),
             color = MaterialTheme.colorScheme.primary,
             fontSize = 13.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .clickable {
+                    onCreateAccountClick()
+                }
+                .padding(start = 4.dp)
         )
     }
 }
@@ -69,7 +76,9 @@ fun CreateAccountSectionPreview() {
                 .padding(24.dp)
         ) {
 
-            CreateAccountSection()
+            CreateAccountSection(
+                onCreateAccountClick = { }
+            )
         }
     }
 }

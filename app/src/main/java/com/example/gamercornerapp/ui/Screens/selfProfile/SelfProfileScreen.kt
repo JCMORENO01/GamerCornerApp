@@ -27,19 +27,48 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 @Composable
 fun SelfProfileScreen(
+    onFollowersClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
-    // Datos que vienen del LocalDataProvider
     val userProfile = LocalDataProvider.userProfile
     val reviews = LocalDataProvider.reviews
 
 
-    // Estado de la pestaña seleccionada
     var selectedTabIndex by remember {
         mutableIntStateOf(0)
     }
 
+
+    SelfProfileScreenContent(
+        userProfile = userProfile,
+        reviews = reviews,
+
+        selectedTabIndex = selectedTabIndex,
+
+        onTabSelected = {
+            selectedTabIndex = it
+        },
+
+        onFollowersClick = onFollowersClick,
+
+        modifier = modifier
+    )
+}
+
+
+@Composable
+fun SelfProfileScreenContent(
+    userProfile: UserProfile,
+    reviews: List<ReviewItem>,
+
+    selectedTabIndex: Int,
+    onTabSelected: (Int) -> Unit,
+
+    onFollowersClick: () -> Unit,
+
+    modifier: Modifier = Modifier
+) {
 
     Box(
         modifier = modifier
@@ -57,61 +86,33 @@ fun SelfProfileScreen(
 
         Column {
 
-            SelfProfileScreenContent(
-                userProfile = userProfile,
+            ProfileHeaderSection(
+                userProfile = userProfile
+            )
+
+
+            Spacer(
+                modifier = Modifier.height(20.dp)
+            )
+
+
+            ProfileStatsSection(
+                stats = userProfile.stats,
+                onFollowersClick = onFollowersClick
+            )
+
+
+            Spacer(
+                modifier = Modifier.height(30.dp)
+            )
+
+
+            ProfileReviewsSection(
                 reviews = reviews,
-
                 selectedTabIndex = selectedTabIndex,
-
-                onTabSelected = {
-                    selectedTabIndex = it
-                }
+                onTabSelected = onTabSelected
             )
         }
-    }
-}
-
-
-@Composable
-fun SelfProfileScreenContent(
-    userProfile: UserProfile,
-    reviews: List<ReviewItem>,
-
-    selectedTabIndex: Int,
-    onTabSelected: (Int) -> Unit,
-
-    modifier: Modifier = Modifier
-) {
-
-    Column(
-        modifier = modifier
-    ) {
-
-        ProfileHeaderSection(
-            userProfile = userProfile
-        )
-
-
-        Spacer(
-            modifier = Modifier.height(20.dp)
-        )
-
-
-        ProfileStatsSection(
-            stats = userProfile.stats
-        )
-
-
-        Spacer(
-            modifier = Modifier.height(30.dp)
-        )
-
-
-        ProfileReviewsSection(
-            reviews = reviews,
-            selectedTabIndex = selectedTabIndex,
-            onTabSelected = onTabSelected
-        )
     }
 }
 
@@ -127,6 +128,8 @@ fun SelfProfileScreenPreview() {
         darkTheme = true
     ) {
 
-        SelfProfileScreen()
+        SelfProfileScreen(
+            onFollowersClick = { }
+        )
     }
 }

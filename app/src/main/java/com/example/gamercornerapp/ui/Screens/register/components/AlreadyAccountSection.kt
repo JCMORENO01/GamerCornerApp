@@ -1,6 +1,7 @@
 package com.example.gamercornerapp.ui.Screens.register.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,11 +23,14 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 @Composable
 fun AlreadyAccountSection(
+    onLoginClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
     Row(
-        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
+        horizontalArrangement =
+            androidx.compose.foundation.layout.Arrangement.Center,
+
         modifier = modifier.fillMaxWidth()
     ) {
 
@@ -34,7 +38,8 @@ fun AlreadyAccountSection(
             text = stringResource(
                 id = R.string.has_account
             ),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color =
+                MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 12.sp
         )
 
@@ -48,15 +53,26 @@ fun AlreadyAccountSection(
             text = stringResource(
                 id = R.string.login_link
             ),
-            color = MaterialTheme.colorScheme.primary,
+
+            color =
+                MaterialTheme.colorScheme.primary,
+
             fontSize = 12.sp,
-            fontWeight = FontWeight.Bold
+
+            fontWeight =
+                FontWeight.Bold,
+
+            modifier = Modifier.clickable {
+                onLoginClick()
+            }
         )
     }
 }
 
 
-@Preview(showBackground = true)
+@Preview(
+    showBackground = true
+)
 @Composable
 fun AlreadyAccountSectionPreview() {
 
@@ -72,7 +88,9 @@ fun AlreadyAccountSectionPreview() {
                 .padding(16.dp)
         ) {
 
-            AlreadyAccountSection()
+            AlreadyAccountSection(
+                onLoginClick = { }
+            )
         }
     }
 }

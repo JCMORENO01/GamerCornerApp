@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
@@ -35,7 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gamercornerapp.R
-import com.example.gamercornerapp.ui.model.Game
+import com.example.gamercornerapp.data.Game
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 import com.example.gamercornerapp.ui.util.formatReviewsCount
 
@@ -152,7 +151,9 @@ fun PopularGameItem(
 
 
                     Text(
-                        text = "%.1f".format(game.rating),
+                        text = "%.1f".format(
+                            game.rating
+                        ),
                         color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold
@@ -211,6 +212,7 @@ fun PopularGameItemPreview() {
                 rank = 1,
 
                 game = Game(
+                    id = 3,
                     title = "Hogwarts Legacy",
                     developer = "Avalanche Software",
                     year = 2023,

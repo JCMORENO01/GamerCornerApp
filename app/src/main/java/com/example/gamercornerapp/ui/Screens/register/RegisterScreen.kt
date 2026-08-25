@@ -31,10 +31,11 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 @Composable
 fun RegisterScreen(
+    onRegisterClick: () -> Unit,
+    onLoginClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
-    // Estados del formulario
     var fullName by remember {
         mutableStateOf("")
     }
@@ -60,7 +61,6 @@ fun RegisterScreen(
     }
 
 
-    // Estados para mostrar las contraseñas
     var showPassword by remember {
         mutableStateOf(false)
     }
@@ -70,7 +70,6 @@ fun RegisterScreen(
     }
 
 
-    // Estado de terminos y condiciones
     var termsAccepted by remember {
         mutableStateOf(false)
     }
@@ -125,7 +124,9 @@ fun RegisterScreen(
             termsAccepted = it
         },
 
-        onRegisterClick = { },
+        onRegisterClick = onRegisterClick,
+
+        onLoginClick = onLoginClick,
 
         modifier = modifier
     )
@@ -159,6 +160,7 @@ fun RegisterScreenContent(
     onTermsChange: (Boolean) -> Unit,
 
     onRegisterClick: () -> Unit,
+    onLoginClick: () -> Unit,
 
     modifier: Modifier = Modifier
 ) {
@@ -178,10 +180,11 @@ fun RegisterScreenContent(
                 .verticalScroll(
                     rememberScrollState()
                 ),
-            horizontalAlignment = Alignment.CenterHorizontally
+
+            horizontalAlignment =
+                Alignment.CenterHorizontally
         ) {
 
-            // Encabezado
             RegisterHeader()
 
 
@@ -190,7 +193,6 @@ fun RegisterScreenContent(
             )
 
 
-            // Formulario
             RegisterForm(
                 fullName = fullName,
                 username = username,
@@ -219,7 +221,6 @@ fun RegisterScreenContent(
             )
 
 
-            // Terminos y condiciones
             TermsSection(
                 checked = termsAccepted,
                 onCheckedChange = onTermsChange
@@ -231,11 +232,11 @@ fun RegisterScreenContent(
             )
 
 
-            // Crear cuenta
             AppButton(
                 text = stringResource(
                     id = R.string.btn_action_create_account
                 ),
+
                 onClick = onRegisterClick
             )
 
@@ -245,8 +246,9 @@ fun RegisterScreenContent(
             )
 
 
-            // Ya tengo una cuenta
-            AlreadyAccountSection()
+            AlreadyAccountSection(
+                onLoginClick = onLoginClick
+            )
 
 
             Spacer(
@@ -268,6 +270,9 @@ fun RegisterScreenPreview() {
         darkTheme = true
     ) {
 
-        RegisterScreen()
+        RegisterScreen(
+            onRegisterClick = { },
+            onLoginClick = { }
+        )
     }
 }

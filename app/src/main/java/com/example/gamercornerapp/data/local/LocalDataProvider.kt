@@ -1,9 +1,17 @@
 package com.example.gamercornerapp.data.local
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.Explore
+import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material.icons.filled.SportsEsports
+import androidx.compose.material.icons.filled.SportsSoccer
 import com.example.gamercornerapp.R
 import com.example.gamercornerapp.data.FeedPost
 import com.example.gamercornerapp.data.FollowerItem
 import com.example.gamercornerapp.data.Game
+import com.example.gamercornerapp.data.GameCategory
 import com.example.gamercornerapp.data.NotificationItem
 import com.example.gamercornerapp.data.ReviewItem
 import com.example.gamercornerapp.data.UserProfile
@@ -180,6 +188,7 @@ object LocalDataProvider {
             relativeTime = "Hace 2 horas",
 
             game = Game(
+                id = 1,
                 title = "Elden Ring",
                 developer = "FromSoftware",
                 year = 2022,
@@ -206,6 +215,7 @@ object LocalDataProvider {
             relativeTime = "Hace 4 horas",
 
             game = Game(
+                id = 2,
                 title = "God of War",
                 developer = "Santa Monica Studio",
                 year = 2022,
@@ -267,6 +277,118 @@ object LocalDataProvider {
             handle = "@pixelpro",
             avatarImage = R.drawable.messi1,
             isFollowing = true
+        )
+    )
+
+
+    val exploreCategories = listOf(
+
+        GameCategory(
+            name = "Todos",
+            icon = Icons.Default.AutoAwesome
+        ),
+
+        GameCategory(
+            name = "Acción",
+            icon = Icons.Default.Bolt
+        ),
+
+        GameCategory(
+            name = "Aventura",
+            icon = Icons.Default.Explore
+        ),
+
+        GameCategory(
+            name = "RPG",
+            icon = Icons.Default.Shield
+        ),
+
+        GameCategory(
+            name = "Deportes",
+            icon = Icons.Default.SportsSoccer
+        ),
+
+        GameCategory(
+            name = "Arcade",
+            icon = Icons.Default.SportsEsports
+        )
+    )
+
+
+    val popularGames = listOf(
+
+        Game(
+            id = 3,
+            title = "Hogwarts Legacy",
+            developer = "Avalanche Software",
+            year = 2023,
+            image = R.drawable.hog,
+            rating = 4.7,
+            reviewsCount = 2100
+        ),
+
+        Game(
+            id = 4,
+            title = "Baldur's Gate 3",
+            developer = "Larian Studios",
+            year = 2023,
+            image = R.drawable.bal,
+            rating = 4.9,
+            reviewsCount = 3400
+        ),
+
+        Game(
+            id = 5,
+            title = "Cyberpunk 2077",
+            developer = "CD Projekt Red",
+            year = 2020,
+            image = R.drawable.cyberpunk,
+            rating = 4.2,
+            reviewsCount = 1800
+        )
+    )
+
+
+    val exploreResults = listOf(
+
+        Game(
+            id = 1,
+            title = "Elden Ring",
+            developer = "FromSoftware",
+            year = 2022,
+            image = R.drawable.elden,
+            rating = 4.8,
+            reviewsCount = 5200
+        ),
+
+        Game(
+            id = 4,
+            title = "Baldur's Gate 3",
+            developer = "Larian Studios",
+            year = 2023,
+            image = R.drawable.bal,
+            rating = 4.9,
+            reviewsCount = 3400
+        ),
+
+        Game(
+            id = 3,
+            title = "Hogwarts Legacy",
+            developer = "Avalanche Software",
+            year = 2023,
+            image = R.drawable.img,
+            rating = 4.7,
+            reviewsCount = 2100
+        ),
+
+        Game(
+            id = 2,
+            title = "God of War",
+            developer = "Santa Monica Studio",
+            year = 2022,
+            image = R.drawable.cyberpunk,
+            rating = 4.7,
+            reviewsCount = 1980
         )
     )
 }

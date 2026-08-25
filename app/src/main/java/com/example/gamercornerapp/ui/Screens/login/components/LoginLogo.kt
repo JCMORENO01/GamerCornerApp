@@ -1,6 +1,7 @@
 package com.example.gamercornerapp.ui.Screens.login.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
@@ -12,9 +13,16 @@ import com.example.gamercornerapp.R
 
 @Composable
 fun LoginLogo () {
+    val isDark = isSystemInDarkTheme()
+    val logoRes = if (isDark) {
+        R.drawable.logo_gamer1      // Blanco para modo oscuro
+    } else {
+        R.drawable.logo_fondo_claro // Negro para modo claro
+    }
+
     Image(
         painter = painterResource(
-            id = R.drawable.logo_gamer
+            id = logoRes
         ),
         contentDescription = stringResource(
             id = R.string.logo_content_description
