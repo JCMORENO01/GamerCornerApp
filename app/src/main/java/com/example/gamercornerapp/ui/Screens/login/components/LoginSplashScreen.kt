@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.example.gamercornerapp.R
+import com.example.gamercornerapp.ui.componentes.LoginLogo
 import kotlinx.coroutines.delay
 
 @Composable
