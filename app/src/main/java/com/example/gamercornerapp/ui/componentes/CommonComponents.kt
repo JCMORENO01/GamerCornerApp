@@ -23,6 +23,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gamercornerapp.R
+import com.example.gamercornerapp.ui.theme.LocalIsDarkTheme
 
 
 // Campo de texto reutilizable
@@ -464,11 +465,11 @@ fun AppPasswordField(
 
 @Composable
 fun LoginLogo () {
-    val isDark = isSystemInDarkTheme()
+    val isDark = LocalIsDarkTheme.current
     val logoRes = if (isDark) {
-        R.drawable.logo_gamer1      // Blanco para modo oscuro
+        R.drawable.logo_gamer1      // Logo blanco para modo oscuro
     } else {
-        R.drawable.logo_fondo_claro // Negro para modo claro
+        R.drawable.logo_fondo_claro // Logo negro para modo claro
     }
 
     Image(
@@ -479,7 +480,7 @@ fun LoginLogo () {
             id = R.string.logo_content_description
         ),
         modifier = Modifier
-            .width(500.dp)
-            .height(200.dp)
+            .width(320.dp) // Ajustado para ser más consistente
+            .height(140.dp)
     )
 }

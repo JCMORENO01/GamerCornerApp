@@ -1,6 +1,7 @@
 package com.example.gamercornerapp.ui.Screens.login.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,6 +34,7 @@ fun LoginForm(
     onPasswordChange: (String) -> Unit,
     onShowPasswordChange: () -> Unit,
     onLoginClick: () -> Unit,
+    onForgotPasswordClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -90,7 +92,10 @@ fun LoginForm(
                 ),
                 color = MaterialTheme.colorScheme.primary,
                 fontSize = 12.sp,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.clickable {
+                    onForgotPasswordClick()
+                }
             )
         }
 
@@ -134,7 +139,8 @@ fun LoginFormPreview() {
                 onEmailChange = { },
                 onPasswordChange = { },
                 onShowPasswordChange = { },
-                onLoginClick = { }
+                onLoginClick = { },
+                onForgotPasswordClick = { }
             )
         }
     }

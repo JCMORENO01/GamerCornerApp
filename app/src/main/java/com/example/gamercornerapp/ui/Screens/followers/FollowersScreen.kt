@@ -25,6 +25,7 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 @Composable
 fun FollowersScreen(
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -44,6 +45,8 @@ fun FollowersScreen(
             selectedTabIndex = it
         },
 
+        onBackClick = onBackClick,
+
         modifier = modifier
     )
 }
@@ -55,6 +58,8 @@ fun FollowersScreenContent(
 
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit,
+
+    onBackClick: () -> Unit,
 
     modifier: Modifier = Modifier
 ) {
@@ -73,7 +78,9 @@ fun FollowersScreenContent(
         )
 
 
-        FollowersHeader()
+        FollowersHeader(
+            onBackClick = onBackClick
+        )
 
 
         FollowersTabs(
@@ -105,6 +112,8 @@ fun FollowersScreenPreview() {
         darkTheme = true
     ) {
 
-        FollowersScreen()
+        FollowersScreen(
+            onBackClick = { }
+        )
     }
 }

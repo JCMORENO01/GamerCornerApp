@@ -9,10 +9,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.gamercornerapp.R
 import com.example.gamercornerapp.ui.componentes.LoginLogo
 
 @Composable
@@ -30,7 +32,7 @@ fun RecoverPasswordHeader(
 
 
         Text(
-            text = "Recuperar contraseña",
+            text = stringResource(id = R.string.title_recover_password),
             color = MaterialTheme.colorScheme.onBackground,
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
@@ -41,7 +43,7 @@ fun RecoverPasswordHeader(
 
 
         Text(
-            text = "Te enviaremos un enlace para restablecer tu contraseña",
+            text = stringResource(id = R.string.subtitle_recover_password),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 14.sp,
             textAlign = TextAlign.Center,

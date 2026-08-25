@@ -35,6 +35,8 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 fun LoginScreen(
     onLoginClick: () -> Unit,
     onCreateAccountClick: () -> Unit,
+    onForgotPasswordClick: () -> Unit,
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -75,6 +77,8 @@ fun LoginScreen(
 
         onLoginClick = onLoginClick,
         onCreateAccountClick = onCreateAccountClick,
+        onForgotPasswordClick = onForgotPasswordClick,
+        onBackClick = onBackClick,
 
         modifier = modifier
     )
@@ -91,6 +95,8 @@ fun LoginScreenContent(
     onShowPasswordChange: () -> Unit,
     onLoginClick: () -> Unit,
     onCreateAccountClick: () -> Unit,
+    onForgotPasswordClick: () -> Unit,
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -153,7 +159,9 @@ fun LoginScreenContent(
                 )
 
 
-                LoginHeader()
+                LoginHeader(
+                    onBackClick = onBackClick
+                )
 
 
                 Spacer(
@@ -170,7 +178,8 @@ fun LoginScreenContent(
                     onPasswordChange = onPasswordChange,
                     onShowPasswordChange = onShowPasswordChange,
 
-                    onLoginClick = onLoginClick
+                    onLoginClick = onLoginClick,
+                    onForgotPasswordClick = onForgotPasswordClick
                 )
 
 
@@ -217,7 +226,9 @@ fun LoginScreenPreview() {
 
         LoginScreen(
             onLoginClick = { },
-            onCreateAccountClick = { }
+            onCreateAccountClick = { },
+            onForgotPasswordClick = { },
+            onBackClick = { }
         )
     }
 }
@@ -235,7 +246,9 @@ fun LoginScreenLightPreview() {
 
         LoginScreen(
             onLoginClick = { },
-            onCreateAccountClick = { }
+            onCreateAccountClick = { },
+            onForgotPasswordClick = { },
+            onBackClick = { }
         )
     }
 }

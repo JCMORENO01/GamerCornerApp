@@ -33,6 +33,7 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 fun RegisterScreen(
     onRegisterClick: () -> Unit,
     onLoginClick: () -> Unit,
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -128,6 +129,8 @@ fun RegisterScreen(
 
         onLoginClick = onLoginClick,
 
+        onBackClick = onBackClick,
+
         modifier = modifier
     )
 }
@@ -161,6 +164,7 @@ fun RegisterScreenContent(
 
     onRegisterClick: () -> Unit,
     onLoginClick: () -> Unit,
+    onBackClick: () -> Unit,
 
     modifier: Modifier = Modifier
 ) {
@@ -185,7 +189,9 @@ fun RegisterScreenContent(
                 Alignment.CenterHorizontally
         ) {
 
-            RegisterHeader()
+            RegisterHeader(
+                onBackClick = onBackClick
+            )
 
 
             Spacer(
@@ -272,7 +278,8 @@ fun RegisterScreenPreview() {
 
         RegisterScreen(
             onRegisterClick = { },
-            onLoginClick = { }
+            onLoginClick = { },
+            onBackClick = { }
         )
     }
 }

@@ -13,6 +13,10 @@
     <string name="create_account">Crear cuenta</string>
     <string name="login_password_placeholder">Ingresa tu contraseña</string>
     <string name="login_or_separator"> o </string>
+    <string name="btn_send_link">Enviar enlace</string>
+    <string name="title_recover_password">Recuperar contraseña</string>
+    <string name="subtitle_recover_password">Te enviaremos un enlace para restablecer tu contraseña</string>
+    <string name="remember_password">¿Ya recordaste tu contraseña?</string>
 
     <!-- Componentes (Seguidores) -->
     <string name="btn_follow">Seguir</string>

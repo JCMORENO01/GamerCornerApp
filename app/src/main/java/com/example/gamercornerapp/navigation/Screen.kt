@@ -69,4 +69,9 @@ sealed class Screen(
             return "review/$gameId"
         }
     }
+
+
+    data object RecoverPassword : Screen(
+        route = "recover_password"
+    )
 }

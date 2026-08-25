@@ -14,6 +14,7 @@ import com.example.gamercornerapp.ui.Screens.feed.FeedScreen
 import com.example.gamercornerapp.ui.Screens.followers.FollowersScreen
 import com.example.gamercornerapp.ui.Screens.login.LoginScreen
 import com.example.gamercornerapp.ui.Screens.notifications.NotificationsScreen
+import com.example.gamercornerapp.ui.Screens.recoverPassword.RecoverPasswordScreen
 import com.example.gamercornerapp.ui.Screens.register.RegisterScreen
 import com.example.gamercornerapp.ui.Screens.review.ReviewScreen
 import com.example.gamercornerapp.ui.Screens.selfProfile.SelfProfileScreen
@@ -79,6 +80,39 @@ fun AppNavigation(
                     navController.navigate(
                         Screen.Register.route
                     )
+                },
+
+                onForgotPasswordClick = {
+
+                    navController.navigate(
+                        Screen.RecoverPassword.route
+                    )
+                },
+
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+
+        // RECOVER PASSWORD
+        composable(
+            route = Screen.RecoverPassword.route
+        ) {
+
+            RecoverPasswordScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onLoginClick = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                },
+                onSendLinkClick = { email ->
+                    // Aquí iría la lógica para enviar el correo
+                    navController.popBackStack()
                 }
             )
         }
@@ -108,6 +142,10 @@ fun AppNavigation(
                     navController.navigate(
                         Screen.Login.route
                     )
+                },
+
+                onBackClick = {
+                    navController.popBackStack()
                 }
             )
         }
@@ -173,7 +211,11 @@ fun AppNavigation(
             route = Screen.Followers.route
         ) {
 
-            FollowersScreen()
+            FollowersScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
         }
 
 

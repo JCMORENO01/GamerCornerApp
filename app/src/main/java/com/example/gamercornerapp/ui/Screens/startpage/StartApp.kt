@@ -124,7 +124,7 @@ fun StartAppContent(
 fun StartAppPreview() {
 
     GamerCornerAppTheme(
-        darkTheme = true
+        darkTheme = false
     ) {
 
         StartApp(

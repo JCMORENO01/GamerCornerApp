@@ -1,7 +1,10 @@
 package com.example.gamercornerapp.ui.Screens.login.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,6 +26,7 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 @Composable
 fun LoginHeader(
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -30,6 +34,27 @@ fun LoginHeader(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        // Boton de retroceso
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start
+        ) {
+
+            Text(
+                text = stringResource(
+                    id = R.string.back_arrow
+                ),
+                color = MaterialTheme.colorScheme.onBackground,
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.clickable {
+                    onBackClick()
+                }
+            )
+        }
+
+
         Spacer(
             modifier = Modifier.height(20.dp)
         )
@@ -83,7 +108,9 @@ fun LoginHeaderPreview() {
                 .padding(24.dp)
         ) {
 
-            LoginHeader()
+            LoginHeader(
+                onBackClick = { }
+            )
         }
     }
 }

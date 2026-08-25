@@ -107,7 +107,9 @@ fun RecoverPasswordScreenContent(
 
 
             AppButton(
-                text = "Enviar enlace",
+                text = stringResource(
+                    id = R.string.btn_send_link
+                ),
                 onClick = onSendLinkClick
             )
 

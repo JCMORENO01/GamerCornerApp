@@ -8,8 +8,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.example.gamercornerapp.R
 
 @Composable
 fun RecoverPasswordFooter(
@@ -21,13 +23,13 @@ fun RecoverPasswordFooter(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "¿Ya recordaste tu contraseña? ",
+            text = stringResource(id = R.string.remember_password),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 13.sp
         )
 
         Text(
-            text = "Inicia sesión",
+            text = stringResource(id = R.string.login_link),
             color = MaterialTheme.colorScheme.primary,
             fontSize = 13.sp,
             fontWeight = FontWeight.Bold,

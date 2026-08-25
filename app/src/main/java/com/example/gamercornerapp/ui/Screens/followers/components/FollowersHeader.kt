@@ -1,6 +1,7 @@
 package com.example.gamercornerapp.ui.Screens.followers.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -19,6 +20,7 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 @Composable
 fun FollowersHeader(
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -34,9 +36,13 @@ fun FollowersHeader(
             color = MaterialTheme.colorScheme.onBackground,
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(
-                end = 12.dp
-            )
+            modifier = Modifier
+                .clickable {
+                    onBackClick()
+                }
+                .padding(
+                    end = 12.dp
+                )
         )
 
 
@@ -68,7 +74,9 @@ fun FollowersHeaderPreview() {
                 .padding(16.dp)
         ) {
 
-            FollowersHeader()
+            FollowersHeader(
+                onBackClick = { }
+            )
         }
     }
 }
