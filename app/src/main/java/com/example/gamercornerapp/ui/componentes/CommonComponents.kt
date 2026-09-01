@@ -1,7 +1,9 @@
 package com.example.gamercornerapp.ui.componentes
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -169,7 +171,8 @@ fun AppChip(
     text: String,
     modifier: Modifier = Modifier,
     backgroundColor: Color = Color.Unspecified,
-    textColor: Color = Color.Unspecified
+    textColor: Color = Color.Unspecified,
+    border: BorderStroke? = null
 ) {
 
     val finalBackgroundColor =
@@ -191,6 +194,12 @@ fun AppChip(
     Box(
         modifier = modifier
             .height(36.dp)
+            .then(
+                if (border != null) Modifier.border(
+                    border,
+                    RoundedCornerShape(20.dp)
+                ) else Modifier
+            )
             .background(
                 finalBackgroundColor,
                 RoundedCornerShape(20.dp)

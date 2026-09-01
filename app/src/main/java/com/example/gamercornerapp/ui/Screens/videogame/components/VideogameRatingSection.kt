@@ -2,6 +2,7 @@ package com.example.gamercornerapp.ui.Screens.videogame.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +17,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,13 +45,13 @@ fun VideogameRatingSection(
                 id = R.string.label_community_rating
             ),
             color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 16.sp,
+            fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
 
 
         Spacer(
-            modifier = Modifier.height(16.dp)
+            modifier = Modifier.height(24.dp)
         )
 
 
@@ -59,15 +62,15 @@ fun VideogameRatingSection(
             Text(
                 text = "%.1f".format(rating),
                 color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 40.sp,
+                fontSize = 56.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.width(80.dp)
+                modifier = Modifier.width(100.dp)
             )
 
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
 
                 distribution.forEach { bar ->
@@ -87,6 +90,9 @@ private fun RatingBarRow(
     bar: GameRatingBar
 ) {
 
+    val barColor = MaterialTheme.colorScheme.primary
+    val barSecondaryColor = MaterialTheme.colorScheme.secondary
+
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -100,23 +106,23 @@ private fun RatingBarRow(
 
 
         Spacer(
-            modifier = Modifier.width(8.dp)
+            modifier = Modifier.width(12.dp)
         )
 
 
-        Row(
+        Box(
             modifier = Modifier
                 .weight(1f)
-                .height(8.dp)
+                .height(10.dp)
                 .clip(
-                    RoundedCornerShape(4.dp)
+                    RoundedCornerShape(5.dp)
                 )
                 .background(
                     MaterialTheme.colorScheme.surface
                 )
         ) {
 
-            Row(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth(
                         bar.percentage.coerceIn(
@@ -124,14 +130,19 @@ private fun RatingBarRow(
                             1f
                         )
                     )
-                    .height(8.dp)
+                    .height(10.dp)
                     .clip(
-                        RoundedCornerShape(4.dp)
+                        RoundedCornerShape(5.dp)
                     )
                     .background(
-                        MaterialTheme.colorScheme.primary
+                        Brush.horizontalGradient(
+                            colors = listOf(
+                                barColor,
+                                barSecondaryColor
+                            )
+                        )
                     )
-            ) { }
+            )
         }
     }
 }

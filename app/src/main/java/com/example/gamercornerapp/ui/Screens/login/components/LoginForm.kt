@@ -35,6 +35,8 @@ fun LoginForm(
     onShowPasswordChange: () -> Unit,
     onLoginClick: () -> Unit,
     onForgotPasswordClick: () -> Unit,
+    showError: Boolean = false,
+    errorMessage: String = "",
     modifier: Modifier = Modifier
 ) {
 
@@ -73,6 +75,17 @@ fun LoginForm(
             showPassword = showPassword,
             onShowPasswordChange = onShowPasswordChange
         )
+
+
+        if (showError) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = errorMessage,
+                color = MaterialTheme.colorScheme.error,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(start = 4.dp)
+            )
+        }
 
 
         Spacer(

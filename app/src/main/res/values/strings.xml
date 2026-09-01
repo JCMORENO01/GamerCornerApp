@@ -117,4 +117,11 @@
     <string name="content_description_favorite">Favorito</string>
     <string name="reviews_count_parentheses">(%1$s)</string>
     <string name="game_developer_format">%1$s</string>
+
+    <!-- Mensajes de error -->
+    <string name="error_all_fields_required">Todos los campos son obligatorios</string>
+    <string name="error_password_too_short">La contraseña debe tener al menos 6 caracteres</string>
+    <string name="error_email_already_registered">Este correo ya está en uso</string>
+    <string name="error_accept_terms">Debes aceptar los términos y condiciones</string>
+    <string name="error_game_not_found">Juego no encontrado</string>
 </resources>

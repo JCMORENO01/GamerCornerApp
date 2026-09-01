@@ -1,6 +1,5 @@
 package com.example.gamercornerapp.navigation
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -8,18 +7,28 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.gamercornerapp.data.local.LocalDataProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gamercornerapp.ui.Screens.explore.ExploreScreen
+import com.example.gamercornerapp.ui.Screens.explore.ExploreViewModel
 import com.example.gamercornerapp.ui.Screens.feed.FeedScreen
+import com.example.gamercornerapp.ui.Screens.feed.FeedViewModel
 import com.example.gamercornerapp.ui.Screens.followers.FollowersScreen
+import com.example.gamercornerapp.ui.Screens.followers.FollowersViewModel
 import com.example.gamercornerapp.ui.Screens.login.LoginScreen
+import com.example.gamercornerapp.ui.Screens.login.LoginViewModel
 import com.example.gamercornerapp.ui.Screens.notifications.NotificationsScreen
+import com.example.gamercornerapp.ui.Screens.notifications.NotificationsViewModel
 import com.example.gamercornerapp.ui.Screens.recoverPassword.RecoverPasswordScreen
+import com.example.gamercornerapp.ui.Screens.recoverPassword.RecoverPasswordViewModel
 import com.example.gamercornerapp.ui.Screens.register.RegisterScreen
+import com.example.gamercornerapp.ui.Screens.register.RegisterViewModel
 import com.example.gamercornerapp.ui.Screens.review.ReviewScreen
+import com.example.gamercornerapp.ui.Screens.review.ReviewViewModel
 import com.example.gamercornerapp.ui.Screens.selfProfile.SelfProfileScreen
+import com.example.gamercornerapp.ui.Screens.selfProfile.SelfProfileViewModel
 import com.example.gamercornerapp.ui.Screens.startpage.StartApp
 import com.example.gamercornerapp.ui.Screens.videogame.VideogameScreen
+import com.example.gamercornerapp.ui.Screens.videogame.VideogameViewModel
 
 
 @Composable
@@ -61,8 +70,9 @@ fun AppNavigation(
         composable(
             route = Screen.Login.route
         ) {
-
+            val viewModel: LoginViewModel = viewModel()
             LoginScreen(
+                viewModel = viewModel,
                 onLoginClick = {
 
                     navController.navigate(
@@ -100,8 +110,9 @@ fun AppNavigation(
         composable(
             route = Screen.RecoverPassword.route
         ) {
-
+            val viewModel: RecoverPasswordViewModel = viewModel()
             RecoverPasswordScreen(
+                viewModel = viewModel,
                 onBackClick = {
                     navController.popBackStack()
                 },
@@ -122,9 +133,9 @@ fun AppNavigation(
         composable(
             route = Screen.Register.route
         ) {
-
+            val viewModel: RegisterViewModel = viewModel()
             RegisterScreen(
-
+                viewModel = viewModel,
                 onRegisterClick = {
 
                     navController.navigate(
@@ -155,8 +166,9 @@ fun AppNavigation(
         composable(
             route = Screen.Feed.route
         ) {
-
+            val viewModel: FeedViewModel = viewModel()
             FeedScreen(
+                viewModel = viewModel,
                 onGameClick = { gameId ->
 
                     navController.navigate(
@@ -173,9 +185,9 @@ fun AppNavigation(
         composable(
             route = Screen.Explore.route
         ) {
-
+            val viewModel: ExploreViewModel = viewModel()
             ExploreScreen(
-
+                viewModel = viewModel,
                 onPopularGameClick = { game ->
 
                     navController.navigate(
@@ -201,8 +213,10 @@ fun AppNavigation(
         composable(
             route = Screen.Notifications.route
         ) {
-
-            NotificationsScreen()
+            val viewModel: NotificationsViewModel = viewModel()
+            NotificationsScreen(
+                viewModel = viewModel
+            )
         }
 
 
@@ -210,8 +224,9 @@ fun AppNavigation(
         composable(
             route = Screen.Followers.route
         ) {
-
+            val viewModel: FollowersViewModel = viewModel()
             FollowersScreen(
+                viewModel = viewModel,
                 onBackClick = {
                     navController.popBackStack()
                 }
@@ -223,8 +238,9 @@ fun AppNavigation(
         composable(
             route = Screen.SelfProfile.route
         ) {
-
+            val viewModel: SelfProfileViewModel = viewModel()
             SelfProfileScreen(
+                viewModel = viewModel,
                 onFollowersClick = {
 
                     navController.navigate(
@@ -256,47 +272,26 @@ fun AppNavigation(
                     ?.getInt("gameId")
                     ?: 0
 
+            val viewModel: VideogameViewModel = viewModel()
 
-            val allGames =
-                LocalDataProvider.exploreResults +
-                        LocalDataProvider.popularGames +
-                        LocalDataProvider.posts.map {
-                            it.game
-                        }
+            VideogameScreen(
+                gameId = gameId,
+                viewModel = viewModel,
 
+                onBackClick = {
 
-            val game =
-                allGames.find {
-                    it.id == gameId
-                }
+                    navController.popBackStack()
+                },
 
+                onWriteReviewClick = {
 
-            if (game != null) {
-
-                VideogameScreen(
-                    game = game,
-
-                    onBackClick = {
-
-                        navController.popBackStack()
-                    },
-
-                    onWriteReviewClick = {
-
-                        navController.navigate(
-                            Screen.Review.createRoute(
-                                game.id
-                            )
+                    navController.navigate(
+                        Screen.Review.createRoute(
+                            gameId
                         )
-                    }
-                )
-
-            } else {
-
-                Text(
-                    text = "Juego no encontrado"
-                )
-            }
+                    )
+                }
+            )
         }
 
 
@@ -321,38 +316,17 @@ fun AppNavigation(
                     ?.getInt("gameId")
                     ?: 0
 
+            val viewModel: ReviewViewModel = viewModel()
 
-            val allGames =
-                LocalDataProvider.exploreResults +
-                        LocalDataProvider.popularGames +
-                        LocalDataProvider.posts.map {
-                            it.game
-                        }
+            ReviewScreen(
+                gameId = gameId,
+                viewModel = viewModel,
 
+                onPublishClick = {
 
-            val game =
-                allGames.find {
-                    it.id == gameId
+                    navController.popBackStack()
                 }
-
-
-            if (game != null) {
-
-                ReviewScreen(
-                    game = game,
-
-                    onPublishClick = {
-
-                        navController.popBackStack()
-                    }
-                )
-
-            } else {
-
-                Text(
-                    text = "Juego no encontrado"
-                )
-            }
+            )
         }
     }
 }

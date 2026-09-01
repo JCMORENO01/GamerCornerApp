@@ -18,9 +18,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gamercornerapp.data.Game
 import com.example.gamercornerapp.data.GameCategory
-import com.example.gamercornerapp.data.local.LocalDataProvider
 import com.example.gamercornerapp.ui.Screens.explore.components.CategoryChipsSection
 import com.example.gamercornerapp.ui.Screens.explore.components.ExploreSearchBar
 import com.example.gamercornerapp.ui.Screens.explore.components.ExploreTopBar
@@ -33,66 +34,29 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 @Composable
 fun ExploreScreen(
     modifier: Modifier = Modifier,
-    popularGames: List<Game> = LocalDataProvider.popularGames,
-    categories: List<GameCategory> = LocalDataProvider.exploreCategories,
-    resultGames: List<Game> = LocalDataProvider.exploreResults,
     onFiltersClick: () -> Unit = { },
     onSearchClick: () -> Unit = { },
     onSeeAllCategoriesClick: () -> Unit = { },
     onAddFiltersClick: () -> Unit = { },
     onPopularGameClick: (Game) -> Unit = { },
-    onResultGameClick: (Game) -> Unit = { }
+    onResultGameClick: (Game) -> Unit = { },
+    viewModel: ExploreViewModel = viewModel()
 ) {
-
-
-    // Estado de busqueda
-    var searchQuery by remember {
-        mutableStateOf("")
-    }
-
-
-    // Estado de la categoria seleccionada
-    var selectedCategory by remember {
-        mutableStateOf(
-            categories.firstOrNull()?.name ?: ""
-        )
-    }
-
-
-    // Estado de los juegos favoritos
-    var favoriteGameTitles by remember {
-        mutableStateOf(setOf<String>())
-    }
-
+    val uiState by viewModel.uiState.collectAsState()
 
     ExploreScreenContent(
-        popularGames = popularGames,
-        categories = categories,
-        resultGames = resultGames,
+        popularGames = uiState.popularGames,
+        categories = uiState.categories,
+        resultGames = uiState.resultGames,
 
-        searchQuery = searchQuery,
-        onSearchQueryChange = {
-            searchQuery = it
-        },
+        searchQuery = uiState.searchQuery,
+        onSearchQueryChange = viewModel::onSearchQueryChange,
 
-        selectedCategory = selectedCategory,
-        onCategorySelected = {
-            selectedCategory = it
-        },
+        selectedCategory = uiState.selectedCategory,
+        onCategorySelected = viewModel::onCategorySelected,
 
-        favoriteGameTitles = favoriteGameTitles,
-        onFavoriteClick = { game ->
-
-            favoriteGameTitles =
-                if (favoriteGameTitles.contains(game.title)) {
-
-                    favoriteGameTitles - game.title
-
-                } else {
-
-                    favoriteGameTitles + game.title
-                }
-        },
+        favoriteGameTitles = uiState.favoriteGameTitles,
+        onFavoriteClick = viewModel::onFavoriteClick,
 
         onFiltersClick = onFiltersClick,
         onSearchClick = onSearchClick,

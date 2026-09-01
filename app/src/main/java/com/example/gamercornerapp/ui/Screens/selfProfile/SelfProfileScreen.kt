@@ -16,9 +16,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gamercornerapp.data.ReviewItem
 import com.example.gamercornerapp.data.UserProfile
-import com.example.gamercornerapp.data.local.LocalDataProvider
 import com.example.gamercornerapp.ui.Screens.selfProfile.components.ProfileHeaderSection
 import com.example.gamercornerapp.ui.Screens.selfProfile.components.ProfileReviewsSection
 import com.example.gamercornerapp.ui.Screens.selfProfile.components.ProfileStatsSection
@@ -28,32 +29,21 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 @Composable
 fun SelfProfileScreen(
     onFollowersClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: SelfProfileViewModel = viewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
 
-    val userProfile = LocalDataProvider.userProfile
-    val reviews = LocalDataProvider.reviews
-
-
-    var selectedTabIndex by remember {
-        mutableIntStateOf(0)
+    uiState.userProfile?.let { profile ->
+        SelfProfileScreenContent(
+            userProfile = profile,
+            reviews = uiState.reviews,
+            selectedTabIndex = uiState.selectedTabIndex,
+            onTabSelected = viewModel::onTabSelected,
+            onFollowersClick = onFollowersClick,
+            modifier = modifier
+        )
     }
-
-
-    SelfProfileScreenContent(
-        userProfile = userProfile,
-        reviews = reviews,
-
-        selectedTabIndex = selectedTabIndex,
-
-        onTabSelected = {
-            selectedTabIndex = it
-        },
-
-        onFollowersClick = onFollowersClick,
-
-        modifier = modifier
-    )
 }
 
 

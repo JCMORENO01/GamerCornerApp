@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BookmarkBorder
@@ -17,6 +18,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,30 +38,33 @@ fun VideogameActionBar(
 
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
 
         OutlinedButton(
             onClick = onSaveClick,
 
-            modifier = Modifier.height(50.dp),
+            modifier = Modifier
+                .height(56.dp)
+                .weight(0.4f),
 
-            shape = RoundedCornerShape(25.dp),
+            shape = RoundedCornerShape(16.dp),
 
             colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = MaterialTheme.colorScheme.onBackground
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface
             ),
 
             border = BorderStroke(
                 width = 1.dp,
-                color = MaterialTheme.colorScheme.outline
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
             )
         ) {
 
             Icon(
                 imageVector = Icons.Filled.BookmarkBorder,
                 contentDescription = null,
-                modifier = Modifier.height(18.dp)
+                modifier = Modifier.size(20.dp)
             )
 
 
@@ -81,7 +86,9 @@ fun VideogameActionBar(
                 id = R.string.btn_write_review
             ),
             onClick = onWriteReviewClick,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .height(56.dp)
+                .weight(0.6f)
         )
     }
 }

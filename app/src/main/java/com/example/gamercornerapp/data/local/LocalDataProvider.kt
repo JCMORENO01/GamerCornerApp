@@ -12,6 +12,7 @@ import com.example.gamercornerapp.data.FeedPost
 import com.example.gamercornerapp.data.FollowerItem
 import com.example.gamercornerapp.data.Game
 import com.example.gamercornerapp.data.GameCategory
+import com.example.gamercornerapp.data.GameRatingBar
 import com.example.gamercornerapp.data.NotificationItem
 import com.example.gamercornerapp.data.ReviewItem
 import com.example.gamercornerapp.data.UserProfile
@@ -324,7 +325,16 @@ object LocalDataProvider {
             year = 2023,
             image = R.drawable.hog,
             rating = 4.7,
-            reviewsCount = 2100
+            reviewsCount = 2100,
+            tags = listOf("Aventura", "Mundo Abierto", "Magia"),
+            description = "Vive lo no escrito en Hogwarts Legacy. Explora el mundo mágico de finales del siglo XIX y forja tu propio destino.",
+            ratingDistribution = listOf(
+                GameRatingBar(5, 0.75f),
+                GameRatingBar(4, 0.5f),
+                GameRatingBar(3, 0.2f),
+                GameRatingBar(2, 0.05f),
+                GameRatingBar(1, 0.03f)
+            )
         ),
 
         Game(
@@ -334,7 +344,16 @@ object LocalDataProvider {
             year = 2023,
             image = R.drawable.bal,
             rating = 4.9,
-            reviewsCount = 3400
+            reviewsCount = 3400,
+            tags = listOf("RPG", "Estrategia", "Turnos"),
+            description = "El RPG definitivo. Una libertad sin precedentes en un mundo donde cada decisión tiene consecuencias reales.",
+            ratingDistribution = listOf(
+                GameRatingBar(5, 0.95f),
+                GameRatingBar(4, 0.2f),
+                GameRatingBar(3, 0.05f),
+                GameRatingBar(2, 0.02f),
+                GameRatingBar(1, 0.01f)
+            )
         ),
 
         Game(
@@ -344,7 +363,16 @@ object LocalDataProvider {
             year = 2020,
             image = R.drawable.cyberpunk,
             rating = 4.2,
-            reviewsCount = 1800
+            reviewsCount = 1800,
+            tags = listOf("RPG", "Mundo Abierto", "Futurista"),
+            description = "Conviértete en un mercenario en Night City. Sobrevive en una metrópolis obsesionada con el poder, el glamour y las modificaciones corporales.",
+            ratingDistribution = listOf(
+                GameRatingBar(5, 0.5f),
+                GameRatingBar(4, 0.4f),
+                GameRatingBar(3, 0.3f),
+                GameRatingBar(2, 0.15f),
+                GameRatingBar(1, 0.1f)
+            )
         )
     )
 
@@ -358,7 +386,16 @@ object LocalDataProvider {
             year = 2022,
             image = R.drawable.elden,
             rating = 4.8,
-            reviewsCount = 5200
+            reviewsCount = 1200,
+            tags = listOf("RPG", "Mundo Abierto", "Fantasía"),
+            description = "Una obra maestra. Un vasto mundo lleno de secretos, jefes épicos y una historia profunda que te atrapa desde el primer momento.",
+            ratingDistribution = listOf(
+                GameRatingBar(5, 0.9f),
+                GameRatingBar(4, 0.35f),
+                GameRatingBar(3, 0.15f),
+                GameRatingBar(2, 0.05f),
+                GameRatingBar(1, 0.05f)
+            )
         ),
 
         Game(
@@ -368,7 +405,16 @@ object LocalDataProvider {
             year = 2023,
             image = R.drawable.bal,
             rating = 4.9,
-            reviewsCount = 3400
+            reviewsCount = 3400,
+            tags = listOf("RPG", "Estrategia", "Turnos"),
+            description = "El RPG definitivo. Una libertad sin precedentes en un mundo donde cada decisión tiene consecuencias reales.",
+            ratingDistribution = listOf(
+                GameRatingBar(5, 0.95f),
+                GameRatingBar(4, 0.2f),
+                GameRatingBar(3, 0.05f),
+                GameRatingBar(2, 0.02f),
+                GameRatingBar(1, 0.01f)
+            )
         ),
 
         Game(
@@ -376,9 +422,18 @@ object LocalDataProvider {
             title = "Hogwarts Legacy",
             developer = "Avalanche Software",
             year = 2023,
-            image = R.drawable.img,
+            image = R.drawable.hog,
             rating = 4.7,
-            reviewsCount = 2100
+            reviewsCount = 2100,
+            tags = listOf("Aventura", "Mundo Abierto", "Magia"),
+            description = "Vive lo no escrito en Hogwarts Legacy. Explora el mundo mágico de finales del siglo XIX y forja tu propio destino.",
+            ratingDistribution = listOf(
+                GameRatingBar(5, 0.75f),
+                GameRatingBar(4, 0.5f),
+                GameRatingBar(3, 0.2f),
+                GameRatingBar(2, 0.05f),
+                GameRatingBar(1, 0.03f)
+            )
         ),
 
         Game(
@@ -388,7 +443,22 @@ object LocalDataProvider {
             year = 2022,
             image = R.drawable.cyberpunk,
             rating = 4.7,
-            reviewsCount = 1980
+            reviewsCount = 1980,
+            tags = listOf("Acción", "Aventura", "Mitología"),
+            description = "Una aventura épica a través de los reinos de la mitología nórdica. Kratos y Atreus deben luchar por sobrevivir mientras buscan respuestas.",
+            ratingDistribution = listOf(
+                GameRatingBar(5, 0.85f),
+                GameRatingBar(4, 0.4f),
+                GameRatingBar(3, 0.1f),
+                GameRatingBar(2, 0.03f),
+                GameRatingBar(1, 0.02f)
+            )
         )
     )
+
+
+    fun getGameById(id: Int): Game? {
+        val allGames = exploreResults + popularGames + posts.map { it.game }
+        return allGames.find { it.id == id }
+    }
 }

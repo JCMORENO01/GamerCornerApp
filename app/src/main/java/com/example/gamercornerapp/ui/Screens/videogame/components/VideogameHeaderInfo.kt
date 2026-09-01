@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,25 +43,25 @@ fun VideogameHeaderInfo(
         Text(
             text = game.title,
             color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 24.sp,
+            fontSize = 32.sp,
             fontWeight = FontWeight.Bold
         )
 
 
         Spacer(
-            modifier = Modifier.height(4.dp)
+            modifier = Modifier.height(2.dp)
         )
 
 
         Text(
             text = "${game.developer} • ${game.year}",
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 14.sp
+            fontSize = 16.sp
         )
 
 
         Spacer(
-            modifier = Modifier.height(10.dp)
+            modifier = Modifier.height(14.dp)
         )
 
 
@@ -68,16 +69,29 @@ fun VideogameHeaderInfo(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Text(
-                text = "%.1f".format(game.rating),
-                color = MaterialTheme.colorScheme.tertiary,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
+            Icon(
+                imageVector = Icons.Filled.Star,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.tertiary,
+                modifier = Modifier.size(20.dp)
             )
 
 
             Spacer(
                 modifier = Modifier.width(8.dp)
+            )
+
+
+            Text(
+                text = "%.1f".format(game.rating),
+                color = MaterialTheme.colorScheme.tertiary,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+
+            Spacer(
+                modifier = Modifier.width(12.dp)
             )
 
 
@@ -96,7 +110,13 @@ fun VideogameHeaderInfo(
                             Icons.Filled.StarBorder
                         },
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.tertiary,
+                        tint = if (index < fullStars) {
+                            MaterialTheme.colorScheme.tertiary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                alpha = 0.5f
+                            )
+                        },
                         modifier = Modifier.size(16.dp)
                     )
                 }
@@ -104,7 +124,7 @@ fun VideogameHeaderInfo(
 
 
             Spacer(
-                modifier = Modifier.width(8.dp)
+                modifier = Modifier.width(12.dp)
             )
 
 
@@ -114,7 +134,7 @@ fun VideogameHeaderInfo(
                     formatReviewsCount(game.reviewsCount)
                 ),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 13.sp
+                fontSize = 14.sp
             )
         }
 
@@ -122,7 +142,7 @@ fun VideogameHeaderInfo(
         if (game.tags.isNotEmpty()) {
 
             Spacer(
-                modifier = Modifier.height(14.dp)
+                modifier = Modifier.height(18.dp)
             )
 
 

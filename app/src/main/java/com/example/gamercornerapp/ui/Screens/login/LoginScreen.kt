@@ -20,8 +20,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gamercornerapp.ui.Screens.login.components.AnimatedSplashScreen
 import com.example.gamercornerapp.ui.Screens.login.components.CreateAccountSection
 import com.example.gamercornerapp.ui.Screens.login.components.GoogleLoginButton
@@ -37,45 +41,32 @@ fun LoginScreen(
     onCreateAccountClick: () -> Unit,
     onForgotPasswordClick: () -> Unit,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: LoginViewModel = viewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
 
-    // Estado del correo
-    var email by remember {
-        mutableStateOf("")
+    LaunchedEffect(uiState.navigateToFeed) {
+        if (uiState.navigateToFeed) {
+            onLoginClick()
+            viewModel.onNavigationHandled()
+        }
     }
-
-
-    // Estado de la contraseña
-    var password by remember {
-        mutableStateOf("")
-    }
-
-
-    // Estado para mostrar u ocultar la contraseña
-    var showPassword by remember {
-        mutableStateOf(false)
-    }
-
 
     LoginScreenContent(
-        email = email,
-        password = password,
-        showPassword = showPassword,
+        email = uiState.email,
+        password = uiState.password,
+        showPassword = uiState.showPassword,
+        isLogoUp = uiState.isLogoUp,
+        showError = uiState.showError,
+        errorMessage = uiState.errorRes?.let { stringResource(id = it) } ?: "",
 
-        onEmailChange = {
-            email = it
-        },
+        onEmailChange = viewModel::onEmailChange,
+        onPasswordChange = viewModel::onPasswordChange,
+        onShowPasswordChange = viewModel::togglePasswordVisibility,
+        onAnimationFinished = viewModel::onAnimationFinished,
 
-        onPasswordChange = {
-            password = it
-        },
-
-        onShowPasswordChange = {
-            showPassword = !showPassword
-        },
-
-        onLoginClick = onLoginClick,
+        onLoginClick = viewModel::onLoginClick,
         onCreateAccountClick = onCreateAccountClick,
         onForgotPasswordClick = onForgotPasswordClick,
         onBackClick = onBackClick,
@@ -90,21 +81,19 @@ fun LoginScreenContent(
     email: String,
     password: String,
     showPassword: Boolean,
+    isLogoUp: Boolean,
+    showError: Boolean = false,
+    errorMessage: String = "",
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onShowPasswordChange: () -> Unit,
+    onAnimationFinished: () -> Unit,
     onLoginClick: () -> Unit,
     onCreateAccountClick: () -> Unit,
     onForgotPasswordClick: () -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-
-    var isLogoUp by remember {
-        mutableStateOf(false)
-    }
-
-
     // Opacidad del formulario
     val formAlpha by animateFloatAsState(
         targetValue = if (isLogoUp) 1f else 0f,
@@ -126,11 +115,7 @@ fun LoginScreenContent(
     ) {
 
         AnimatedSplashScreen(
-            onAnimationFinished = {
-
-                // Solo si el logo ya llegó arriba
-                isLogoUp = true
-            }
+            onAnimationFinished = onAnimationFinished
         )
 
 
@@ -173,6 +158,8 @@ fun LoginScreenContent(
                     email = email,
                     password = password,
                     showPassword = showPassword,
+                    showError = showError,
+                    errorMessage = errorMessage,
 
                     onEmailChange = onEmailChange,
                     onPasswordChange = onPasswordChange,

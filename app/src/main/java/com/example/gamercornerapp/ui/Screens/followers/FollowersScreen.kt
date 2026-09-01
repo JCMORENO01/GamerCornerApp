@@ -15,8 +15,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gamercornerapp.data.FollowerItem
-import com.example.gamercornerapp.data.local.LocalDataProvider
 import com.example.gamercornerapp.ui.Screens.followers.components.FollowersHeader
 import com.example.gamercornerapp.ui.Screens.followers.components.FollowersList
 import com.example.gamercornerapp.ui.Screens.followers.components.FollowersTabs
@@ -26,27 +27,16 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 @Composable
 fun FollowersScreen(
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: FollowersViewModel = viewModel()
 ) {
-
-    val followers = LocalDataProvider.followers
-
-    var selectedTabIndex by remember {
-        mutableStateOf(0)
-    }
-
+    val uiState by viewModel.uiState.collectAsState()
 
     FollowersScreenContent(
-        followers = followers,
-
-        selectedTabIndex = selectedTabIndex,
-
-        onTabSelected = {
-            selectedTabIndex = it
-        },
-
+        followers = uiState.followers,
+        selectedTabIndex = uiState.selectedTabIndex,
+        onTabSelected = viewModel::onTabSelected,
         onBackClick = onBackClick,
-
         modifier = modifier
     )
 }

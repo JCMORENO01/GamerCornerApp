@@ -1,19 +1,28 @@
 package com.example.gamercornerapp.ui.Screens.videogame
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gamercornerapp.R
 import com.example.gamercornerapp.data.Game
 import com.example.gamercornerapp.data.GameRatingBar
@@ -28,22 +37,34 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 @Composable
 fun VideogameScreen(
-    game: Game,
+    gameId: Int,
     onBackClick: () -> Unit = {},
     onShareClick: () -> Unit = {},
     onSaveClick: () -> Unit = {},
     onWriteReviewClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: VideogameViewModel = viewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
 
-    VideogameScreenContent(
-        game = game,
-        onBackClick = onBackClick,
-        onShareClick = onShareClick,
-        onSaveClick = onSaveClick,
-        onWriteReviewClick = onWriteReviewClick,
-        modifier = modifier
-    )
+    LaunchedEffect(gameId) {
+        viewModel.loadGame(gameId)
+    }
+
+    val game = uiState.game
+
+    if (game != null) {
+        VideogameScreenContent(
+            game = game,
+            onBackClick = onBackClick,
+            onShareClick = onShareClick,
+            onSaveClick = onSaveClick,
+            onWriteReviewClick = onWriteReviewClick,
+            modifier = modifier
+        )
+    } else {
+        Text(text = stringResource(id = R.string.error_game_not_found))
+    }
 }
 
 
@@ -67,80 +88,88 @@ fun VideogameScreenContent(
                 rememberScrollState()
             )
             .padding(
-                horizontal = 16.dp
-            )
-            .padding(
-                top = 12.dp,
-                bottom = 24.dp
+                bottom = 40.dp
             )
     ) {
 
-        VideogameTopBar(
-            onBackClick = onBackClick,
-            onShareClick = onShareClick
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp)
+                .padding(horizontal = 16.dp)
+        ) {
+
+            VideogameCoverImage(
+                game = game
+            )
 
 
-        Spacer(
-            modifier = Modifier.height(12.dp)
-        )
+            VideogameTopBar(
+                onBackClick = onBackClick,
+                onShareClick = onShareClick,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
 
 
-        VideogameCoverImage(
-            game = game
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+        ) {
+
+            Spacer(
+                modifier = Modifier.height(24.dp)
+            )
 
 
-        Spacer(
-            modifier = Modifier.height(16.dp)
-        )
+            VideogameHeaderInfo(
+                game = game
+            )
 
 
-        VideogameHeaderInfo(
-            game = game
-        )
+            Spacer(
+                modifier = Modifier.height(24.dp)
+            )
 
 
-        Spacer(
-            modifier = Modifier.height(14.dp)
-        )
+            VideogameSynopsis(
+                description = game.description
+            )
 
 
-        VideogameSynopsis(
-            description = game.description
-        )
+            Spacer(
+                modifier = Modifier.height(24.dp)
+            )
 
 
-        Spacer(
-            modifier = Modifier.height(14.dp)
-        )
+            HorizontalDivider(
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
+                thickness = 1.dp
+            )
 
 
-        HorizontalDivider(
-            color = MaterialTheme.colorScheme.surface
-        )
+            Spacer(
+                modifier = Modifier.height(24.dp)
+            )
 
 
-        Spacer(
-            modifier = Modifier.height(14.dp)
-        )
+            VideogameRatingSection(
+                rating = game.rating,
+                distribution = game.ratingDistribution
+            )
 
 
-        VideogameRatingSection(
-            rating = game.rating,
-            distribution = game.ratingDistribution
-        )
+            Spacer(
+                modifier = Modifier.height(40.dp)
+            )
 
 
-        Spacer(
-            modifier = Modifier.height(20.dp)
-        )
-
-
-        VideogameActionBar(
-            onSaveClick = onSaveClick,
-            onWriteReviewClick = onWriteReviewClick
-        )
+            VideogameActionBar(
+                onSaveClick = onSaveClick,
+                onWriteReviewClick = onWriteReviewClick
+            )
+        }
     }
 }
 
@@ -158,7 +187,7 @@ fun VideogameScreenPreview() {
         darkTheme = true
     ) {
 
-        VideogameScreen(
+        VideogameScreenContent(
             game = Game(
                 id = 1,
                 title = "Elden Ring",
@@ -203,7 +232,11 @@ fun VideogameScreenPreview() {
                         percentage = 0.05f
                     )
                 )
-            )
+            ),
+            onBackClick = {},
+            onShareClick = {},
+            onSaveClick = {},
+            onWriteReviewClick = {}
         )
     }
 }

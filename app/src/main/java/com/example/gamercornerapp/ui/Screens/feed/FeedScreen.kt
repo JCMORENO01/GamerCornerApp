@@ -16,8 +16,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gamercornerapp.data.FeedPost
-import com.example.gamercornerapp.data.local.LocalDataProvider
 import com.example.gamercornerapp.ui.Screens.feed.components.FeedPostCard
 import com.example.gamercornerapp.ui.Screens.feed.components.FeedTabs
 import com.example.gamercornerapp.ui.Screens.feed.components.FeedTopBar
@@ -27,28 +28,16 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 @Composable
 fun FeedScreen(
     onGameClick: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: FeedViewModel = viewModel()
 ) {
-
-    val posts = LocalDataProvider.posts
-
-
-    var selectedTabIndex by remember {
-        mutableIntStateOf(0)
-    }
-
+    val uiState by viewModel.uiState.collectAsState()
 
     FeedScreenContent(
-        posts = posts,
-
-        selectedTabIndex = selectedTabIndex,
-
-        onTabSelected = {
-            selectedTabIndex = it
-        },
-
+        posts = uiState.posts,
+        selectedTabIndex = uiState.selectedTabIndex,
+        onTabSelected = viewModel::onTabSelected,
         onGameClick = onGameClick,
-
         modifier = modifier
     )
 }
