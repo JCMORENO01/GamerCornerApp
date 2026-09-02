@@ -1,6 +1,6 @@
 package com.example.gamercornerapp.ui.Screens.recoverPassword
 
-import  androidx.compose.foundation.background
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,9 +29,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gamercornerapp.R
 import com.example.gamercornerapp.ui.Screens.recoverPassword.components.RecoverPasswordFooter
+import com.example.gamercornerapp.ui.Screens.recoverPassword.components.RecoverPasswordForm
 import com.example.gamercornerapp.ui.Screens.recoverPassword.components.RecoverPasswordHeader
-import com.example.gamercornerapp.ui.componentes.AppButton
-import com.example.gamercornerapp.ui.componentes.AppTextField
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
@@ -95,25 +94,10 @@ fun RecoverPasswordScreenContent(
             Spacer(modifier = Modifier.height(36.dp))
 
 
-            AppTextField(
-                value = email,
-                onValueChange = onEmailChange,
-                label = stringResource(
-                    id = R.string.email_or_user_hint
-                ),
-                placeholder = stringResource(
-                    id = R.string.hint_email
-                )
-            )
-
-            Spacer(modifier = Modifier.height(28.dp))
-
-
-            AppButton(
-                text = stringResource(
-                    id = R.string.btn_send_link
-                ),
-                onClick = onSendLinkClick
+            RecoverPasswordForm(
+                email = email,
+                onEmailChange = onEmailChange,
+                onSendLinkClick = onSendLinkClick
             )
 
             Spacer(modifier = Modifier.weight(1f))

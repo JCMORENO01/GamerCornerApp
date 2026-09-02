@@ -35,7 +35,7 @@ fun AnimatedSplashScreen(
         delay(1200)
 
         logoOffsetY.animateTo(
-            targetValue = -829f, // <-- CALIBRA ESTE NÚMERO HASTA QUE ENCAJE EXACTO CON EL HEADER
+            targetValue = -829f,
             animationSpec = tween(
                 durationMillis = 800,
                 easing = FastOutSlowInEasing

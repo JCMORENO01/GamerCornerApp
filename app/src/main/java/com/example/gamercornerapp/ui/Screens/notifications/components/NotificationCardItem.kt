@@ -16,11 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -75,47 +71,11 @@ fun NotificationCardItem(
                 modifier = Modifier.weight(1f)
             ) {
 
-                val primaryTextColor =
-                    MaterialTheme.colorScheme.onSurface
-
-
-                val annotatedText = buildAnnotatedString {
-
-                    // Nombre de usuario
-                    withStyle(
-                        style = SpanStyle(
-                            fontWeight = FontWeight.Bold,
-                            color = primaryTextColor
-                        )
-                    ) {
-                        append(notification.username)
-                    }
-
-                    append(" ")
-                    append(notification.actionText)
-
-
-                    // Nombre del juego si aplica
-                    notification.targetTitle?.let { title ->
-
-                        append(" ")
-
-                        withStyle(
-                            style = SpanStyle(
-                                fontWeight = FontWeight.Bold,
-                                color = primaryTextColor
-                            )
-                        ) {
-                            append(title)
-                        }
-                    }
-
-                    append(".")
-                }
-
+                val target = notification.targetTitle?.let { " $it." } ?: "."
+                val fullText = "${notification.username} ${notification.actionText}$target"
 
                 Text(
-                    text = annotatedText,
+                    text = fullText,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 13.sp

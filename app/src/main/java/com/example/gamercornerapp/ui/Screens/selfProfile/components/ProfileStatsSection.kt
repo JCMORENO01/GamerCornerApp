@@ -16,10 +16,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.gamercornerapp.R
 import com.example.gamercornerapp.data.UserStats
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
@@ -62,7 +64,7 @@ fun ProfileStatsSection(
             // Reseñas
             StatItem(
                 count = stats.reviewsCount,
-                label = "RESEÑAS"
+                label = stringResource(id = R.string.label_reviews_stat)
             )
 
 
@@ -75,7 +77,7 @@ fun ProfileStatsSection(
 
                 StatItem(
                     count = stats.followersCount,
-                    label = "SEGUIDORES"
+                    label = stringResource(id = R.string.label_followers_stat)
                 )
             }
 
@@ -83,7 +85,7 @@ fun ProfileStatsSection(
             // Siguiendo
             StatItem(
                 count = stats.followingCount,
-                label = "SIGUIENDO"
+                label = stringResource(id = R.string.label_following_stat)
             )
         }
     }

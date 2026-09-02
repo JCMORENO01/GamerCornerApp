@@ -124,4 +124,26 @@
     <string name="error_email_already_registered">Este correo ya está en uso</string>
     <string name="error_accept_terms">Debes aceptar los términos y condiciones</string>
     <string name="error_game_not_found">Juego no encontrado</string>
+    <!-- Feed Post Content Descriptions -->
+    <string name="cd_more_options">Más opciones</string>
+    <string name="cd_game_cover">Portada de %1$s</string>
+    <string name="cd_like">Me gusta</string>
+    <string name="cd_comments">Comentarios</string>
+    <string name="cd_share">Compartir</string>
+    <string name="cd_bookmark">Guardar</string>
+    <!-- Pantalla de Notificaciones -->
+    <string name="title_notifications">Notificaciones</string>
+    <string name="filter_all">Todas</string>
+    <string name="cd_filter">Filtrar</string>
+    <!-- Pantalla de Perfil Propio -->
+    <string name="cd_settings">Ajustes</string>
+    <string name="cd_go_to_detail">Ir a detalle</string>
+    <string name="cd_score">Puntuación</string>
+    <string name="tab_reviews">Reseñas</string>
+    <string name="tab_saved">Guardados</string>
+    <string name="title_recent_reviews">RESEÑAS RECIENTES</string>
+    <string name="title_recent_saved">GUARDADOS RECIENTES</string>
+    <string name="label_reviews_stat">RESEÑAS</string>
+    <string name="label_followers_stat">SEGUIDORES</string>
+    <string name="label_following_stat">SIGUIENDO</string>
 </resources>

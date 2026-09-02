@@ -34,6 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -54,8 +55,8 @@ fun ProfileReviewsSection(
 ) {
 
     val tabs = listOf(
-        "Reseñas",
-        "Guardados"
+        stringResource(id = R.string.tab_reviews),
+        stringResource(id = R.string.tab_saved)
     )
 
 
@@ -148,9 +149,9 @@ fun ProfileReviewsSection(
 
             Text(
                 text = if (selectedTabIndex == 0) {
-                    "RESEÑAS RECIENTES"
+                    stringResource(id = R.string.title_recent_reviews)
                 } else {
-                    "GUARDADOS RECIENTES"
+                    stringResource(id = R.string.title_recent_saved)
                 },
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
@@ -161,7 +162,7 @@ fun ProfileReviewsSection(
 
 
             Text(
-                text = "Ver todas",
+                text = stringResource(id = R.string.btn_see_all),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 12.sp,
@@ -233,7 +234,10 @@ private fun ReviewCardItem(
                 painter = painterResource(
                     id = review.gameImageId
                 ),
-                contentDescription = "Portada de ${review.gameTitle}",
+                contentDescription = stringResource(
+                    id = R.string.cd_game_cover,
+                    review.gameTitle
+                ),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(
@@ -300,7 +304,7 @@ private fun ReviewCardItem(
 
                             Icon(
                                 imageVector = Icons.Default.Star,
-                                contentDescription = "Puntuación",
+                                contentDescription = stringResource(id = R.string.cd_score),
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(15.dp)
                             )
@@ -325,7 +329,7 @@ private fun ReviewCardItem(
 
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = "Ir a detalle",
+                contentDescription = stringResource(id = R.string.cd_go_to_detail),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(20.dp)
             )
