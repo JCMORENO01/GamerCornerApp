@@ -25,12 +25,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gamercornerapp.R
+import com.example.gamercornerapp.data.FollowerItem
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
 @Composable
 fun UserRow(
-    user: FollowerUser,
+    user: FollowerItem,
     modifier: Modifier = Modifier
 ) {
 
@@ -47,7 +48,7 @@ fun UserRow(
 
             Image(
                 painter = painterResource(
-                    id = user.image
+                    id = user.avatarImage
                 ),
                 contentDescription = null,
                 modifier = Modifier
@@ -64,9 +65,7 @@ fun UserRow(
             Column {
 
                 Text(
-                    text = stringResource(
-                        id = user.name
-                    ),
+                    text = user.username,
                     color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
@@ -74,9 +73,7 @@ fun UserRow(
 
 
                 Text(
-                    text = stringResource(
-                        id = user.handle
-                    ),
+                    text = user.handle,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 14.sp
                 )
@@ -152,10 +149,11 @@ fun UserRowNotFollowingPreview() {
         ) {
 
             UserRow(
-                user = FollowerUser(
-                    name = R.string.mock_user_drakool,
-                    handle = R.string.mock_handle_drakool,
-                    image = R.drawable.messi1,
+                user = FollowerItem(
+                    id = "1",
+                    username = "Drakool",
+                    handle = "@drakool",
+                    avatarImage = R.drawable.messi1,
                     isFollowing = false
                 )
             )
@@ -184,10 +182,11 @@ fun UserRowFollowingPreview() {
         ) {
 
             UserRow(
-                user = FollowerUser(
-                    name = R.string.mock_user_ladyaki,
-                    handle = R.string.mock_handle_ladyaki,
-                    image = R.drawable.messi1,
+                user = FollowerItem(
+                    id = "2",
+                    username = "LadyAki",
+                    handle = "@ladyaki",
+                    avatarImage = R.drawable.messi2,
                     isFollowing = true
                 )
             )

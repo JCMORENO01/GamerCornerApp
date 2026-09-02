@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gamercornerapp.R
 import com.example.gamercornerapp.ui.Screens.notifications.enums.NotificationType
-import com.example.gamercornerapp.ui.model.NotificationItem
+import com.example.gamercornerapp.data.NotificationItem
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 

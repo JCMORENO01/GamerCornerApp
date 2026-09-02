@@ -32,8 +32,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.gamercornerapp.R
-import com.example.gamercornerapp.ui.model.UserProfile
-import com.example.gamercornerapp.ui.model.UserStats
+import com.example.gamercornerapp.data.UserProfile
+import com.example.gamercornerapp.data.UserStats
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 

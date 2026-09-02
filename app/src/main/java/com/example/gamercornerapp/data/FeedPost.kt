@@ -1,4 +1,4 @@
-package com.example.gamercornerapp.ui.model
+package com.example.gamercornerapp.data
 
 data class FeedPost(
     val id: String,

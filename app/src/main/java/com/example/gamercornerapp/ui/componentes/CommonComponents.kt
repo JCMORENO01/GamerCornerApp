@@ -1,6 +1,10 @@
 package com.example.gamercornerapp.ui.componentes
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -20,6 +25,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gamercornerapp.R
+import com.example.gamercornerapp.ui.theme.LocalIsDarkTheme
 
 
 // Campo de texto reutilizable
@@ -165,7 +171,8 @@ fun AppChip(
     text: String,
     modifier: Modifier = Modifier,
     backgroundColor: Color = Color.Unspecified,
-    textColor: Color = Color.Unspecified
+    textColor: Color = Color.Unspecified,
+    border: BorderStroke? = null
 ) {
 
     val finalBackgroundColor =
@@ -187,6 +194,12 @@ fun AppChip(
     Box(
         modifier = modifier
             .height(36.dp)
+            .then(
+                if (border != null) Modifier.border(
+                    border,
+                    RoundedCornerShape(20.dp)
+                ) else Modifier
+            )
             .background(
                 finalBackgroundColor,
                 RoundedCornerShape(20.dp)
@@ -457,4 +470,26 @@ fun AppPasswordField(
             )
         )
     }
+}
+
+@Composable
+fun LoginLogo () {
+    val isDark = LocalIsDarkTheme.current
+    val logoRes = if (isDark) {
+        R.drawable.logo_gamer1      // Logo blanco para modo oscuro
+    } else {
+        R.drawable.logo_fondo_claro // Logo negro para modo claro
+    }
+
+    Image(
+        painter = painterResource(
+            id = logoRes
+        ),
+        contentDescription = stringResource(
+            id = R.string.logo_content_description
+        ),
+        modifier = Modifier
+            .width(320.dp) // Ajustado para ser más consistente
+            .height(140.dp)
+    )
 }

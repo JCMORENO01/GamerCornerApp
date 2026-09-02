@@ -1,6 +1,7 @@
 package com.example.gamercornerapp.ui.Screens.followers.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -25,6 +26,8 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 @Composable
 fun FollowersTabs(
+    selectedTabIndex: Int,
+    onTabSelected: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -48,8 +51,15 @@ fun FollowersTabs(
                     RoundedCornerShape(20.dp)
                 )
                 .background(
-                    MaterialTheme.colorScheme.background
-                ),
+                    if (selectedTabIndex == 0) {
+                        MaterialTheme.colorScheme.background
+                    } else {
+                        MaterialTheme.colorScheme.surface
+                    }
+                )
+                .clickable {
+                    onTabSelected(0)
+                },
 
             contentAlignment = Alignment.Center
         ) {
@@ -58,7 +68,11 @@ fun FollowersTabs(
                 text = stringResource(
                     id = R.string.tab_followers
                 ),
-                color = MaterialTheme.colorScheme.primary,
+                color = if (selectedTabIndex == 0) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -69,7 +83,20 @@ fun FollowersTabs(
         Box(
             modifier = Modifier
                 .weight(1f)
-                .fillMaxHeight(),
+                .fillMaxHeight()
+                .clip(
+                    RoundedCornerShape(20.dp)
+                )
+                .background(
+                    if (selectedTabIndex == 1) {
+                        MaterialTheme.colorScheme.background
+                    } else {
+                        MaterialTheme.colorScheme.surface
+                    }
+                )
+                .clickable {
+                    onTabSelected(1)
+                },
 
             contentAlignment = Alignment.Center
         ) {
@@ -78,7 +105,11 @@ fun FollowersTabs(
                 text = stringResource(
                     id = R.string.tab_following
                 ),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = if (selectedTabIndex == 1) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -103,7 +134,10 @@ fun FollowersTabsPreview() {
                 .padding(16.dp)
         ) {
 
-            FollowersTabs()
+            FollowersTabs(
+                selectedTabIndex = 0,
+                onTabSelected = { }
+            )
         }
     }
 }

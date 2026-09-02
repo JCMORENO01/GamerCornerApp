@@ -2,17 +2,14 @@ package com.example.gamercornerapp.ui.Screens.startpage.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -22,12 +19,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gamercornerapp.R
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
+import com.example.gamercornerapp.ui.theme.LocalIsDarkTheme
 
 
 @Composable
 fun StartInfoSection(
     modifier: Modifier = Modifier
 ) {
+
+    val isDark = LocalIsDarkTheme.current
+    val logoRes = if (isDark) {
+        R.drawable.logo_gamer1      // Logo blanco para modo oscuro
+    } else {
+        R.drawable.logo_fondo_claro // Logo negro para modo claro
+    }
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -37,14 +42,14 @@ fun StartInfoSection(
         // Logo
         Image(
             painter = painterResource(
-                id = R.drawable.logo_gamer
+                id = logoRes
             ),
             contentDescription = stringResource(
                 id = R.string.logo_content_description
             ),
+            contentScale = ContentScale.Fit,
             modifier = Modifier
-                .fillMaxWidth()
-                .height(300.dp)
+                .size(300.dp)
         )
 
 
@@ -93,6 +98,30 @@ fun StartInfoSectionPreview() {
 
     GamerCornerAppTheme(
         darkTheme = true
+    ) {
+
+        Box(
+            modifier = Modifier
+                .background(
+                    MaterialTheme.colorScheme.background
+                )
+                .padding(28.dp)
+        ) {
+
+            StartInfoSection()
+        }
+    }
+}
+
+@Preview(
+    showBackground = true,
+    name = "Start Info Light"
+)
+@Composable
+fun StartInfoSectionLightPreview() {
+
+    GamerCornerAppTheme(
+        darkTheme = false
     ) {
 
         Box(

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,53 +19,49 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gamercornerapp.R
+import com.example.gamercornerapp.data.Game
 import com.example.gamercornerapp.ui.Screens.review.components.GameInfoCard
 import com.example.gamercornerapp.ui.Screens.review.components.OpinionSection
 import com.example.gamercornerapp.ui.Screens.review.components.RatingSection
 import com.example.gamercornerapp.ui.Screens.review.components.ReviewTitle
 import com.example.gamercornerapp.ui.Screens.review.components.TagsSection
 import com.example.gamercornerapp.ui.componentes.AppButton
-import com.example.gamercornerapp.ui.model.Game
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
 @Composable
 fun ReviewScreen(
-    game: Game,
-    modifier: Modifier = Modifier
+    gameId: Int,
+    onPublishClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: ReviewViewModel = viewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
 
-    // Estado de la calificacion
-    var rating by remember {
-        mutableStateOf(5)
+    LaunchedEffect(gameId) {
+        viewModel.loadGame(gameId)
     }
 
+    val game = uiState.game
 
-    // Estado de la opinion
-    var opinion by remember {
-        mutableStateOf("")
+    if (game != null) {
+        ReviewScreenContent(
+            game = game,
+            rating = uiState.rating,
+            opinion = uiState.opinion,
+            onRatingChange = viewModel::onRatingChange,
+            onOpinionChange = viewModel::onOpinionChange,
+            onPublishClick = onPublishClick,
+            modifier = modifier
+        )
+    } else {
+        Text(text = stringResource(id = R.string.error_game_not_found))
     }
-
-
-    ReviewScreenContent(
-        game = game,
-
-        rating = rating,
-        opinion = opinion,
-
-        onRatingChange = {
-            rating = it
-        },
-
-        onOpinionChange = {
-            opinion = it
-        },
-
-        onPublishClick = { },
-
-        modifier = modifier
-    )
 }
 
 
@@ -164,13 +161,20 @@ fun ReviewScreenEldenRingPreview() {
         darkTheme = true
     ) {
 
-        ReviewScreen(
+        ReviewScreenContent(
             game = Game(
+                id = 1,
                 title = "Elden Ring",
                 developer = "FromSoftware",
                 year = 2022,
                 image = R.drawable.messi
-            )
+            ),
+
+            rating = 5,
+            opinion = "",
+            onRatingChange = {},
+            onOpinionChange = {},
+            onPublishClick = { }
         )
     }
 }
@@ -187,13 +191,20 @@ fun ReviewScreenGodOfWarPreview() {
         darkTheme = true
     ) {
 
-        ReviewScreen(
+        ReviewScreenContent(
             game = Game(
+                id = 2,
                 title = "God of War",
                 developer = "Santa Monica Studio",
                 year = 2018,
                 image = R.drawable.messi1
-            )
+            ),
+
+            rating = 5,
+            opinion = "",
+            onRatingChange = {},
+            onOpinionChange = {},
+            onPublishClick = { }
         )
     }
 }
@@ -210,13 +221,20 @@ fun ReviewScreenMinecraftPreview() {
         darkTheme = true
     ) {
 
-        ReviewScreen(
+        ReviewScreenContent(
             game = Game(
+                id = 6,
                 title = "Minecraft",
                 developer = "Mojang",
                 year = 2011,
                 image = R.drawable.messi2
-            )
+            ),
+
+            rating = 5,
+            opinion = "",
+            onRatingChange = {},
+            onOpinionChange = {},
+            onPublishClick = { }
         )
     }
 }

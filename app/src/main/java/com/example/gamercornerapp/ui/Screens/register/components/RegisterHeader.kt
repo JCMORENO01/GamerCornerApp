@@ -1,6 +1,7 @@
 package com.example.gamercornerapp.ui.Screens.register.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,6 +26,7 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 @Composable
 fun RegisterHeader(
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -45,7 +47,10 @@ fun RegisterHeader(
                 ),
                 color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 26.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.clickable {
+                    onBackClick()
+                }
             )
         }
 
@@ -100,7 +105,9 @@ fun RegisterHeaderPreview() {
                 .padding(16.dp)
         ) {
 
-            RegisterHeader()
+            RegisterHeader(
+                onBackClick = { }
+            )
         }
     }
 }

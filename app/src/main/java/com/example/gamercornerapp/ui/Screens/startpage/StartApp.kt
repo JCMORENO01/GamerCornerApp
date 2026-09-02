@@ -23,10 +23,14 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 @Composable
 fun StartApp(
+    onLoginClick: () -> Unit,
+    onRegisterClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
     StartAppContent(
+        onLoginClick = onLoginClick,
+        onRegisterClick = onRegisterClick,
         modifier = modifier
     )
 }
@@ -34,6 +38,8 @@ fun StartApp(
 
 @Composable
 fun StartAppContent(
+    onLoginClick: () -> Unit,
+    onRegisterClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -77,12 +83,28 @@ fun StartAppContent(
             )
 
 
-            // Boton continuar reutilizando AppButton
+            // Boton Iniciar Sesion
             AppButton(
                 text = stringResource(
-                    id = R.string.btn_continue
-                ) + " ›",
-                onClick = { }
+                    id = R.string.login_button
+                ),
+
+                onClick = onLoginClick
+            )
+
+
+            Spacer(
+                modifier = Modifier.height(16.dp)
+            )
+
+
+            // Boton Registrarse
+            AppButton(
+                text = stringResource(
+                    id = R.string.btn_action_create_account
+                ),
+
+                onClick = onRegisterClick
             )
 
 
@@ -102,9 +124,12 @@ fun StartAppContent(
 fun StartAppPreview() {
 
     GamerCornerAppTheme(
-        darkTheme = true
+        darkTheme = false
     ) {
 
-        StartApp()
+        StartApp(
+            onLoginClick = { },
+            onRegisterClick = { }
+        )
     }
 }

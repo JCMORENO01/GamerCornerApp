@@ -9,23 +9,54 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.gamercornerapp.R
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.gamercornerapp.data.ReviewItem
+import com.example.gamercornerapp.data.UserProfile
 import com.example.gamercornerapp.ui.Screens.selfProfile.components.ProfileHeaderSection
 import com.example.gamercornerapp.ui.Screens.selfProfile.components.ProfileReviewsSection
 import com.example.gamercornerapp.ui.Screens.selfProfile.components.ProfileStatsSection
-import com.example.gamercornerapp.ui.model.ReviewItem
-import com.example.gamercornerapp.ui.model.UserProfile
-import com.example.gamercornerapp.ui.model.UserStats
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
 @Composable
 fun SelfProfileScreen(
+    onFollowersClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: SelfProfileViewModel = viewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    uiState.userProfile?.let { profile ->
+        SelfProfileScreenContent(
+            userProfile = profile,
+            reviews = uiState.reviews,
+            selectedTabIndex = uiState.selectedTabIndex,
+            onTabSelected = viewModel::onTabSelected,
+            onFollowersClick = onFollowersClick,
+            modifier = modifier
+        )
+    }
+}
+
+
+@Composable
+fun SelfProfileScreenContent(
     userProfile: UserProfile,
     reviews: List<ReviewItem>,
+
+    selectedTabIndex: Int,
+    onTabSelected: (Int) -> Unit,
+
+    onFollowersClick: () -> Unit,
+
     modifier: Modifier = Modifier
 ) {
 
@@ -45,49 +76,33 @@ fun SelfProfileScreen(
 
         Column {
 
-            SelfProfileScreenContent(
-                userProfile = userProfile,
-                reviews = reviews
+            ProfileHeaderSection(
+                userProfile = userProfile
+            )
+
+
+            Spacer(
+                modifier = Modifier.height(20.dp)
+            )
+
+
+            ProfileStatsSection(
+                stats = userProfile.stats,
+                onFollowersClick = onFollowersClick
+            )
+
+
+            Spacer(
+                modifier = Modifier.height(30.dp)
+            )
+
+
+            ProfileReviewsSection(
+                reviews = reviews,
+                selectedTabIndex = selectedTabIndex,
+                onTabSelected = onTabSelected
             )
         }
-    }
-}
-
-
-@Composable
-fun SelfProfileScreenContent(
-    userProfile: UserProfile,
-    reviews: List<ReviewItem>,
-    modifier: Modifier = Modifier
-) {
-
-    Column(
-        modifier = modifier
-    ) {
-
-        ProfileHeaderSection(
-            userProfile = userProfile
-        )
-
-
-        Spacer(
-            modifier = Modifier.height(20.dp)
-        )
-
-
-        ProfileStatsSection(
-            stats = userProfile.stats
-        )
-
-
-        Spacer(
-            modifier = Modifier.height(30.dp)
-        )
-
-
-        ProfileReviewsSection(
-            reviews = reviews
-        )
     }
 }
 
@@ -104,40 +119,7 @@ fun SelfProfileScreenPreview() {
     ) {
 
         SelfProfileScreen(
-            userProfile = UserProfile(
-                username = "NightHunter",
-                nickName = "@nighthunter_21",
-                bio = "Vivo para los videojuegos 🎮",
-                profileBackgroundId = R.drawable.background_maquinitas,
-                profileBgDescription = "Imagen de monitores",
-                profileImageId = R.drawable.messi1,
-                stats = UserStats(
-                    reviewsCount = 128,
-                    followersCount = 342,
-                    followingCount = 176
-                )
-            ),
-
-            reviews = listOf(
-
-                ReviewItem(
-                    id = "1",
-                    gameTitle = "Elden Ring",
-                    rating = 5,
-                    relativeDate = "Hace 2 días",
-                    gameImageId = R.drawable.mini_elden,
-                    description = "Un juego increible..."
-                ),
-
-                ReviewItem(
-                    id = "2",
-                    gameTitle = "Cyberpunk",
-                    rating = 4,
-                    relativeDate = "Hace 1 semana",
-                    gameImageId = R.drawable.cyberpunk,
-                    description = "Una gran historia..."
-                )
-            )
+            onFollowersClick = { }
         )
     }
 }

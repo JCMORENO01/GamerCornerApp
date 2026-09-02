@@ -12,120 +12,74 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.gamercornerapp.R
+import com.example.gamercornerapp.data.FollowerItem
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
 @Composable
 fun FollowersList(
+    followers: List<FollowerItem>,
     modifier: Modifier = Modifier
 ) {
-
-    val drakool = FollowerUser(
-        name = R.string.mock_user_drakool,
-        handle = R.string.mock_handle_drakool,
-        image = R.drawable.messi1,
-        isFollowing = false
-    )
-
-    val ladyAki = FollowerUser(
-        name = R.string.mock_user_ladyaki,
-        handle = R.string.mock_handle_ladyaki,
-        image = R.drawable.messi1,
-        isFollowing = true
-    )
-
-    val shadowX = FollowerUser(
-        name = R.string.mock_user_shadowx,
-        handle = R.string.mock_handle_shadowx,
-        image = R.drawable.messi2,
-        isFollowing = false
-    )
-
-    val neoGamer = FollowerUser(
-        name = R.string.mock_user_neogamer,
-        handle = R.string.mock_handle_neogamer,
-        image = R.drawable.messi3,
-        isFollowing = false
-    )
-
-    val pixelPro = FollowerUser(
-        name = R.string.mock_user_pixelpro,
-        handle = R.string.mock_handle_pixelpro,
-        image = R.drawable.messi4,
-        isFollowing = false
-    )
-
-    val rogueMaster = FollowerUser(
-        name = R.string.mock_user_roguemaster,
-        handle = R.string.mock_handle_roguemaster,
-        image = R.drawable.messi1,
-        isFollowing = false
-    )
-
 
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
 
-        UserRow(
-            user = drakool
-        )
+        followers.forEachIndexed { index, follower ->
 
-        Spacer(
-            modifier = Modifier.height(16.dp)
-        )
+            UserRow(
+                user = follower
+            )
 
+            if (index < followers.lastIndex) {
 
-        UserRow(
-            user = ladyAki
-        )
-
-        Spacer(
-            modifier = Modifier.height(16.dp)
-        )
-
-
-        UserRow(
-            user = shadowX
-        )
-
-        Spacer(
-            modifier = Modifier.height(16.dp)
-        )
-
-
-        UserRow(
-            user = neoGamer
-        )
-
-        Spacer(
-            modifier = Modifier.height(16.dp)
-        )
-
-
-        UserRow(
-            user = pixelPro
-        )
-
-        Spacer(
-            modifier = Modifier.height(16.dp)
-        )
-
-
-        UserRow(
-            user = rogueMaster
-        )
+                Spacer(
+                    modifier = Modifier.height(16.dp)
+                )
+            }
+        }
     }
 }
 
 
-@Preview(showBackground = true)
+@Preview(
+    showBackground = true
+)
 @Composable
 fun FollowersListPreview() {
 
     GamerCornerAppTheme(
         darkTheme = true
     ) {
+
+        val mockFollowers = listOf(
+
+            FollowerItem(
+                id = "1",
+                username = "Drakool",
+                handle = "@drakool",
+                avatarImage = R.drawable.messi1,
+                isFollowing = true
+            ),
+
+            FollowerItem(
+                id = "2",
+                username = "LadyAki",
+                handle = "@ladyaki",
+                avatarImage = R.drawable.messi2,
+                isFollowing = false
+            ),
+
+            FollowerItem(
+                id = "3",
+                username = "ShadowX",
+                handle = "@shadowx",
+                avatarImage = R.drawable.messi3,
+                isFollowing = true
+            )
+        )
+
 
         Column(
             modifier = Modifier
@@ -135,7 +89,9 @@ fun FollowersListPreview() {
                 .padding(16.dp)
         ) {
 
-            FollowersList()
+            FollowersList(
+                followers = mockFollowers
+            )
         }
     }
 }

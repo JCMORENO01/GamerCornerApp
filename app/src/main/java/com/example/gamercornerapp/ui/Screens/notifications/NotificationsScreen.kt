@@ -9,25 +9,31 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gamercornerapp.R
+import com.example.gamercornerapp.data.NotificationItem
 import com.example.gamercornerapp.ui.Screens.notifications.components.NotificationCardItem
 import com.example.gamercornerapp.ui.Screens.notifications.components.NotificationsHeader
 import com.example.gamercornerapp.ui.Screens.notifications.enums.NotificationType
-import com.example.gamercornerapp.ui.model.NotificationItem
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
 @Composable
 fun NotificationsScreen(
-    notifications: List<NotificationItem>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: NotificationsViewModel = viewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
 
     NotificationScreenContent(
-        notifications = notifications,
+        notifications = uiState.notifications,
         modifier = modifier
     )
 }
@@ -49,7 +55,6 @@ fun NotificationScreenContent(
     ) {
 
         NotificationsHeader()
-
 
         LazyColumn(
             contentPadding = PaddingValues(
@@ -144,8 +149,7 @@ fun NotificationsScreenPreview() {
             )
         )
 
-
-        NotificationsScreen(
+        NotificationScreenContent(
             notifications = sampleNotifications
         )
     }
