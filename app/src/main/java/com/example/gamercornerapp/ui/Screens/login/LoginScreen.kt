@@ -114,9 +114,11 @@ fun LoginScreenContent(
             )
     ) {
 
-        AnimatedSplashScreen(
-            onAnimationFinished = onAnimationFinished
-        )
+        if (!isLogoUp) {
+            AnimatedSplashScreen(
+                onAnimationFinished = onAnimationFinished
+            )
+        }
 
 
         Box(
@@ -140,7 +142,7 @@ fun LoginScreenContent(
             ) {
 
                 Spacer(
-                    modifier = Modifier.height(180.dp)
+                    modifier = Modifier.height(16.dp)
                 )
 
 

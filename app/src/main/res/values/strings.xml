@@ -136,6 +136,7 @@
     <string name="filter_all">Todas</string>
     <string name="cd_filter">Filtrar</string>
     <!-- Pantalla de Perfil Propio -->
+    <string name="cd_menu">Menú</string>
     <string name="cd_settings">Ajustes</string>
     <string name="cd_go_to_detail">Ir a detalle</string>
     <string name="cd_score">Puntuación</string>

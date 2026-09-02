@@ -32,12 +32,12 @@ fun AnimatedSplashScreen(
     val logoOffsetY = remember { Animatable(0f) }
 
     LaunchedEffect(Unit) {
-        delay(1200)
+        delay(800)
 
         logoOffsetY.animateTo(
-            targetValue = -829f,
+            targetValue = -300f,
             animationSpec = tween(
-                durationMillis = 800,
+                durationMillis = 600,
                 easing = FastOutSlowInEasing
             )
         )

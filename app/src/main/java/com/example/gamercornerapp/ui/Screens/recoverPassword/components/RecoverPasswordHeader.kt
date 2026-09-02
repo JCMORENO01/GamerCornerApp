@@ -1,9 +1,15 @@
 package com.example.gamercornerapp.ui.Screens.recoverPassword.components
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,12 +27,28 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 @Composable
 fun RecoverPasswordHeader(
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        // Boton de retroceso
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = stringResource(id = R.string.back_arrow),
+                tint = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.clickable { onBackClick() }
+            )
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         LoginLogo()
 
@@ -58,6 +80,6 @@ fun RecoverPasswordHeader(
 @Composable
 fun RecoverPasswordHeaderPreview() {
     GamerCornerAppTheme(darkTheme = true) {
-        RecoverPasswordHeader()
+        RecoverPasswordHeader(onBackClick = {})
     }
 }

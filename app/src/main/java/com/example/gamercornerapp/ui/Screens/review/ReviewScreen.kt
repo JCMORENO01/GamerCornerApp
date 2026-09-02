@@ -11,17 +11,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gamercornerapp.R
 import com.example.gamercornerapp.data.Game
@@ -54,8 +50,10 @@ fun ReviewScreen(
             game = game,
             rating = uiState.rating,
             opinion = uiState.opinion,
+            selectedTags = uiState.selectedTags,
             onRatingChange = viewModel::onRatingChange,
             onOpinionChange = viewModel::onOpinionChange,
+            onTagToggle = viewModel::onTagToggle,
             onPublishClick = onPublishClick,
             modifier = modifier
         )
@@ -77,7 +75,9 @@ fun ReviewScreenContent(
 
     onPublishClick: () -> Unit,
 
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    selectedTags: Set<String> = emptySet(),
+    onTagToggle: (String) -> Unit = {}
 ) {
 
     Column(
@@ -132,7 +132,10 @@ fun ReviewScreenContent(
         )
 
 
-        TagsSection()
+        TagsSection(
+            selectedTags = selectedTags,
+            onTagToggle = onTagToggle
+        )
 
 
         Spacer(
@@ -167,13 +170,15 @@ fun ReviewScreenEldenRingPreview() {
                 title = "Elden Ring",
                 developer = "FromSoftware",
                 year = 2022,
-                image = R.drawable.messi
+                image = R.drawable.elden
             ),
 
             rating = 5,
             opinion = "",
+            selectedTags = setOf("Historia"),
             onRatingChange = {},
             onOpinionChange = {},
+            onTagToggle = {},
             onPublishClick = { }
         )
     }
@@ -197,13 +202,14 @@ fun ReviewScreenGodOfWarPreview() {
                 title = "God of War",
                 developer = "Santa Monica Studio",
                 year = 2018,
-                image = R.drawable.messi1
+                image = R.drawable.cyberpunk
             ),
 
             rating = 5,
             opinion = "",
             onRatingChange = {},
             onOpinionChange = {},
+            onTagToggle = {},
             onPublishClick = { }
         )
     }
@@ -227,13 +233,14 @@ fun ReviewScreenMinecraftPreview() {
                 title = "Minecraft",
                 developer = "Mojang",
                 year = 2011,
-                image = R.drawable.messi2
+                image = R.drawable.hog
             ),
 
             rating = 5,
             opinion = "",
             onRatingChange = {},
             onOpinionChange = {},
+            onTagToggle = {},
             onPublishClick = { }
         )
     }
