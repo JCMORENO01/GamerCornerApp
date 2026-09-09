@@ -220,7 +220,7 @@ object LocalDataProvider {
                 title = "God of War",
                 developer = "Santa Monica Studio",
                 year = 2022,
-                image = R.drawable.cyberpunk
+                image = R.drawable.godofwar
             ),
 
             rating = 4.7,
@@ -441,7 +441,7 @@ object LocalDataProvider {
             title = "God of War",
             developer = "Santa Monica Studio",
             year = 2022,
-            image = R.drawable.cyberpunk,
+            image = R.drawable.godofwar,
             rating = 4.7,
             reviewsCount = 1980,
             tags = listOf("Acción", "Aventura", "Mitología"),

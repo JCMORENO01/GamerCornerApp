@@ -153,8 +153,6 @@ fun VideogameHeaderInfo(
     }
 }
 
-
-// Convierte 1200 en "1.2k"
 private fun formatReviewsCount(
     count: Int
 ): String {

@@ -1,6 +1,9 @@
 package com.example.gamercornerapp.ui.Screens.review.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,11 +11,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,9 +33,19 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
 @Composable
-fun TagsSection() {
+fun TagsSection(
+    modifier: Modifier = Modifier,
+    selectedTags: Set<String> = emptySet(),
+    onTagToggle: (String) -> Unit = {},
+    onAddTagClick: () -> Unit = {}
+) {
+    val defaultTags = listOf(
+        stringResource(id = R.string.tag_history),
+        stringResource(id = R.string.tag_gameplay),
+        stringResource(id = R.string.tag_graphics)
+    )
 
-    Column {
+    Column(modifier = modifier) {
 
         Text(
             text = stringResource(
@@ -44,22 +63,59 @@ fun TagsSection() {
 
 
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            AppChip(
-                text = stringResource(
-                    id = R.string.tag_history
-                )
-            )
+            defaultTags.forEach { tag ->
+                val isSelected = selectedTags.contains(tag)
 
-
-            AppChip(
-                text = stringResource(
-                    id = R.string.tag_gameplay
+                AppChip(
+                    text = tag,
+                    backgroundColor = if (isSelected) {
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.25f)
+                    } else {
+                        MaterialTheme.colorScheme.surface
+                    },
+                    textColor = if (isSelected) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                    border = BorderStroke(
+                        width = 1.dp,
+                        color = if (isSelected) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+                        }
+                    ),
+                    onClick = { onTagToggle(tag) }
                 )
-            )
+            }
+
+            // Botón de agregar nueva etiqueta (+)
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .border(
+                        BorderStroke(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+                        ),
+                        CircleShape
+                    )
+                    .clickable { onAddTagClick() },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(id = R.string.plus_sign),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
         }
     }
 }
@@ -84,7 +140,9 @@ fun TagsSectionPreview() {
                 .padding(16.dp)
         ) {
 
-            TagsSection()
+            TagsSection(
+                selectedTags = setOf("Historia")
+            )
         }
     }
 }

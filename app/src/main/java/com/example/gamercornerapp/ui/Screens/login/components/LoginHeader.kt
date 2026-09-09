@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gamercornerapp.R
+import com.example.gamercornerapp.ui.componentes.LoginLogo
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
@@ -53,6 +54,14 @@ fun LoginHeader(
                 }
             )
         }
+
+
+        Spacer(
+            modifier = Modifier.height(12.dp)
+        )
+
+
+        LoginLogo()
 
 
         Spacer(

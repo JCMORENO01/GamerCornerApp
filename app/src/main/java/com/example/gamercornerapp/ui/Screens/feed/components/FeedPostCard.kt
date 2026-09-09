@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -88,8 +89,10 @@ fun FeedPostCard(
                         id = post.author.profileImageId
                     ),
 
-                    contentDescription =
-                        "Foto de ${post.author.username}",
+                    contentDescription = stringResource(
+                        id = R.string.user_profile_photo_description,
+                        post.author.username
+                    ),
 
                     contentScale = ContentScale.Crop,
 
@@ -126,7 +129,7 @@ fun FeedPostCard(
 
                 Icon(
                     imageVector = Icons.Default.MoreVert,
-                    contentDescription = "Más opciones",
+                    contentDescription = stringResource(id = R.string.cd_more_options),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
 
                     modifier = Modifier
@@ -151,8 +154,10 @@ fun FeedPostCard(
                         id = post.game.image
                     ),
 
-                    contentDescription =
-                        "Portada de ${post.game.title}",
+                    contentDescription = stringResource(
+                        id = R.string.cd_game_cover,
+                        post.game.title
+                    ),
 
                     contentScale = ContentScale.Crop,
 
@@ -286,7 +291,7 @@ fun FeedPostCard(
                         Icons.Default.FavoriteBorder
                     },
 
-                    contentDescription = "Me gusta",
+                    contentDescription = stringResource(id = R.string.cd_like),
 
                     tint = MaterialTheme.colorScheme.primary,
 
@@ -318,7 +323,7 @@ fun FeedPostCard(
 
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.Chat,
-                    contentDescription = "Comentarios",
+                    contentDescription = stringResource(id = R.string.cd_comments),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
 
                     modifier = Modifier
@@ -348,7 +353,7 @@ fun FeedPostCard(
 
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.Send,
-                    contentDescription = "Compartir",
+                    contentDescription = stringResource(id = R.string.cd_share),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
 
                     modifier = Modifier
@@ -371,7 +376,7 @@ fun FeedPostCard(
                         Icons.Default.BookmarkBorder
                     },
 
-                    contentDescription = "Guardar",
+                    contentDescription = stringResource(id = R.string.cd_bookmark),
 
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
 

@@ -23,4 +23,15 @@ class ReviewViewModel : ViewModel() {
     fun onOpinionChange(opinion: String) {
         _uiState.update { it.copy(opinion = opinion) }
     }
+
+    fun onTagToggle(tag: String) {
+        _uiState.update { state ->
+            val updatedTags = if (state.selectedTags.contains(tag)) {
+                state.selectedTags - tag
+            } else {
+                state.selectedTags + tag
+            }
+            state.copy(selectedTags = updatedTags)
+        }
+    }
 }

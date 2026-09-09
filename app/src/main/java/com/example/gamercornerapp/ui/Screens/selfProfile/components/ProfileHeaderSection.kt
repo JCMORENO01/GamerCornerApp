@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -79,7 +80,7 @@ fun ProfileHeaderSection(
 
                 Icon(
                     imageVector = Icons.Outlined.Settings,
-                    contentDescription = "Ajustes",
+                    contentDescription = stringResource(id = R.string.cd_settings),
                     tint = MaterialTheme.colorScheme.onBackground
                 )
             }
@@ -90,7 +91,10 @@ fun ProfileHeaderSection(
                 painter = painterResource(
                     id = userProfile.profileImageId
                 ),
-                contentDescription = "Foto de perfil de ${userProfile.username}",
+                contentDescription = stringResource(
+                    id = R.string.user_profile_photo_description,
+                    userProfile.username
+                ),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(110.dp)

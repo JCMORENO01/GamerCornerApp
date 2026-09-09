@@ -73,8 +73,10 @@ fun ResultGameCard(
                         id = game.image
                     ),
 
-                    contentDescription =
-                        "Portada de ${game.title}",
+                    contentDescription = stringResource(
+                        id = R.string.cd_game_cover,
+                        game.title
+                    ),
 
                     contentScale = ContentScale.Crop,
 

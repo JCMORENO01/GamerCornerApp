@@ -46,7 +46,7 @@ fun FeedTopBar(
 
         Icon(
             imageVector = Icons.Default.Menu,
-            contentDescription = "Menú",
+            contentDescription = stringResource(id = R.string.cd_menu),
             tint = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
                 .size(26.dp)
@@ -74,7 +74,7 @@ fun FeedTopBar(
 
         Icon(
             imageVector = Icons.Default.Settings,
-            contentDescription = "Ajustes",
+            contentDescription = stringResource(id = R.string.cd_settings),
             tint = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
                 .size(24.dp)

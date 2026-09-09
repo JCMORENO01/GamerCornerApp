@@ -18,16 +18,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.gamercornerapp.R
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
 @Composable
 fun NotificationsHeader(
-    selectedFilter: String = "Todas",
+    selectedFilter: String = stringResource(id = R.string.filter_all),
     onFilterClick: () -> Unit = { },
     modifier: Modifier = Modifier
 ) {
@@ -45,7 +47,7 @@ fun NotificationsHeader(
     ) {
 
         Text(
-            text = "Notificaciones",
+            text = stringResource(id = R.string.title_notifications),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
@@ -74,7 +76,7 @@ fun NotificationsHeader(
 
             Icon(
                 imageVector = Icons.Default.KeyboardArrowDown,
-                contentDescription = "Filtrar",
+                contentDescription = stringResource(id = R.string.cd_filter),
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(18.dp)
             )
