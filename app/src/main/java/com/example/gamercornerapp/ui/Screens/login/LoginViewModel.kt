@@ -1,14 +1,21 @@
 package com.example.gamercornerapp.ui.Screens.login
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.gamercornerapp.R
+import com.example.gamercornerapp.data.repository.AuthRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-import com.example.gamercornerapp.R
-
-class LoginViewModel : ViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(
+    private val authRepository: AuthRepository
+) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginState())
     val uiState: StateFlow<LoginState> = _uiState.asStateFlow()
 
@@ -37,8 +44,21 @@ class LoginViewModel : ViewModel() {
                     errorRes = R.string.error_all_fields_required
                 ) 
             }
-        } else {
-            _uiState.update { it.copy(showError = false, navigateToFeed = true) }
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                authRepository.signIn(currentState.email, currentState.password)
+                _uiState.update { it.copy(showError = false, navigateToFeed = true) }
+            } catch (e: Exception) {
+                _uiState.update { 
+                    it.copy(
+                        showError = true, 
+                        errorRes = R.string.error_invalid_credentials
+                    ) 
+                }
+            }
         }
     }
 

@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,7 +43,8 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 fun ProfileHeaderSection(
     userProfile: UserProfile,
     modifier: Modifier = Modifier,
-    onSettingsClick: () -> Unit = {}
+    onSettingsClick: () -> Unit = {},
+    onLogoutClick: () -> Unit = {}
 ) {
 
     Column(
@@ -71,17 +73,21 @@ fun ProfileHeaderSection(
 
 
             IconButton(
-                onClick = onSettingsClick,
+                onClick = onLogoutClick,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(16.dp)
                     .size(36.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+                        shape = CircleShape
+                    )
             ) {
 
                 Icon(
-                    imageVector = Icons.Outlined.Settings,
-                    contentDescription = stringResource(id = R.string.cd_settings),
-                    tint = MaterialTheme.colorScheme.onBackground
+                    imageVector = Icons.AutoMirrored.Outlined.Logout,
+                    contentDescription = "Cerrar sesión",
+                    tint = MaterialTheme.colorScheme.error
                 )
             }
 

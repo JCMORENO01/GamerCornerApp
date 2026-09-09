@@ -123,6 +123,8 @@
     <string name="error_password_too_short">La contraseña debe tener al menos 6 caracteres</string>
     <string name="error_email_already_registered">Este correo ya está en uso</string>
     <string name="error_accept_terms">Debes aceptar los términos y condiciones</string>
+    <string name="error_invalid_credentials">Credenciales incorrectas o usuario no encontrado</string>
+    <string name="error_generic_auth">Ocurrió un error al procesar la solicitud</string>
     <string name="error_game_not_found">Juego no encontrado</string>
     <!-- Feed Post Content Descriptions -->
     <string name="cd_more_options">Más opciones</string>

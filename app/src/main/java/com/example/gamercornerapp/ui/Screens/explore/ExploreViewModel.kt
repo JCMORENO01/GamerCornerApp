@@ -1,6 +1,8 @@
 package com.example.gamercornerapp.ui.Screens.explore
 
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import com.example.gamercornerapp.data.Game
 import com.example.gamercornerapp.data.local.LocalDataProvider
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -8,7 +10,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class ExploreViewModel : ViewModel() {
+@HiltViewModel
+class ExploreViewModel @Inject constructor() : ViewModel() {
     private val _uiState = MutableStateFlow(ExploreState())
     val uiState: StateFlow<ExploreState> = _uiState.asStateFlow()
 

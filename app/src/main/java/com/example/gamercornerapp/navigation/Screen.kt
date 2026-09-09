@@ -5,6 +5,11 @@ sealed class Screen(
     val route: String
 ) {
 
+    data object Splash : Screen(
+        route = "splash"
+    )
+
+
     data object Start : Screen(
         route = "start"
     )

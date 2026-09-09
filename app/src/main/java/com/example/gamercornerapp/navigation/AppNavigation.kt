@@ -2,12 +2,12 @@ package com.example.gamercornerapp.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gamercornerapp.ui.Screens.explore.ExploreScreen
 import com.example.gamercornerapp.ui.Screens.explore.ExploreViewModel
 import com.example.gamercornerapp.ui.Screens.feed.FeedScreen
@@ -26,6 +26,7 @@ import com.example.gamercornerapp.ui.Screens.review.ReviewScreen
 import com.example.gamercornerapp.ui.Screens.review.ReviewViewModel
 import com.example.gamercornerapp.ui.Screens.selfProfile.SelfProfileScreen
 import com.example.gamercornerapp.ui.Screens.selfProfile.SelfProfileViewModel
+import com.example.gamercornerapp.ui.Screens.splash.SplashScreen
 import com.example.gamercornerapp.ui.Screens.startpage.StartApp
 import com.example.gamercornerapp.ui.Screens.videogame.VideogameScreen
 import com.example.gamercornerapp.ui.Screens.videogame.VideogameViewModel
@@ -39,9 +40,28 @@ fun AppNavigation(
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Start.route,
+        startDestination = Screen.Splash.route,
         modifier = modifier
     ) {
+
+
+        // SPLASH
+        composable(
+            route = Screen.Splash.route
+        ) {
+            SplashScreen(
+                onNavigateToHome = {
+                    navController.navigate(Screen.Feed.route) {
+                        popUpTo(Screen.Splash.route) { inclusive = true }
+                    }
+                },
+                onNavigateToStart = {
+                    navController.navigate(Screen.Start.route) {
+                        popUpTo(Screen.Splash.route) { inclusive = true }
+                    }
+                }
+            )
+        }
 
 
         // START
@@ -70,7 +90,7 @@ fun AppNavigation(
         composable(
             route = Screen.Login.route
         ) {
-            val viewModel: LoginViewModel = viewModel()
+            val viewModel: LoginViewModel = hiltViewModel()
             LoginScreen(
                 viewModel = viewModel,
                 onLoginClick = {
@@ -110,7 +130,7 @@ fun AppNavigation(
         composable(
             route = Screen.RecoverPassword.route
         ) {
-            val viewModel: RecoverPasswordViewModel = viewModel()
+            val viewModel: RecoverPasswordViewModel = hiltViewModel()
             RecoverPasswordScreen(
                 viewModel = viewModel,
                 onBackClick = {
@@ -133,7 +153,7 @@ fun AppNavigation(
         composable(
             route = Screen.Register.route
         ) {
-            val viewModel: RegisterViewModel = viewModel()
+            val viewModel: RegisterViewModel = hiltViewModel()
             RegisterScreen(
                 viewModel = viewModel,
                 onRegisterClick = {
@@ -166,7 +186,7 @@ fun AppNavigation(
         composable(
             route = Screen.Feed.route
         ) {
-            val viewModel: FeedViewModel = viewModel()
+            val viewModel: FeedViewModel = hiltViewModel()
             FeedScreen(
                 viewModel = viewModel,
                 onGameClick = { gameId ->
@@ -185,7 +205,7 @@ fun AppNavigation(
         composable(
             route = Screen.Explore.route
         ) {
-            val viewModel: ExploreViewModel = viewModel()
+            val viewModel: ExploreViewModel = hiltViewModel()
             ExploreScreen(
                 viewModel = viewModel,
                 onPopularGameClick = { game ->
@@ -213,7 +233,7 @@ fun AppNavigation(
         composable(
             route = Screen.Notifications.route
         ) {
-            val viewModel: NotificationsViewModel = viewModel()
+            val viewModel: NotificationsViewModel = hiltViewModel()
             NotificationsScreen(
                 viewModel = viewModel
             )
@@ -224,7 +244,7 @@ fun AppNavigation(
         composable(
             route = Screen.Followers.route
         ) {
-            val viewModel: FollowersViewModel = viewModel()
+            val viewModel: FollowersViewModel = hiltViewModel()
             FollowersScreen(
                 viewModel = viewModel,
                 onBackClick = {
@@ -238,7 +258,7 @@ fun AppNavigation(
         composable(
             route = Screen.SelfProfile.route
         ) {
-            val viewModel: SelfProfileViewModel = viewModel()
+            val viewModel: SelfProfileViewModel = hiltViewModel()
             SelfProfileScreen(
                 viewModel = viewModel,
                 onFollowersClick = {
@@ -246,6 +266,11 @@ fun AppNavigation(
                     navController.navigate(
                         Screen.Followers.route
                     )
+                },
+                onLogoutClick = {
+                    navController.navigate(Screen.Start.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
             )
         }
@@ -272,7 +297,7 @@ fun AppNavigation(
                     ?.getInt("gameId")
                     ?: 0
 
-            val viewModel: VideogameViewModel = viewModel()
+            val viewModel: VideogameViewModel = hiltViewModel()
 
             VideogameScreen(
                 gameId = gameId,
@@ -316,7 +341,7 @@ fun AppNavigation(
                     ?.getInt("gameId")
                     ?: 0
 
-            val viewModel: ReviewViewModel = viewModel()
+            val viewModel: ReviewViewModel = hiltViewModel()
 
             ReviewScreen(
                 gameId = gameId,

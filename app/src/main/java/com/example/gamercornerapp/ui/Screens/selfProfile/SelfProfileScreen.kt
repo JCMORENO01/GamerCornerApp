@@ -9,15 +9,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.collectAsState
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.gamercornerapp.data.ReviewItem
 import com.example.gamercornerapp.data.UserProfile
 import com.example.gamercornerapp.ui.Screens.selfProfile.components.ProfileHeaderSection
@@ -29,8 +26,9 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 @Composable
 fun SelfProfileScreen(
     onFollowersClick: () -> Unit,
+    onLogoutClick: () -> Unit = {},
     modifier: Modifier = Modifier,
-    viewModel: SelfProfileViewModel = viewModel()
+    viewModel: SelfProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -41,6 +39,10 @@ fun SelfProfileScreen(
             selectedTabIndex = uiState.selectedTabIndex,
             onTabSelected = viewModel::onTabSelected,
             onFollowersClick = onFollowersClick,
+            onLogoutClick = {
+                viewModel.onLogoutClick()
+                onLogoutClick()
+            },
             modifier = modifier
         )
     }
@@ -51,12 +53,10 @@ fun SelfProfileScreen(
 fun SelfProfileScreenContent(
     userProfile: UserProfile,
     reviews: List<ReviewItem>,
-
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit,
-
     onFollowersClick: () -> Unit,
-
+    onLogoutClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
 
@@ -77,7 +77,8 @@ fun SelfProfileScreenContent(
         Column {
 
             ProfileHeaderSection(
-                userProfile = userProfile
+                userProfile = userProfile,
+                onLogoutClick = onLogoutClick
             )
 
 
