@@ -19,6 +19,15 @@ class AuthRepository @Inject constructor(
         remoteDataSource.signOut()
     }
 
+    suspend fun updateProfilePicture(photoUrl: String): Result<Unit> {
+        return try {
+            remoteDataSource.updateProfilePicture(photoUrl)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     val currentUser: FirebaseUser?
         get() = remoteDataSource.currentUser
 }

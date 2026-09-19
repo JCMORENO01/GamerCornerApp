@@ -7,6 +7,7 @@ data class UserProfile(
     val profileBackgroundId: Int,
     val profileBgDescription: String,
     val profileImageId: Int,
+    val profilePictureUrl: String? = null,
     val stats: UserStats
 )
 

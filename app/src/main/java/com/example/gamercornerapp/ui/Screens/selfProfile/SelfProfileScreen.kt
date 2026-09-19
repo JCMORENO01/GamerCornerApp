@@ -43,6 +43,9 @@ fun SelfProfileScreen(
                 viewModel.onLogoutClick()
                 onLogoutClick()
             },
+            onImageSelected = { uri ->
+                viewModel.uploadImageToFirebase(uri)
+            },
             modifier = modifier
         )
     }
@@ -57,6 +60,7 @@ fun SelfProfileScreenContent(
     onTabSelected: (Int) -> Unit,
     onFollowersClick: () -> Unit,
     onLogoutClick: () -> Unit = {},
+    onImageSelected: (android.net.Uri) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
 
@@ -78,7 +82,8 @@ fun SelfProfileScreenContent(
 
             ProfileHeaderSection(
                 userProfile = userProfile,
-                onLogoutClick = onLogoutClick
+                onLogoutClick = onLogoutClick,
+                onImageSelected = onImageSelected
             )
 
 

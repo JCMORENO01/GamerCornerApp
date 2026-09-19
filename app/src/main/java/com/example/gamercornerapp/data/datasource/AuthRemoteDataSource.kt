@@ -20,6 +20,16 @@ class AuthRemoteDataSource @Inject constructor(
         auth.signOut()
     }
 
+
+    suspend fun updateProfilePicture(photoUrl: String) {
+        val user = auth.currentUser
+        val profileUpdates = com.google.firebase.auth.UserProfileChangeRequest.Builder()
+            .setPhotoUri(android.net.Uri.parse(photoUrl))
+            .build()
+
+        user?.updateProfile(profileUpdates)?.await()
+    }
+
     val currentUser: FirebaseUser?
         get() = auth.currentUser
 }

@@ -62,11 +62,15 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.kotlinx.coroutines.play.services)
+    implementation("com.google.firebase:firebase-storage-ktx")
 
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
+
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.6.0")
 
     // Iconos
     implementation("androidx.compose.material:material-icons-extended")
