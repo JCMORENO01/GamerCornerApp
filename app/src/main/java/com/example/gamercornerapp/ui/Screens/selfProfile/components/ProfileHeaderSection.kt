@@ -49,6 +49,7 @@ import androidx.compose.foundation.clickable
 fun ProfileHeaderSection(
     userProfile: UserProfile,
     modifier: Modifier = Modifier,
+    isLoadingImage: Boolean = false,
     onSettingsClick: () -> Unit = {},
     onLogoutClick: () -> Unit = {},
     onImageSelected: (Uri) -> Unit = {}
@@ -101,25 +102,47 @@ fun ProfileHeaderSection(
             }
 
 
-            ProfileAsyncImage(
-                profileImage = userProfile.profilePictureUrl ?: userProfile.profileImageId,
-                size = 110.dp,
+            Box(
                 modifier = Modifier
-                    .offset(y = 45.dp)
-                    .border(
-                        width = 3.dp,
-                        color = MaterialTheme.colorScheme.primary,
-                        shape = CircleShape
-                    )
-                    .clip(CircleShape)
-                    .clickable {
-                        singlePhotoPickerLauncher.launch(
-                            PickVisualMediaRequest(
-                                ActivityResultContracts.PickVisualMedia.ImageOnly
+                    .offset(y = 45.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                ProfileAsyncImage(
+                    profileImage = userProfile.profilePictureUrl ?: userProfile.profileImageId,
+                    size = 110.dp,
+                    modifier = Modifier
+                        .border(
+                            width = 3.dp,
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = CircleShape
+                        )
+                        .clip(CircleShape)
+                        .clickable(enabled = !isLoadingImage) {
+                            singlePhotoPickerLauncher.launch(
+                                PickVisualMediaRequest(
+                                    ActivityResultContracts.PickVisualMedia.ImageOnly
+                                )
                             )
+                        }
+                )
+
+                if (isLoadingImage) {
+                    Box(
+                        modifier = Modifier
+                            .size(110.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.background.copy(alpha = 0.6f),
+                                shape = CircleShape
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        androidx.compose.material3.CircularProgressIndicator(
+                            modifier = Modifier.size(36.dp),
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
-            )
+                }
+            }
         }
 
 
