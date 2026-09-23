@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "588532291865",
-    "project_id": "gamerscorner-b119d",
-    "storage_bucket": "gamerscorner-b119d.firebasestorage.app"
+    "project_number": "182268771811",
+    "project_id": "gamers-corner-7f555",
+    "storage_bucket": "gamers-corner-7f555.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:588532291865:android:bcc63bb5929bf2bdf74d88",
+        "mobilesdk_app_id": "1:182268771811:android:686c79ffc6f96375da74d6",
         "android_client_info": {
           "package_name": "com.example.gamercornerapp"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBZLK5IdJQFwhFCMbaYTRukRxKhSzOwbLo"
+          "current_key": "AIzaSyAK4n4OehZkkySVbGpnQbxWV--oonnLoUA"
         }
       ],
       "services": {
