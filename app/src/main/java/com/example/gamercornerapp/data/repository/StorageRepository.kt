@@ -15,7 +15,7 @@ class StorageRepository @Inject constructor(
 ) {
     suspend fun uploadProfileImage(imageUri: Uri): Result<String> {
         return try {
-                // Limite de 15 segundos agregado
+            // Limite de 15 segundos para manejar conexiones a internet (Te quiero mucho Angarita)
             val url = withTimeout(15_000L) {
                 val userId = authRepository.currentUser?.uid ?: "guest_user"
                 val path = "profile_images/$userId.jpg"

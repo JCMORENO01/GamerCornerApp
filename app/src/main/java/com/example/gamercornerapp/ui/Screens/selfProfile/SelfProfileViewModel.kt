@@ -51,7 +51,6 @@ class SelfProfileViewModel @Inject constructor(
             result.onSuccess { downloadUrl ->
                 authRepository.updateProfilePicture(downloadUrl)
 
-                //actualizar para renderizar la nueva imagen publica
                 _uiState.update { currentState ->
                     currentState.copy(
                         isLoadingImage = false,

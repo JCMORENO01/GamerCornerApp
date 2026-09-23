@@ -62,6 +62,7 @@ class LoginViewModel @Inject constructor(
             result.onSuccess {
                 _uiState.update { it.copy(showError = false, navigateToFeed = true) }
             }.onFailure { error ->
+                // Si lees esto te quiero mucho.
                 val errorRes = when (error) {
                     is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException ->
                         R.string.error_invalid_credentials
