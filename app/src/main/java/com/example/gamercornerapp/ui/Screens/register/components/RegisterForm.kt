@@ -1,6 +1,9 @@
 package com.example.gamercornerapp.ui.Screens.register.components
 
+import android.app.DatePickerDialog
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -16,6 +20,8 @@ import com.example.gamercornerapp.R
 import com.example.gamercornerapp.ui.componentes.AppPasswordField
 import com.example.gamercornerapp.ui.componentes.AppTextField
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
+import java.util.Calendar
+import java.util.Locale
 
 
 @Composable
@@ -141,17 +147,57 @@ fun RegisterForm(
         )
 
 
-        // Fecha de nacimiento
-        AppTextField(
-            value = birthDate,
-            onValueChange = onBirthDateChange,
-            label = stringResource(
-                id = R.string.label_birthdate
-            ),
-            placeholder = stringResource(
-                id = R.string.hint_birthdate
-            )
+        val context = LocalContext.current
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(
+            context,
+            { _, selectedYear, selectedMonth, selectedDayOfMonth ->
+                val formattedDate = String.format(
+                    Locale.getDefault(),
+                    "%02d/%02d/%04d",
+                    selectedDayOfMonth,
+                    selectedMonth + 1,
+                    selectedYear
+                )
+                onBirthDateChange(formattedDate)
+            },
+            year,
+            month,
+            day
         )
+
+
+        // Fecha de nacimiento
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    datePickerDialog.show()
+                }
+        ) {
+            AppTextField(
+                value = birthDate,
+                onValueChange = { },
+                label = stringResource(
+                    id = R.string.label_birthdate
+                ),
+                placeholder = stringResource(
+                    id = R.string.hint_birthdate
+                )
+            )
+
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .clickable {
+                        datePickerDialog.show()
+                    }
+            )
+        }
     }
 }
 

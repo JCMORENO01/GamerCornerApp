@@ -12,7 +12,7 @@ class StorageRepository @Inject constructor(
 ) {
     suspend fun uploadProfileImage(imageUri: Uri): Result<String> {
         return try {
-            val userId = authRepository.currentUser?.uid ?: throw Exception("Usuario no autenticado")
+            val userId = authRepository.currentUser?.uid ?: "guest_user"
             val path = "profile_images/$userId.jpg"
 
             val url = storageDataSource.uploadImage(imageUri, path)
