@@ -120,10 +120,13 @@
 
     <!-- Mensajes de error -->
     <string name="error_all_fields_required">Todos los campos son obligatorios</string>
+    <string name="error_invalid_email">Ingresa un correo electrónico válido (ejemplo@correo.com)</string>
     <string name="error_password_too_short">La contraseña debe tener al menos 6 caracteres</string>
     <string name="error_email_already_registered">Este correo ya está en uso</string>
     <string name="error_accept_terms">Debes aceptar los términos y condiciones</string>
     <string name="error_invalid_credentials">Credenciales incorrectas o usuario no encontrado</string>
+    <string name="error_user_not_found">El usuario no existe</string>
+    <string name="error_network">Sin conexión a internet. Inténtalo de nuevo</string>
     <string name="error_generic_auth">Ocurrió un error al procesar la solicitud</string>
     <string name="error_game_not_found">Juego no encontrado</string>
     <!-- Feed Post Content Descriptions -->

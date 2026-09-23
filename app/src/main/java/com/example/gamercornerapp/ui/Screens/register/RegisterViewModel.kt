@@ -63,7 +63,17 @@ class RegisterViewModel @Inject constructor(
                 it.copy(
                     showError = true, 
                     errorRes = R.string.error_all_fields_required 
-                ) 
+                )
+            }
+            return
+        }
+
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(currentState.email).matches()) {
+            _uiState.update {
+                it.copy(
+                    showError = true,
+                    errorRes = R.string.error_invalid_email
+                )
             }
             return
         }
@@ -89,14 +99,24 @@ class RegisterViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            try {
-                authRepository.signUp(currentState.email, currentState.password)
+            val result = authRepository.signUp(currentState.email, currentState.password)
+            result.onSuccess {
                 _uiState.update { it.copy(showError = false, navigateToFeed = true) }
-            } catch (e: Exception) {
+            }.onFailure { error ->
+                val errorRes = when (error) {
+                    is com.google.firebase.auth.FirebaseAuthUserCollisionException ->
+                        R.string.error_email_already_registered
+                    is com.google.firebase.auth.FirebaseAuthWeakPasswordException ->
+                        R.string.error_password_too_short
+                    is com.google.firebase.FirebaseNetworkException ->
+                        R.string.error_network
+                    else ->
+                        R.string.error_generic_auth
+                }
                 _uiState.update { 
                     it.copy(
                         showError = true, 
-                        errorRes = R.string.error_generic_auth
+                        errorRes = errorRes
                     ) 
                 }
             }

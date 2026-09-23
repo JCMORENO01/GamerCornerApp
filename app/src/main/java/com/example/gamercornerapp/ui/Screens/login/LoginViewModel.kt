@@ -42,20 +42,40 @@ class LoginViewModel @Inject constructor(
                 it.copy(
                     showError = true, 
                     errorRes = R.string.error_all_fields_required
-                ) 
+                )
+            }
+            return
+        }
+
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(currentState.email).matches()) {
+            _uiState.update {
+                it.copy(
+                    showError = true,
+                    errorRes = R.string.error_invalid_email
+                )
             }
             return
         }
 
         viewModelScope.launch {
-            try {
-                authRepository.signIn(currentState.email, currentState.password)
+            val result = authRepository.signIn(currentState.email, currentState.password)
+            result.onSuccess {
                 _uiState.update { it.copy(showError = false, navigateToFeed = true) }
-            } catch (e: Exception) {
+            }.onFailure { error ->
+                val errorRes = when (error) {
+                    is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException ->
+                        R.string.error_invalid_credentials
+                    is com.google.firebase.auth.FirebaseAuthInvalidUserException ->
+                        R.string.error_user_not_found
+                    is com.google.firebase.FirebaseNetworkException ->
+                        R.string.error_network
+                    else ->
+                        R.string.error_invalid_credentials
+                }
                 _uiState.update { 
                     it.copy(
                         showError = true, 
-                        errorRes = R.string.error_invalid_credentials
+                        errorRes = errorRes
                     ) 
                 }
             }
