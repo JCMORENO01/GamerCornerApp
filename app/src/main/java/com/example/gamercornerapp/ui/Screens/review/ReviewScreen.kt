@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.gamercornerapp.R
 import com.example.gamercornerapp.data.Game
 import com.example.gamercornerapp.ui.Screens.review.components.GameInfoCard
@@ -29,18 +29,20 @@ import com.example.gamercornerapp.ui.Screens.review.components.TagsSection
 import com.example.gamercornerapp.ui.componentes.AppButton
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
-
 @Composable
 fun ReviewScreen(
     gameId: Int,
+    reviewId: String? = null,
+    initialOpinion: String? = null,
+    initialRating: Int? = null,
     onPublishClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: ReviewViewModel = viewModel()
+    viewModel: ReviewViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(gameId) {
-        viewModel.loadGame(gameId)
+    LaunchedEffect(gameId, reviewId) {
+        viewModel.loadGame(gameId, reviewId, initialOpinion, initialRating)
     }
 
     val game = uiState.game
@@ -51,10 +53,13 @@ fun ReviewScreen(
             rating = uiState.rating,
             opinion = uiState.opinion,
             selectedTags = uiState.selectedTags,
+            isLoading = uiState.isLoading,
             onRatingChange = viewModel::onRatingChange,
             onOpinionChange = viewModel::onOpinionChange,
             onTagToggle = viewModel::onTagToggle,
-            onPublishClick = onPublishClick,
+            onPublishClick = {
+                viewModel.publishReview(gameId, onPublishClick)
+            },
             modifier = modifier
         )
     } else {
@@ -62,108 +67,66 @@ fun ReviewScreen(
     }
 }
 
-
 @Composable
 fun ReviewScreenContent(
     game: Game,
-
     rating: Int,
     opinion: String,
-
     onRatingChange: (Int) -> Unit,
     onOpinionChange: (String) -> Unit,
-
     onPublishClick: () -> Unit,
-
     modifier: Modifier = Modifier,
     selectedTags: Set<String> = emptySet(),
+    isLoading: Boolean = false,
     onTagToggle: (String) -> Unit = {}
 ) {
-
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(
-                MaterialTheme.colorScheme.background
-            )
-            .verticalScroll(
-                rememberScrollState()
-            )
+            .background(MaterialTheme.colorScheme.background)
+            .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
-
-        Spacer(
-            modifier = Modifier.height(8.dp)
-        )
-
+        Spacer(modifier = Modifier.height(8.dp))
 
         ReviewTitle()
 
+        GameInfoCard(game = game)
 
-        GameInfoCard(
-            game = game
-        )
-
-
-        Spacer(
-            modifier = Modifier.height(24.dp)
-        )
-
+        Spacer(modifier = Modifier.height(24.dp))
 
         RatingSection(
             rating = rating,
             onRatingChange = onRatingChange
         )
 
-
-        Spacer(
-            modifier = Modifier.height(24.dp)
-        )
-
+        Spacer(modifier = Modifier.height(24.dp))
 
         OpinionSection(
             opinion = opinion,
             onOpinionChange = onOpinionChange
         )
 
-
-        Spacer(
-            modifier = Modifier.height(16.dp)
-        )
-
+        Spacer(modifier = Modifier.height(16.dp))
 
         TagsSection(
             selectedTags = selectedTags,
             onTagToggle = onTagToggle
         )
 
-
-        Spacer(
-            modifier = Modifier.height(145.dp)
-        )
-
+        Spacer(modifier = Modifier.height(30.dp))
 
         AppButton(
-            text = stringResource(
-                id = R.string.btn_publish_review
-            ),
+            text = if (isLoading) "Guardando..." else stringResource(id = R.string.btn_publish_review),
             onClick = onPublishClick
         )
     }
 }
 
-
-@Preview(
-    showBackground = true,
-    name = "Elden Ring"
-)
+@Preview(showBackground = true, name = "Elden Ring")
 @Composable
 fun ReviewScreenEldenRingPreview() {
-
-    GamerCornerAppTheme(
-        darkTheme = true
-    ) {
-
+    GamerCornerAppTheme(darkTheme = true) {
         ReviewScreenContent(
             game = Game(
                 id = 1,
@@ -172,72 +135,9 @@ fun ReviewScreenEldenRingPreview() {
                 year = 2022,
                 image = R.drawable.elden
             ),
-
             rating = 5,
             opinion = "",
             selectedTags = setOf("Historia"),
-            onRatingChange = {},
-            onOpinionChange = {},
-            onTagToggle = {},
-            onPublishClick = { }
-        )
-    }
-}
-
-
-@Preview(
-    showBackground = true,
-    name = "God of War"
-)
-@Composable
-fun ReviewScreenGodOfWarPreview() {
-
-    GamerCornerAppTheme(
-        darkTheme = true
-    ) {
-
-        ReviewScreenContent(
-            game = Game(
-                id = 2,
-                title = "God of War",
-                developer = "Santa Monica Studio",
-                year = 2018,
-                image = R.drawable.cyberpunk
-            ),
-
-            rating = 5,
-            opinion = "",
-            onRatingChange = {},
-            onOpinionChange = {},
-            onTagToggle = {},
-            onPublishClick = { }
-        )
-    }
-}
-
-
-@Preview(
-    showBackground = true,
-    name = "Minecraft"
-)
-@Composable
-fun ReviewScreenMinecraftPreview() {
-
-    GamerCornerAppTheme(
-        darkTheme = true
-    ) {
-
-        ReviewScreenContent(
-            game = Game(
-                id = 6,
-                title = "Minecraft",
-                developer = "Mojang",
-                year = 2011,
-                image = R.drawable.hog
-            ),
-
-            rating = 5,
-            opinion = "",
             onRatingChange = {},
             onOpinionChange = {},
             onTagToggle = {},

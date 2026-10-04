@@ -1,21 +1,49 @@
 package com.example.gamercornerapp.ui.Screens.feed
 
 import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import androidx.lifecycle.viewModelScope
 import com.example.gamercornerapp.data.local.LocalDataProvider
+import com.example.gamercornerapp.data.repository.ReviewRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
-class FeedViewModel @Inject constructor() : ViewModel() {
+class FeedViewModel @Inject constructor(
+    private val reviewRepository: ReviewRepository
+) : ViewModel() {
     private val _uiState = MutableStateFlow(FeedState())
     val uiState: StateFlow<FeedState> = _uiState.asStateFlow()
 
     init {
-        _uiState.update { it.copy(posts = LocalDataProvider.posts) }
+        loadFeed()
+    }
+
+    fun loadFeed() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            val result = reviewRepository.getAllReviewsAsFeed()
+            result.onSuccess { feedPosts ->
+                _uiState.update {
+                    it.copy(
+                        posts = if (feedPosts.isNotEmpty()) feedPosts else LocalDataProvider.posts,
+                        isLoading = false
+                    )
+                }
+            }.onFailure { error ->
+                _uiState.update {
+                    it.copy(
+                        posts = LocalDataProvider.posts,
+                        isLoading = false,
+                        errorMessage = error.localizedMessage
+                    )
+                }
+            }
+        }
     }
 
     fun onTabSelected(index: Int) {
