@@ -38,14 +38,15 @@ class ExploreViewModel @Inject constructor(
                         isLoading = false
                     )
                 }
-            }.onFailure {
+            }.onFailure { error ->
                 _uiState.update {
                     it.copy(
                         popularGames = LocalDataProvider.popularGames,
                         categories = LocalDataProvider.exploreCategories,
                         resultGames = LocalDataProvider.exploreResults,
                         selectedCategory = LocalDataProvider.exploreCategories.firstOrNull()?.name ?: "",
-                        isLoading = false
+                        isLoading = false,
+                        searchQuery = error.localizedMessage ?: "Error desconocido" // Hack para ver el error en pantalla
                     )
                 }
             }

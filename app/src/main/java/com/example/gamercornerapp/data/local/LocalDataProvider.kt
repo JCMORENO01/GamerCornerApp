@@ -24,6 +24,7 @@ object LocalDataProvider {
 
 
     val userProfile = UserProfile(
+        id = "1",
         username = "NightHunter",
         nickName = "@nighthunter_21",
         bio = "Vivo para los videojuegos 🎮",
@@ -39,6 +40,7 @@ object LocalDataProvider {
 
 
     val katanaGamerProfile = UserProfile(
+        id = "2",
         username = "KatanaGamer",
         nickName = "@katana_gamer",
         bio = "Fan de los souls-like 🗡️",

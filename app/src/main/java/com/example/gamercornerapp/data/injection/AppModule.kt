@@ -32,7 +32,7 @@ object AppModule {
     @Singleton
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://localhost:3000/")
+            .baseUrl("http://192.168.0.203:3000/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

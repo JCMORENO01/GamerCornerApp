@@ -29,8 +29,8 @@ class UserProfileViewModel @Inject constructor(
             val userResult = userRepository.getUserById(userId)
             val reviewsResult = reviewRepository.getReviewsByUser(userId)
 
-            val userProfile = userResult.getOrElse { LocalDataProvider.katanaGamerProfile }
-            val reviews = reviewsResult.getOrElse { LocalDataProvider.reviews }
+            val userProfile = userResult.getOrNull()
+            val reviews = reviewsResult.getOrElse { emptyList() }
 
             _uiState.update {
                 it.copy(

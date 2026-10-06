@@ -48,12 +48,12 @@ fun VideogameCoverImage(
                 .height(380.dp)
         ) {
 
-            Image(
-                painter = painterResource(
-                    id = game.image
-                ),
+            coil.compose.AsyncImage(
+                model = game.imageUrl,
                 contentDescription = game.title,
                 contentScale = ContentScale.Crop,
+                placeholder = painterResource(id = R.drawable.elden),
+                error = painterResource(id = R.drawable.elden),
                 modifier = Modifier.fillMaxSize()
             )
 

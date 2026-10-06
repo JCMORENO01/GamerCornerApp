@@ -24,12 +24,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.CircleShape
+import com.example.gamercornerapp.R
 import com.example.gamercornerapp.data.ReviewItem
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 @Composable
 fun VideogameCommentsSection(
     reviews: List<ReviewItem>,
+    onUserClick: (String) -> Unit, // Callback para navegar al usuario
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -54,7 +62,10 @@ fun VideogameCommentsSection(
         } else {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 reviews.forEach { review ->
-                    GameCommentCardItem(review = review)
+                    GameCommentCardItem(
+                        review = review,
+                        onUserClick = onUserClick
+                    )
                 }
             }
         }
@@ -64,6 +75,7 @@ fun VideogameCommentsSection(
 @Composable
 private fun GameCommentCardItem(
     review: ReviewItem,
+    onUserClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -83,7 +95,32 @@ private fun GameCommentCardItem(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable {
+                        onUserClick(review.authorId)
+                    }
+                ) {
+                    // Profile Image
+                    Image(
+                        painter = painterResource(id = if (review.authorImageId != 0) review.authorImageId else R.drawable.messi1),
+                        contentDescription = "Profile",
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    
+                    Text(
+                        text = review.authorName,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = 14.sp
+                    )
+                    
+                    Spacer(modifier = Modifier.width(8.dp))
+                    
                     Text(
                         text = review.rating.toString(),
                         fontWeight = FontWeight.Bold,
@@ -137,7 +174,8 @@ fun VideogameCommentsSectionPreview() {
                     gameImageId = 0,
                     description = "¡Excelente juego, totalmente recomendado!"
                 )
-            )
+            ),
+            onUserClick = {}
         )
     }
 }

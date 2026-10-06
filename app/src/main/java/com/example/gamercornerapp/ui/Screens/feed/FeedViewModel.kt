@@ -30,14 +30,14 @@ class FeedViewModel @Inject constructor(
             result.onSuccess { feedPosts ->
                 _uiState.update {
                     it.copy(
-                        posts = if (feedPosts.isNotEmpty()) feedPosts else LocalDataProvider.posts,
+                        posts = feedPosts, // Aquí quitamos el LocalDataProvider
                         isLoading = false
                     )
                 }
             }.onFailure { error ->
                 _uiState.update {
                     it.copy(
-                        posts = LocalDataProvider.posts,
+                        posts = emptyList(), // Si falla, mostramos lista vacía
                         isLoading = false,
                         errorMessage = error.localizedMessage
                     )

@@ -88,6 +88,7 @@ fun UserProfileScreenContent(
                     ProfileHeaderSection(
                         userProfile = profile,
                         isLoadingImage = false,
+                        isOwnProfile = false, // ¡Aquí está la clave!
                         onLogoutClick = {},
                         onImageSelected = {}
                     )

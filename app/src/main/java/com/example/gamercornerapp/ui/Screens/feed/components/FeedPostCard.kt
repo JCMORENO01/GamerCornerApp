@@ -76,13 +76,12 @@ fun FeedPostCard(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = painterResource(id = post.author.profileImageId),
-                    contentDescription = stringResource(
-                        id = R.string.user_profile_photo_description,
-                        post.author.username
-                    ),
+                coil.compose.AsyncImage(
+                    model = post.author.profilePictureUrl,
+                    contentDescription = stringResource(id = R.string.user_profile_photo_description, post.author.username),
                     contentScale = ContentScale.Crop,
+                    placeholder = painterResource(id = R.drawable.messi1),
+                    error = painterResource(id = R.drawable.messi1),
                     modifier = Modifier
                         .size(44.dp)
                         .clip(CircleShape)
@@ -124,13 +123,12 @@ fun FeedPostCard(
 
             // Contenido: portada del juego + información
             Row {
-                Image(
-                    painter = painterResource(id = post.game.image),
-                    contentDescription = stringResource(
-                        id = R.string.cd_game_cover,
-                        post.game.title
-                    ),
+                coil.compose.AsyncImage(
+                    model = post.game.imageUrl,
+                    contentDescription = stringResource(id = R.string.cd_game_cover, post.game.title),
                     contentScale = ContentScale.Crop,
+                    placeholder = painterResource(id = R.drawable.elden),
+                    error = painterResource(id = R.drawable.elden),
                     modifier = Modifier
                         .size(width = 78.dp, height = 100.dp)
                         .clip(RoundedCornerShape(10.dp))
@@ -270,6 +268,7 @@ fun FeedPostCardPreview() {
             post = FeedPost(
                 id = "1",
                 author = UserProfile(
+                    id = "u1",
                     username = "NightHunter",
                     nickName = "@nighthunter_21",
                     bio = "Vivo para los videojuegos 🎮",

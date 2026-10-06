@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,6 +37,7 @@ fun FeedScreen(
     FeedScreenContent(
         posts = uiState.posts,
         isLoading = uiState.isLoading,
+        errorMessage = uiState.errorMessage,
         selectedTabIndex = uiState.selectedTabIndex,
         onTabSelected = viewModel::onTabSelected,
         onGameClick = onGameClick,
@@ -48,6 +50,7 @@ fun FeedScreen(
 fun FeedScreenContent(
     posts: List<FeedPost>,
     isLoading: Boolean,
+    errorMessage: String?,
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit,
     onGameClick: (Int) -> Unit,
@@ -73,6 +76,16 @@ fun FeedScreenContent(
             ) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
+        } else if (posts.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = errorMessage ?: "No hay publicaciones",
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
         } else {
             LazyColumn(
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
@@ -85,7 +98,7 @@ fun FeedScreenContent(
                 ) { post ->
                     FeedPostCard(
                         post = post,
-                        onAuthorClick = { onUserClick(post.author.username) },
+                        onAuthorClick = { onUserClick(post.author.id) },
                         onCardClick = { onGameClick(post.game.id) }
                     )
                 }
@@ -101,6 +114,7 @@ fun FeedScreenPreview() {
         FeedScreenContent(
             posts = emptyList(),
             isLoading = false,
+            errorMessage = null,
             selectedTabIndex = 0,
             onTabSelected = {},
             onGameClick = {}

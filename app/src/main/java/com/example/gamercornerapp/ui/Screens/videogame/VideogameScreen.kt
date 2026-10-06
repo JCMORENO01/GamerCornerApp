@@ -44,6 +44,7 @@ fun VideogameScreen(
     onShareClick: () -> Unit = {},
     onSaveClick: () -> Unit = {},
     onWriteReviewClick: () -> Unit = {},
+    onUserClick: (String) -> Unit = {}, // Added callback
     modifier: Modifier = Modifier,
     viewModel: VideogameViewModel = hiltViewModel()
 ) {
@@ -68,6 +69,7 @@ fun VideogameScreen(
             onShareClick = onShareClick,
             onSaveClick = onSaveClick,
             onWriteReviewClick = onWriteReviewClick,
+            onUserClick = onUserClick,
             modifier = modifier
         )
     } else {
@@ -91,6 +93,7 @@ fun VideogameScreenContent(
     onShareClick: () -> Unit,
     onSaveClick: () -> Unit,
     onWriteReviewClick: () -> Unit,
+    onUserClick: (String) -> Unit, // Callback added
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -158,7 +161,10 @@ fun VideogameScreenContent(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            VideogameCommentsSection(reviews = reviews)
+            VideogameCommentsSection(
+                reviews = reviews,
+                onUserClick = onUserClick
+            )
         }
     }
 }
@@ -200,7 +206,8 @@ fun VideogameScreenPreview() {
             onBackClick = {},
             onShareClick = {},
             onSaveClick = {},
-            onWriteReviewClick = {}
+            onWriteReviewClick = {},
+            onUserClick = {}
         )
     }
 }

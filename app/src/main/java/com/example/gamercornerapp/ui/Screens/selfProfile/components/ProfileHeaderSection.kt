@@ -50,6 +50,7 @@ fun ProfileHeaderSection(
     userProfile: UserProfile,
     modifier: Modifier = Modifier,
     isLoadingImage: Boolean = false,
+    isOwnProfile: Boolean = true, // Added this flag
     onSettingsClick: () -> Unit = {},
     onLogoutClick: () -> Unit = {},
     onImageSelected: (Uri) -> Unit = {}
@@ -82,23 +83,25 @@ fun ProfileHeaderSection(
                     .clip(MaterialTheme.shapes.medium)
             )
 
-            IconButton(
-                onClick = onLogoutClick,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(16.dp)
-                    .size(36.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
-                        shape = CircleShape
-                    )
-            ) {
+            if (isOwnProfile) {
+                IconButton(
+                    onClick = onLogoutClick,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(16.dp)
+                        .size(36.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+                            shape = CircleShape
+                        )
+                ) {
 
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.Logout,
-                    contentDescription = "Cerrar sesión",
-                    tint = MaterialTheme.colorScheme.error
-                )
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.Logout,
+                        contentDescription = "Cerrar sesión",
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                }
             }
 
 
@@ -117,12 +120,14 @@ fun ProfileHeaderSection(
                             shape = CircleShape
                         )
                         .clip(CircleShape)
-                        .clickable(enabled = !isLoadingImage) {
-                            singlePhotoPickerLauncher.launch(
-                                PickVisualMediaRequest(
-                                    ActivityResultContracts.PickVisualMedia.ImageOnly
+                        .clickable(enabled = !isLoadingImage && isOwnProfile) {
+                            if (isOwnProfile) {
+                                singlePhotoPickerLauncher.launch(
+                                    PickVisualMediaRequest(
+                                        ActivityResultContracts.PickVisualMedia.ImageOnly
+                                    )
                                 )
-                            )
+                            }
                         }
                 )
 
@@ -218,6 +223,7 @@ fun ProfileHeaderSectionPreview() {
 
             ProfileHeaderSection(
                 userProfile = UserProfile(
+                    id = "u1",
                     username = "NightHunter",
                     nickName = "@nighthunter_21",
                     bio = "Vivo para los videojuegos 🎮",

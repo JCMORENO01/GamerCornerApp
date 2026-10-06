@@ -6,6 +6,7 @@ data class Game(
     val developer: String,
     val year: Int,
     val image: Int,
+    val imageUrl: String? = null, // CAMBIO: Nuevo campo para soportar URLs de internet
     val rating: Double = 0.0,
     val reviewsCount: Int = 0,
     val tags: List<String> = emptyList(),

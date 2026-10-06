@@ -235,6 +235,9 @@ fun AppNavigation(
                 },
                 onWriteReviewClick = {
                     navController.navigate(Screen.Review.createRoute(gameId))
+                },
+                onUserClick = { userId ->
+                    navController.navigate(Screen.UserProfile.createRoute(userId))
                 }
             )
         }
