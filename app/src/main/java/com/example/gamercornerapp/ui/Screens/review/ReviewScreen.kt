@@ -1,19 +1,32 @@
 package com.example.gamercornerapp.ui.Screens.review
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,15 +58,32 @@ fun ReviewScreen(
         viewModel.loadGame(gameId, reviewId, initialOpinion, initialRating)
     }
 
+    LaunchedEffect(uiState.isPublishSuccess) {
+        if (uiState.isPublishSuccess) {
+            onPublishClick()
+        }
+    }
+
     val game = uiState.game
 
-    if (game != null) {
+    if (uiState.isLoading && game == null) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+        }
+    } else if (game != null) {
         ReviewScreenContent(
             game = game,
             rating = uiState.rating,
             opinion = uiState.opinion,
             selectedTags = uiState.selectedTags,
             isLoading = uiState.isLoading,
+            errorMessage = uiState.errorMessage,
+            onErrorDismiss = viewModel::onErrorDismiss,
             onRatingChange = viewModel::onRatingChange,
             onOpinionChange = viewModel::onOpinionChange,
             onTagToggle = viewModel::onTagToggle,
@@ -63,7 +93,17 @@ fun ReviewScreen(
             modifier = modifier
         )
     } else {
-        Text(text = stringResource(id = R.string.error_game_not_found))
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = stringResource(id = R.string.error_game_not_found),
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        }
     }
 }
 
@@ -78,6 +118,8 @@ fun ReviewScreenContent(
     modifier: Modifier = Modifier,
     selectedTags: Set<String> = emptySet(),
     isLoading: Boolean = false,
+    errorMessage: String? = null,
+    onErrorDismiss: () -> Unit = {},
     onTagToggle: (String) -> Unit = {}
 ) {
     Column(
@@ -88,6 +130,39 @@ fun ReviewScreenContent(
             .padding(16.dp)
     ) {
         Spacer(modifier = Modifier.height(8.dp))
+
+        if (errorMessage != null) {
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer
+                ),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp)
+                    .clickable { onErrorDismiss() }
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = errorMessage,
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Cerrar",
+                        tint = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                }
+            }
+        }
 
         ReviewTitle()
 

@@ -4,7 +4,6 @@ import com.example.gamercornerapp.data.FeedPost
 import com.example.gamercornerapp.data.ReviewItem
 import com.example.gamercornerapp.data.datasource.GamerCornerRemoteDataSource
 import com.example.gamercornerapp.data.dto.CreateReviewDTO
-import com.example.gamercornerapp.data.dto.ReviewDTO
 import com.example.gamercornerapp.data.dto.toFeedPost
 import com.example.gamercornerapp.data.dto.toReviewItem
 import retrofit2.HttpException
@@ -54,21 +53,21 @@ class ReviewRepository @Inject constructor(
 
     suspend fun createReview(
         description: String,
-        rating: Int,
-        tags: List<String>,
+        rating: Float,
+        tags: List<String>?,
         userId: String = "1",
         gameId: String
-    ): Result<ReviewDTO> {
+    ): Result<Unit> {
         return try {
             val dto = CreateReviewDTO(
                 description = description,
-                rating = rating.toFloat(),
+                rating = rating,
                 tags = tags,
-                userId = userId,
-                gameId = gameId
+                userId = userId.toIntOrNull() ?: 1,
+                gameId = gameId.toIntOrNull() ?: 1
             )
-            val response = remoteDataSource.createReview(dto)
-            Result.success(response)
+            remoteDataSource.createReview(dto)
+            Result.success(Unit)
         } catch (e: HttpException) {
             Result.failure(Exception("Error de servidor (${e.code()}): ${e.message}"))
         } catch (e: Exception) {
@@ -79,21 +78,21 @@ class ReviewRepository @Inject constructor(
     suspend fun updateReview(
         reviewId: String,
         description: String,
-        rating: Int,
-        tags: List<String>,
+        rating: Float,
+        tags: List<String>?,
         userId: String = "1",
         gameId: String
-    ): Result<ReviewDTO> {
+    ): Result<Unit> {
         return try {
             val dto = CreateReviewDTO(
                 description = description,
-                rating = rating.toFloat(),
+                rating = rating,
                 tags = tags,
-                userId = userId,
-                gameId = gameId
+                userId = userId.toIntOrNull() ?: 1,
+                gameId = gameId.toIntOrNull() ?: 1
             )
-            val response = remoteDataSource.updateReview(reviewId, dto)
-            Result.success(response)
+            remoteDataSource.updateReview(reviewId, dto)
+            Result.success(Unit)
         } catch (e: HttpException) {
             Result.failure(Exception("Error de servidor (${e.code()}): ${e.message}"))
         } catch (e: Exception) {
@@ -101,10 +100,10 @@ class ReviewRepository @Inject constructor(
         }
     }
 
-    suspend fun deleteReview(reviewId: String): Result<Boolean> {
+    suspend fun deleteReview(reviewId: String): Result<Unit> {
         return try {
             remoteDataSource.deleteReview(reviewId)
-            Result.success(true)
+            Result.success(Unit)
         } catch (e: HttpException) {
             Result.failure(Exception("Error de servidor (${e.code()}): ${e.message}"))
         } catch (e: Exception) {

@@ -57,6 +57,10 @@ class ReviewViewModel @Inject constructor(
         }
     }
 
+    fun onErrorDismiss() {
+        _uiState.update { it.copy(errorMessage = null) }
+    }
+
     fun publishReview(gameId: Int, onComplete: () -> Unit) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
@@ -66,7 +70,7 @@ class ReviewViewModel @Inject constructor(
                 reviewRepository.updateReview(
                     reviewId = currentState.reviewId,
                     description = currentState.opinion,
-                    rating = currentState.rating,
+                    rating = currentState.rating.toFloat(),
                     tags = currentState.selectedTags.toList(),
                     userId = "1",
                     gameId = gameId.toString()
@@ -74,7 +78,7 @@ class ReviewViewModel @Inject constructor(
             } else {
                 reviewRepository.createReview(
                     description = currentState.opinion,
-                    rating = currentState.rating,
+                    rating = currentState.rating.toFloat(),
                     tags = currentState.selectedTags.toList(),
                     userId = "1",
                     gameId = gameId.toString()

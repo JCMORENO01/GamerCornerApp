@@ -31,16 +31,16 @@ class GamerCornerRemoteDataSourceImpl @Inject constructor(
         return service.getReviewsByUser(userId)
     }
 
-    override suspend fun createReview(review: CreateReviewDTO): ReviewDTO {
-        return service.createReview(review)
+    override suspend fun createReview(review: CreateReviewDTO) {
+        service.createReview(review)
     }
 
-    override suspend fun updateReview(reviewId: String, review: CreateReviewDTO): ReviewDTO {
-        return service.updateReview(reviewId, review)
+    override suspend fun updateReview(reviewId: String, review: CreateReviewDTO) {
+        service.updateReview(reviewId, review)
     }
 
-    override suspend fun deleteReview(reviewId: String): Any {
-        return service.deleteReview(reviewId)
+    override suspend fun deleteReview(reviewId: String) {
+        service.deleteReview(reviewId)
     }
 
     override suspend fun getUserById(userId: String): UserProfileDTO {

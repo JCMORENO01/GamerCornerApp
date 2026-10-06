@@ -11,8 +11,8 @@ interface GamerCornerRemoteDataSource {
     suspend fun getAllReviews(): List<ReviewDTO>
     suspend fun getReviewsByGame(gameId: String): List<ReviewDTO>
     suspend fun getReviewsByUser(userId: String): List<ReviewDTO>
-    suspend fun createReview(review: CreateReviewDTO): ReviewDTO
-    suspend fun updateReview(reviewId: String, review: CreateReviewDTO): ReviewDTO
-    suspend fun deleteReview(reviewId: String): Any
+    suspend fun createReview(review: CreateReviewDTO)
+    suspend fun updateReview(reviewId: String, review: CreateReviewDTO)
+    suspend fun deleteReview(reviewId: String)
     suspend fun getUserById(userId: String): UserProfileDTO
 }

@@ -4,6 +4,6 @@ data class CreateReviewDTO(
     val description: String,
     val rating: Float,
     val tags: List<String>? = emptyList(),
-    val userId: String,
-    val gameId: String
+    val userId: Int,
+    val gameId: Int
 )

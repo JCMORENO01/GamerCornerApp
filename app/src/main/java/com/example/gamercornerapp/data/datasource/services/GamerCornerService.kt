@@ -13,56 +13,44 @@ import retrofit2.http.Path
 
 interface GamerCornerService {
 
-    // ==========================================
-    // 1. HOME & ARTÍCULOS (GAMES)
-    // ==========================================
-
-    @GET("games")
+    @GET("api/games")
     suspend fun getGames(): List<GameDTO>
 
-    @GET("games/{id}")
+    @GET("api/games/{id}")
     suspend fun getGameById(
         @Path("id") gameId: String
     ): GameDTO
 
-    // ==========================================
-    // 2. REVIEWS (COMENTARIOS)
-    // ==========================================
-
-    @GET("reviews")
+    @GET("api/reviews")
     suspend fun getAllReviews(): List<ReviewDTO>
 
-    @GET("reviews/game/{gameId}")
+    @GET("api/reviews/game/{gameId}")
     suspend fun getReviewsByGame(
         @Path("gameId") gameId: String
     ): List<ReviewDTO>
 
-    @POST("reviews")
+    @POST("api/reviews")
     suspend fun createReview(
         @Body review: CreateReviewDTO
-    ): ReviewDTO
+    )
 
-    @PUT("reviews/{id}")
+    @PUT("api/reviews/{id}")
     suspend fun updateReview(
         @Path("id") reviewId: String,
         @Body review: CreateReviewDTO
-    ): ReviewDTO
+    )
 
-    @DELETE("reviews/{id}")
+    @DELETE("api/reviews/{id}")
     suspend fun deleteReview(
         @Path("id") reviewId: String
-    ): Any
+    )
 
-    // ==========================================
-    // 3. PERFIL DE USUARIO
-    // ==========================================
-
-    @GET("users/{id}")
+    @GET("api/users/{id}")
     suspend fun getUserById(
         @Path("id") userId: String
     ): UserProfileDTO
 
-    @GET("reviews/user/{userId}")
+    @GET("api/reviews/user/{userId}")
     suspend fun getReviewsByUser(
         @Path("userId") userId: String
     ): List<ReviewDTO>

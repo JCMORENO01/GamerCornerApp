@@ -139,6 +139,9 @@ fun AppNavigation(
                 viewModel = viewModel,
                 onGameClick = { gameId ->
                     navController.navigate(Screen.Videogame.createRoute(gameId))
+                },
+                onUserClick = { userId ->
+                    navController.navigate(Screen.UserProfile.createRoute(userId))
                 }
             )
         }
@@ -186,6 +189,16 @@ fun AppNavigation(
                     navController.navigate(Screen.Start.route) {
                         popUpTo(0) { inclusive = true }
                     }
+                },
+                onEditReviewClick = { review ->
+                    navController.navigate(
+                        Screen.Review.createRoute(
+                            gameId = 1,
+                            reviewId = review.id,
+                            opinion = review.description,
+                            rating = review.rating
+                        )
+                    )
                 }
             )
         }

@@ -9,5 +9,6 @@ data class ExploreState(
     val resultGames: List<Game> = emptyList(),
     val searchQuery: String = "",
     val selectedCategory: String = "",
-    val favoriteGameTitles: Set<String> = emptySet()
+    val favoriteGameTitles: Set<String> = emptySet(),
+    val isLoading: Boolean = false
 )

@@ -16,11 +16,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
@@ -43,7 +45,6 @@ import com.example.gamercornerapp.R
 import com.example.gamercornerapp.data.ReviewItem
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
-
 @Composable
 fun ProfileReviewsSection(
     reviews: List<ReviewItem>,
@@ -51,43 +52,33 @@ fun ProfileReviewsSection(
     onTabSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
     onSeeAllClick: () -> Unit = {},
-    onReviewClick: (ReviewItem) -> Unit = {}
+    onReviewClick: (ReviewItem) -> Unit = {},
+    onEditClick: ((ReviewItem) -> Unit)? = null,
+    onDeleteClick: ((ReviewItem) -> Unit)? = null
 ) {
-
     val tabs = listOf(
         stringResource(id = R.string.tab_reviews),
         stringResource(id = R.string.tab_saved)
     )
 
-
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
-
         PrimaryTabRow(
             selectedTabIndex = selectedTabIndex,
             containerColor = Color.Transparent,
             contentColor = MaterialTheme.colorScheme.primary,
             divider = {},
-
             indicator = {
-
                 TabRowDefaults.SecondaryIndicator(
-                    modifier = Modifier.tabIndicatorOffset(
-                        selectedTabIndex
-                    ),
+                    modifier = Modifier.tabIndicatorOffset(selectedTabIndex),
                     height = 3.dp,
                     color = MaterialTheme.colorScheme.primary
                 )
             }
         ) {
-
             tabs.forEachIndexed { index, title ->
-
-                val isSelected =
-                    selectedTabIndex == index
-
-
+                val isSelected = selectedTabIndex == index
                 val textColor by animateColorAsState(
                     targetValue = if (isSelected) {
                         MaterialTheme.colorScheme.primary
@@ -97,34 +88,21 @@ fun ProfileReviewsSection(
                     label = "tabTextColor"
                 )
 
-
                 Tab(
                     selected = isSelected,
-
-                    onClick = {
-                        onTabSelected(index)
-                    },
-
+                    onClick = { onTabSelected(index) },
                     modifier = Modifier.background(
                         if (isSelected) {
-                            MaterialTheme.colorScheme.primary.copy(
-                                alpha = 0.15f
-                            )
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
                         } else {
                             Color.Transparent
                         }
                     ),
-
                     text = {
-
                         Text(
                             text = title,
                             fontSize = 15.sp,
-                            fontWeight = if (isSelected) {
-                                FontWeight.Bold
-                            } else {
-                                FontWeight.Medium
-                            },
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                             color = textColor
                         )
                     }
@@ -132,21 +110,15 @@ fun ProfileReviewsSection(
             }
         }
 
-
-        Spacer(
-            modifier = Modifier.height(20.dp)
-        )
-
+        Spacer(modifier = Modifier.height(20.dp))
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             Text(
                 text = if (selectedTabIndex == 0) {
                     stringResource(id = R.string.title_recent_reviews)
@@ -160,79 +132,61 @@ fun ProfileReviewsSection(
                 fontSize = 12.sp
             )
 
-
             Text(
                 text = stringResource(id = R.string.btn_see_all),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 12.sp,
-                modifier = Modifier.clickable {
-                    onSeeAllClick()
-                }
+                modifier = Modifier.clickable { onSeeAllClick() }
             )
         }
 
+        Spacer(modifier = Modifier.height(12.dp))
 
-        Spacer(
-            modifier = Modifier.height(12.dp)
-        )
-
-
-        // Por cada review aparece una tarjeta
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-
             reviews.forEach { review ->
-
                 ReviewCardItem(
                     review = review,
-                    onClick = {
-                        onReviewClick(review)
-                    }
+                    onClick = { onReviewClick(review) },
+                    onEditClick = if (onEditClick != null) { { onEditClick(review) } } else null,
+                    onDeleteClick = if (onDeleteClick != null) { { onDeleteClick(review) } } else null
                 )
             }
         }
     }
 }
 
-
 @Composable
 private fun ReviewCardItem(
     review: ReviewItem,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onEditClick: (() -> Unit)? = null,
+    onDeleteClick: (() -> Unit)? = null
 ) {
-
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable {
-                onClick()
-            },
-
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-
         shape = RoundedCornerShape(18.dp)
     ) {
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp),
-
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             Image(
                 painter = painterResource(
-                    id = review.gameImageId
+                    id = if (review.gameImageId != 0) review.gameImageId else R.drawable.mini_elden
                 ),
                 contentDescription = stringResource(
                     id = R.string.cd_game_cover,
@@ -240,30 +194,17 @@ private fun ReviewCardItem(
                 ),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(
-                        width = 60.dp,
-                        height = 64.dp
-                    )
-                    .clip(
-                        RoundedCornerShape(12.dp)
-                    )
-                    .background(
-                        MaterialTheme.colorScheme.background
-                    )
+                    .size(width = 60.dp, height = 64.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(MaterialTheme.colorScheme.background)
             )
 
+            Spacer(modifier = Modifier.width(14.dp))
 
-            Spacer(
-                modifier = Modifier.width(14.dp)
-            )
-
-
-            // Informacion del juego
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.Center
             ) {
-
                 Text(
                     text = review.gameTitle,
                     style = MaterialTheme.typography.titleMedium,
@@ -272,17 +213,9 @@ private fun ReviewCardItem(
                     fontSize = 15.sp
                 )
 
+                Spacer(modifier = Modifier.height(4.dp))
 
-                Spacer(
-                    modifier = Modifier.height(4.dp)
-                )
-
-
-                // Calificacion
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = review.rating.toString(),
                         fontWeight = FontWeight.Bold,
@@ -290,18 +223,10 @@ private fun ReviewCardItem(
                         fontSize = 14.sp
                     )
 
+                    Spacer(modifier = Modifier.width(4.dp))
 
-                    Spacer(
-                        modifier = Modifier.width(4.dp)
-                    )
-
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         repeat(review.rating) {
-
                             Icon(
                                 imageVector = Icons.Default.Star,
                                 contentDescription = stringResource(id = R.string.cd_score),
@@ -312,11 +237,7 @@ private fun ReviewCardItem(
                     }
                 }
 
-
-                Spacer(
-                    modifier = Modifier.height(4.dp)
-                )
-
+                Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
                     text = review.relativeDate,
@@ -326,58 +247,50 @@ private fun ReviewCardItem(
                 )
             }
 
+            if (onEditClick != null) {
+                IconButton(onClick = onEditClick) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Editar Reseña",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
 
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = stringResource(id = R.string.cd_go_to_detail),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(20.dp)
-            )
+            if (onDeleteClick != null) {
+                IconButton(onClick = onDeleteClick) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Eliminar Reseña",
+                        tint = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
         }
     }
 }
 
-
-@Preview(
-    showBackground = true,
-    name = "Profile Reviews Dark"
-)
+@Preview(showBackground = true, name = "Profile Reviews Dark")
 @Composable
 fun ProfileReviewsSectionPreview() {
-
-    GamerCornerAppTheme(
-        darkTheme = true
-    ) {
-
+    GamerCornerAppTheme(darkTheme = true) {
         Box(
             modifier = Modifier
-                .background(
-                    MaterialTheme.colorScheme.background
-                )
+                .background(MaterialTheme.colorScheme.background)
                 .padding(vertical = 16.dp)
         ) {
-
             val mockReviews = listOf(
-
                 ReviewItem(
                     id = "1",
                     gameTitle = "Elden Ring",
                     rating = 5,
                     relativeDate = "Hace 2 días",
                     gameImageId = R.drawable.mini_elden,
-                    description = "Un juego increible..."
-                ),
-
-                ReviewItem(
-                    id = "2",
-                    gameTitle = "Cyberpunk",
-                    rating = 4,
-                    relativeDate = "Hace 1 semana",
-                    gameImageId = R.drawable.cyberpunk,
-                    description = "Una gran historia..."
+                    description = "Un juego increíble..."
                 )
             )
-
 
             ProfileReviewsSection(
                 reviews = mockReviews,

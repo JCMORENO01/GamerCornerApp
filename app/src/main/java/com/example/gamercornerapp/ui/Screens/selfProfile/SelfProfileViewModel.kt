@@ -58,7 +58,6 @@ class SelfProfileViewModel @Inject constructor(
     fun deleteReview(reviewId: String) {
         viewModelScope.launch {
             reviewRepository.deleteReview(reviewId).onSuccess {
-                // Filter deleted review out
                 _uiState.update { state ->
                     state.copy(reviews = state.reviews.filterNot { it.id == reviewId })
                 }

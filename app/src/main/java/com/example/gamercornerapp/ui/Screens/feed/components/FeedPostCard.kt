@@ -41,17 +41,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gamercornerapp.R
-import com.example.gamercornerapp.ui.componentes.AppChip
 import com.example.gamercornerapp.data.FeedPost
 import com.example.gamercornerapp.data.Game
 import com.example.gamercornerapp.data.UserProfile
 import com.example.gamercornerapp.data.UserStats
+import com.example.gamercornerapp.ui.componentes.AppChip
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
-
 
 @Composable
 fun FeedPostCard(
     post: FeedPost,
+    onAuthorClick: () -> Unit = { },
     onLikeClick: () -> Unit = { },
     onCommentClick: () -> Unit = { },
     onShareClick: () -> Unit = { },
@@ -60,64 +60,48 @@ fun FeedPostCard(
     onCardClick: () -> Unit = { },
     modifier: Modifier = Modifier
 ) {
-
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable {
-                onCardClick()
-            },
-
+            .clickable { onCardClick() },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-
         shape = RoundedCornerShape(18.dp)
     ) {
-
         Column(
             modifier = Modifier.padding(14.dp)
         ) {
-
-            // Encabezado: avatar, usuario, tiempo y menu
+            // Encabezado: avatar, usuario, tiempo y menú
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
                 Image(
-                    painter = painterResource(
-                        id = post.author.profileImageId
-                    ),
-
+                    painter = painterResource(id = post.author.profileImageId),
                     contentDescription = stringResource(
                         id = R.string.user_profile_photo_description,
                         post.author.username
                     ),
-
                     contentScale = ContentScale.Crop,
-
                     modifier = Modifier
                         .size(44.dp)
                         .clip(CircleShape)
+                        .clickable { onAuthorClick() }
                 )
 
-
-                Spacer(
-                    modifier = Modifier.width(10.dp)
-                )
-
+                Spacer(modifier = Modifier.width(10.dp))
 
                 Column(
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable { onAuthorClick() }
                 ) {
-
                     Text(
                         text = post.author.username,
                         color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold
                     )
-
 
                     Text(
                         text = post.relativeTime,
@@ -126,64 +110,38 @@ fun FeedPostCard(
                     )
                 }
 
-
                 Icon(
                     imageVector = Icons.Default.MoreVert,
                     contentDescription = stringResource(id = R.string.cd_more_options),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-
                     modifier = Modifier
                         .size(20.dp)
-                        .clickable {
-                            onMoreClick()
-                        }
+                        .clickable { onMoreClick() }
                 )
             }
 
+            Spacer(modifier = Modifier.height(12.dp))
 
-            Spacer(
-                modifier = Modifier.height(12.dp)
-            )
-
-
-            // Contenido: portada del juego + informacion
+            // Contenido: portada del juego + información
             Row {
-
                 Image(
-                    painter = painterResource(
-                        id = post.game.image
-                    ),
-
+                    painter = painterResource(id = post.game.image),
                     contentDescription = stringResource(
                         id = R.string.cd_game_cover,
                         post.game.title
                     ),
-
                     contentScale = ContentScale.Crop,
-
                     modifier = Modifier
-                        .size(
-                            width = 78.dp,
-                            height = 100.dp
-                        )
-                        .clip(
-                            RoundedCornerShape(10.dp)
-                        )
-                        .background(
-                            MaterialTheme.colorScheme.background
-                        )
+                        .size(width = 78.dp, height = 100.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(MaterialTheme.colorScheme.background)
                 )
 
-
-                Spacer(
-                    modifier = Modifier.width(12.dp)
-                )
-
+                Spacer(modifier = Modifier.width(12.dp))
 
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
-
                     Text(
                         text = post.game.title,
                         color = MaterialTheme.colorScheme.onSurface,
@@ -191,16 +149,9 @@ fun FeedPostCard(
                         fontWeight = FontWeight.Bold
                     )
 
+                    Spacer(modifier = Modifier.height(4.dp))
 
-                    Spacer(
-                        modifier = Modifier.height(4.dp)
-                    )
-
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = post.rating.toString(),
                             color = MaterialTheme.colorScheme.tertiary,
@@ -208,16 +159,10 @@ fun FeedPostCard(
                             fontWeight = FontWeight.Bold
                         )
 
-
-                        Spacer(
-                            modifier = Modifier.width(4.dp)
-                        )
-
+                        Spacer(modifier = Modifier.width(4.dp))
 
                         Row {
-
                             repeat(5) {
-
                                 Icon(
                                     imageVector = Icons.Default.Star,
                                     contentDescription = null,
@@ -228,11 +173,7 @@ fun FeedPostCard(
                         }
                     }
 
-
-                    Spacer(
-                        modifier = Modifier.height(6.dp)
-                    )
-
+                    Spacer(modifier = Modifier.height(6.dp))
 
                     Text(
                         text = post.description,
@@ -243,28 +184,15 @@ fun FeedPostCard(
                         lineHeight = 17.sp
                     )
 
-
                     if (post.tags.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(10.dp))
 
-                        Spacer(
-                            modifier = Modifier.height(10.dp)
-                        )
-
-
-                        Row(
-                            horizontalArrangement =
-                                Arrangement.spacedBy(8.dp)
-                        ) {
-
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             post.tags.forEach { tag ->
-
                                 AppChip(
                                     text = tag,
                                     modifier = Modifier.height(30.dp),
-
-                                    backgroundColor =
-                                        MaterialTheme.colorScheme.secondary
-                                            .copy(alpha = 0.35f)
+                                    backgroundColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.35f)
                                 )
                             }
                         }
@@ -272,41 +200,21 @@ fun FeedPostCard(
                 }
             }
 
-
-            Spacer(
-                modifier = Modifier.height(14.dp)
-            )
-
+            Spacer(modifier = Modifier.height(14.dp))
 
             // Acciones: like, comentarios, compartir y guardar
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
                 Icon(
-                    imageVector = if (post.isLiked) {
-                        Icons.Default.Favorite
-                    } else {
-                        Icons.Default.FavoriteBorder
-                    },
-
+                    imageVector = if (post.isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                     contentDescription = stringResource(id = R.string.cd_like),
-
                     tint = MaterialTheme.colorScheme.primary,
-
-                    modifier = Modifier
-                        .size(20.dp)
-                        .clickable {
-                            onLikeClick()
-                        }
+                    modifier = Modifier.size(20.dp).clickable { onLikeClick() }
                 )
 
-
-                Spacer(
-                    modifier = Modifier.width(6.dp)
-                )
-
+                Spacer(modifier = Modifier.width(6.dp))
 
                 Text(
                     text = post.likesCount.toString(),
@@ -315,29 +223,16 @@ fun FeedPostCard(
                     fontWeight = FontWeight.Medium
                 )
 
-
-                Spacer(
-                    modifier = Modifier.width(20.dp)
-                )
-
+                Spacer(modifier = Modifier.width(20.dp))
 
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.Chat,
                     contentDescription = stringResource(id = R.string.cd_comments),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-
-                    modifier = Modifier
-                        .size(18.dp)
-                        .clickable {
-                            onCommentClick()
-                        }
+                    modifier = Modifier.size(18.dp).clickable { onCommentClick() }
                 )
 
-
-                Spacer(
-                    modifier = Modifier.width(6.dp)
-                )
-
+                Spacer(modifier = Modifier.width(6.dp))
 
                 Text(
                     text = post.commentsCount.toString(),
@@ -345,111 +240,52 @@ fun FeedPostCard(
                     fontSize = 13.sp
                 )
 
-
-                Spacer(
-                    modifier = Modifier.width(20.dp)
-                )
-
+                Spacer(modifier = Modifier.width(20.dp))
 
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.Send,
                     contentDescription = stringResource(id = R.string.cd_share),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-
-                    modifier = Modifier
-                        .size(18.dp)
-                        .clickable {
-                            onShareClick()
-                        }
+                    modifier = Modifier.size(18.dp).clickable { onShareClick() }
                 )
 
-
-                Spacer(
-                    modifier = Modifier.weight(1f)
-                )
-
+                Spacer(modifier = Modifier.weight(1f))
 
                 Icon(
-                    imageVector = if (post.isBookmarked) {
-                        Icons.Default.Bookmark
-                    } else {
-                        Icons.Default.BookmarkBorder
-                    },
-
+                    imageVector = if (post.isBookmarked) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
                     contentDescription = stringResource(id = R.string.cd_bookmark),
-
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-
-                    modifier = Modifier
-                        .size(20.dp)
-                        .clickable {
-                            onBookmarkClick()
-                        }
+                    modifier = Modifier.size(20.dp).clickable { onBookmarkClick() }
                 )
             }
         }
     }
 }
 
-
-@Preview(
-    showBackground = true,
-    name = "Feed Post Card"
-)
+@Preview(showBackground = true, name = "Feed Post Card")
 @Composable
 fun FeedPostCardPreview() {
-
-    GamerCornerAppTheme(
-        darkTheme = true
-    ) {
-
+    GamerCornerAppTheme(darkTheme = true) {
         FeedPostCard(
             post = FeedPost(
-
                 id = "1",
-
                 author = UserProfile(
                     username = "NightHunter",
                     nickName = "@nighthunter_21",
                     bio = "Vivo para los videojuegos 🎮",
-                    profileBackgroundId =
-                        R.drawable.background_maquinitas,
-                    profileBgDescription =
-                        "Imagen de monitores",
-                    profileImageId =
-                        R.drawable.messi1,
-
-                    stats = UserStats(
-                        reviewsCount = 128,
-                        followersCount = 342,
-                        followingCount = 176
-                    )
+                    profileBackgroundId = R.drawable.background_maquinitas,
+                    profileBgDescription = "Imagen de monitores",
+                    profileImageId = R.drawable.messi1,
+                    stats = UserStats(reviewsCount = 128, followersCount = 342, followingCount = 176)
                 ),
-
                 relativeTime = "Hace 2 horas",
-
-                game = Game(
-                    id = 2,
-                    title = "Elden Ring",
-                    developer = "FromSoftware",
-                    year = 2022,
-                    image = R.drawable.mini_elden
-                ),
-
+                game = Game(id = 2, title = "Elden Ring", developer = "FromSoftware", year = 2022, image = R.drawable.mini_elden),
                 rating = 4.8,
-
-                description =
-                    "Simplemente una obra maestra. El mundo, la historia, los jefes... Todo aquí te reta y te recompensa. Inolvidable.",
-
-                tags = listOf(
-                    "RPG",
-                    "Mundo Abierto"
-                ),
-
+                description = "Una obra maestra.",
+                tags = listOf("RPG", "Mundo Abierto"),
                 likesCount = 256,
                 commentsCount = 42
             ),
-
             modifier = Modifier.padding(16.dp)
         )
     }
