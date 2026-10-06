@@ -2,7 +2,6 @@ package com.example.gamercornerapp.ui.Screens.videogame
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.gamercornerapp.data.local.LocalDataProvider
 import com.example.gamercornerapp.data.repository.GameRepository
 import com.example.gamercornerapp.data.repository.ReviewRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,30 +20,54 @@ class VideogameViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(VideogameState())
     val uiState: StateFlow<VideogameState> = _uiState.asStateFlow()
 
-    fun loadGame(gameId: Int) {
+    fun loadGame(gameId: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
 
-            val gameResult = gameRepository.getGameById(gameId.toString())
-            val reviewResult = reviewRepository.getReviewsByGame(gameId.toString())
+            val gameResult = gameRepository.getGameById(gameId)
+            val reviewsResult = reviewRepository.getReviewsByGame(gameId)
 
-            val game = gameResult.getOrElse { LocalDataProvider.getGameById(gameId) }
-            val reviews = reviewResult.getOrElse { LocalDataProvider.reviews }
+            if (gameResult.isSuccess && reviewsResult.isSuccess) {
+                val game = gameResult.getOrNull()
+                val reviews = reviewsResult.getOrNull()
 
-            _uiState.update {
-                it.copy(
-                    game = game,
-                    reviews = reviews,
-                    isLoading = false
-                )
+                if (game != null && reviews != null) {
+                    _uiState.update {
+                        it.copy(
+                            game = game,
+                            reviews = reviews,
+                            isLoading = false,
+                            error = null
+                        )
+                    }
+                }
+            } else {
+                val error = gameResult.exceptionOrNull() ?: reviewsResult.exceptionOrNull()
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = error?.localizedMessage
+                    )
+                }
             }
         }
     }
 
-    fun deleteReview(reviewId: String, gameId: Int) {
+    fun deleteReview(reviewId: String) {
         viewModelScope.launch {
-            reviewRepository.deleteReview(reviewId).onSuccess {
-                loadGame(gameId)
+            val result = reviewRepository.deleteReview(reviewId)
+            if (result.isSuccess) {
+                _uiState.update { state ->
+                    val newReviews = mutableListOf<com.example.gamercornerapp.data.ReviewItem>()
+                    for (review in state.reviews) {
+                        if (review.id != reviewId) {
+                            newReviews.add(review)
+                        }
+                    }
+                    state.copy(reviews = newReviews)
+                }
+            } else {
+                _uiState.update { it.copy(error = result.exceptionOrNull()?.localizedMessage) }
             }
         }
     }

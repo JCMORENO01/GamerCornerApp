@@ -27,19 +27,20 @@ class FeedViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             val result = reviewRepository.getAllReviewsAsFeed()
-            result.onSuccess { feedPosts ->
+            if (result.isSuccess) {
+                val feedPosts = result.getOrNull() ?: emptyList()
                 _uiState.update {
                     it.copy(
                         posts = feedPosts, // Aquí quitamos el LocalDataProvider
                         isLoading = false
                     )
                 }
-            }.onFailure { error ->
+            } else {
                 _uiState.update {
                     it.copy(
                         posts = emptyList(), // Si falla, mostramos lista vacía
                         isLoading = false,
-                        errorMessage = error.localizedMessage
+                        errorMessage = result.exceptionOrNull()?.localizedMessage
                     )
                 }
             }

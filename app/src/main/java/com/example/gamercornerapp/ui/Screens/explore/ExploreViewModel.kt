@@ -28,7 +28,8 @@ class ExploreViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             val result = gameRepository.getGames()
-            result.onSuccess { games ->
+            if (result.isSuccess) {
+                val games = result.getOrNull() ?: emptyList()
                 _uiState.update {
                     it.copy(
                         popularGames = if (games.isNotEmpty()) games else LocalDataProvider.popularGames,
@@ -38,7 +39,8 @@ class ExploreViewModel @Inject constructor(
                         isLoading = false
                     )
                 }
-            }.onFailure { error ->
+            } else {
+                val error = result.exceptionOrNull()
                 _uiState.update {
                     it.copy(
                         popularGames = LocalDataProvider.popularGames,
@@ -46,7 +48,7 @@ class ExploreViewModel @Inject constructor(
                         resultGames = LocalDataProvider.exploreResults,
                         selectedCategory = LocalDataProvider.exploreCategories.firstOrNull()?.name ?: "",
                         isLoading = false,
-                        searchQuery = error.localizedMessage ?: "Error desconocido" // Hack para ver el error en pantalla
+                        searchQuery = error?.localizedMessage ?: "Error desconocido" // Hack para ver el error en pantalla
                     )
                 }
             }

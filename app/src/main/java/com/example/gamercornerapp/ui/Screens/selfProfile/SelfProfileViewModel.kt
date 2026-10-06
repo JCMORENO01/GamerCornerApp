@@ -3,7 +3,6 @@ package com.example.gamercornerapp.ui.Screens.selfProfile
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.gamercornerapp.data.local.LocalDataProvider
 import com.example.gamercornerapp.data.repository.AuthRepository
 import com.example.gamercornerapp.data.repository.ReviewRepository
 import com.example.gamercornerapp.data.repository.StorageRepository
@@ -32,35 +31,57 @@ class SelfProfileViewModel @Inject constructor(
 
     fun loadSelfProfile() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoadingImage = true, errorMessage = null) }
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
             val userResult = userRepository.getUserById("1")
             val reviewsResult = reviewRepository.getReviewsByUser("1")
 
-            val currentPhotoUrl = authRepository.currentUser?.photoUrl?.toString()
-            val userProfile = userResult.getOrElse { LocalDataProvider.userProfile }
-            val reviews = reviewsResult.getOrElse { LocalDataProvider.reviews }
+            if (userResult.isSuccess && reviewsResult.isSuccess) {
+                var userProfile = userResult.getOrNull()
+                val reviews = reviewsResult.getOrNull()
 
-            val finalProfile = userProfile.copy(
-                profilePictureUrl = currentPhotoUrl ?: userProfile.profilePictureUrl
-            )
+                val currentPhotoUrl = authRepository.currentUser?.photoUrl?.toString()
+                if (currentPhotoUrl != null && userProfile != null) {
+                    userProfile = userProfile.copy(profilePictureUrl = currentPhotoUrl)
+                }
 
-            _uiState.update {
-                it.copy(
-                    userProfile = finalProfile,
-                    reviews = reviews,
-                    isLoadingImage = false
-                )
+                if (userProfile != null && reviews != null) {
+                    _uiState.update {
+                        it.copy(
+                            userProfile = userProfile,
+                            reviews = reviews,
+                            isLoading = false,
+                            errorMessage = null
+                        )
+                    }
+                }
+            } else {
+                val error = userResult.exceptionOrNull() ?: reviewsResult.exceptionOrNull()
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = error?.localizedMessage
+                    )
+                }
             }
         }
     }
 
     fun deleteReview(reviewId: String) {
         viewModelScope.launch {
-            reviewRepository.deleteReview(reviewId).onSuccess {
+            val result = reviewRepository.deleteReview(reviewId)
+            if (result.isSuccess) {
                 _uiState.update { state ->
-                    state.copy(reviews = state.reviews.filterNot { it.id == reviewId })
+                    val newReviews = mutableListOf<com.example.gamercornerapp.data.ReviewItem>()
+                    for (review in state.reviews) {
+                        if (review.id != reviewId) {
+                            newReviews.add(review)
+                        }
+                    }
+                    state.copy(reviews = newReviews)
                 }
+            } else {
+                _uiState.update { it.copy(errorMessage = result.exceptionOrNull()?.localizedMessage) }
             }
         }
     }
@@ -76,9 +97,9 @@ class SelfProfileViewModel @Inject constructor(
     fun uploadImageToFirebase(uri: Uri) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoadingImage = true, errorMessage = null) }
-            val result = storageRepository.uploadProfileImage(uri)
-
-            result.onSuccess { downloadUrl ->
+            val uploadResult = storageRepository.uploadProfileImage(uri)
+            if (uploadResult.isSuccess) {
+                val downloadUrl = uploadResult.getOrNull()!!
                 authRepository.updateProfilePicture(downloadUrl)
 
                 _uiState.update { currentState ->
@@ -89,14 +110,14 @@ class SelfProfileViewModel @Inject constructor(
                         )
                     )
                 }
-            }.onFailure { error ->
-                val errorMsg = when {
-                    error.message?.contains("unauthenticated", ignoreCase = true) == true ->
-                        "Error: Usuario no autenticado. Inicia sesión nuevamente."
-                    error.message?.contains("quota", ignoreCase = true) == true || error.message?.contains("plan", ignoreCase = true) == true ->
-                        "Error de almacenamiento: Se requiere configurar el plan de Firebase Storage."
-                    else ->
-                        "Error al subir imagen: ${error.localizedMessage ?: "Verifica tu conexión e intenta de nuevo."}"
+            } else {
+                val error = uploadResult.exceptionOrNull()
+                val errorMsg = if (error?.message?.contains("unauthenticated", ignoreCase = true) == true) {
+                    "Error: Usuario no autenticado. Inicia sesión nuevamente."
+                } else if (error?.message?.contains("quota", ignoreCase = true) == true || error?.message?.contains("plan", ignoreCase = true) == true) {
+                    "Error de almacenamiento: Se requiere configurar el plan de Firebase Storage."
+                } else {
+                    "Error al subir imagen: ${error?.localizedMessage ?: "Verifica tu conexión e intenta de nuevo."}"
                 }
                 _uiState.update { currentState ->
                     currentState.copy(

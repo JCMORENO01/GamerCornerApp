@@ -30,5 +30,8 @@ data class ReviewItem (
     val tags: List<String> = emptyList(), //la idea es que al presionar el + el usuario pueda escribir y agregar su propia etiqueta
     val authorId: String = "1", // NEW FIELD
     val authorName: String = "Usuario",
-    val authorImageId: Int = 0 // Add these fields to display author in Game Detail
+    val authorImageId: Int = 0, // Add these fields to display author in Game Detail
+    val gameId: String = "1",
+    val gameImageUrl: String? = null,
+    val authorImageUrl: String? = null
 )

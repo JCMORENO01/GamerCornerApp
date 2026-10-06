@@ -2,7 +2,6 @@ package com.example.gamercornerapp.ui.Screens.review
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.gamercornerapp.data.local.LocalDataProvider
 import com.example.gamercornerapp.data.repository.GameRepository
 import com.example.gamercornerapp.data.repository.ReviewRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,19 +20,30 @@ class ReviewViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ReviewState())
     val uiState: StateFlow<ReviewState> = _uiState.asStateFlow()
 
-    fun loadGame(gameId: Int, reviewId: String? = null, initialOpinion: String? = null, initialRating: Int? = null) {
+    fun loadGame(gameId: String, reviewId: String? = null, initialOpinion: String? = null, initialRating: Int? = null) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null, reviewId = reviewId) }
-            val gameResult = gameRepository.getGameById(gameId.toString())
-            val game = gameResult.getOrElse { LocalDataProvider.getGameById(gameId) }
-
-            _uiState.update {
-                it.copy(
-                    game = game,
-                    opinion = initialOpinion ?: it.opinion,
-                    rating = initialRating ?: it.rating,
-                    isLoading = false
-                )
+            val result = gameRepository.getGameById(gameId)
+            if (result.isSuccess) {
+                val game = result.getOrNull()
+                if (game != null) {
+                    _uiState.update {
+                        it.copy(
+                            game = game,
+                            opinion = initialOpinion ?: it.opinion,
+                            rating = initialRating ?: it.rating,
+                            isLoading = false,
+                            errorMessage = null
+                        )
+                    }
+                }
+            } else {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = result.exceptionOrNull()?.localizedMessage
+                    )
+                }
             }
         }
     }
@@ -61,7 +71,7 @@ class ReviewViewModel @Inject constructor(
         _uiState.update { it.copy(errorMessage = null) }
     }
 
-    fun publishReview(gameId: Int, onComplete: () -> Unit) {
+    fun publishReview(gameId: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             val currentState = _uiState.value
@@ -73,7 +83,7 @@ class ReviewViewModel @Inject constructor(
                     rating = currentState.rating.toFloat(),
                     tags = currentState.selectedTags.toList(),
                     userId = "1",
-                    gameId = gameId.toString()
+                    gameId = gameId
                 )
             } else {
                 reviewRepository.createReview(
@@ -81,15 +91,14 @@ class ReviewViewModel @Inject constructor(
                     rating = currentState.rating.toFloat(),
                     tags = currentState.selectedTags.toList(),
                     userId = "1",
-                    gameId = gameId.toString()
+                    gameId = gameId
                 )
             }
 
-            result.onSuccess {
+            if (result.isSuccess) {
                 _uiState.update { it.copy(isLoading = false, isPublishSuccess = true) }
-                onComplete()
-            }.onFailure { error ->
-                _uiState.update { it.copy(isLoading = false, errorMessage = error.localizedMessage) }
+            } else {
+                _uiState.update { it.copy(isLoading = false, errorMessage = result.exceptionOrNull()?.localizedMessage) }
             }
         }
     }

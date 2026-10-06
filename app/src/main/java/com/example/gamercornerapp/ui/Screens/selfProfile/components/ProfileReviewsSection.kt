@@ -184,20 +184,35 @@ private fun ReviewCardItem(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(
-                    id = if (review.gameImageId != 0) review.gameImageId else R.drawable.mini_elden
-                ),
-                contentDescription = stringResource(
-                    id = R.string.cd_game_cover,
-                    review.gameTitle
-                ),
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(width = 60.dp, height = 64.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.background)
-            )
+            if (review.gameImageUrl != null) {
+                coil.compose.AsyncImage(
+                    model = review.gameImageUrl,
+                    contentDescription = stringResource(
+                        id = R.string.cd_game_cover,
+                        review.gameTitle
+                    ),
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(width = 60.dp, height = 64.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.background)
+                )
+            } else {
+                Image(
+                    painter = painterResource(
+                        id = if (review.gameImageId != 0) review.gameImageId else R.drawable.mini_elden
+                    ),
+                    contentDescription = stringResource(
+                        id = R.string.cd_game_cover,
+                        review.gameTitle
+                    ),
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(width = 60.dp, height = 64.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.background)
+                )
+            }
 
             Spacer(modifier = Modifier.width(14.dp))
 

@@ -15,12 +15,9 @@ class GameRepository @Inject constructor(
     suspend fun getGames(): Result<List<Game>> {
         return try {
             val dtos = remoteDataSource.getGames()
-            val games = dtos.map { it.toGame() }
-            Result.success(games)
-        } catch (e: HttpException) {
-            Result.failure(Exception("Error de servidor (${e.code()}): ${e.message()}"))
+            Result.success(dtos.map { it.toGame() })
         } catch (e: Exception) {
-            Result.failure(Exception("Error de conexión: ${e.localizedMessage}"))
+            Result.failure(e)
         }
     }
 
@@ -28,10 +25,8 @@ class GameRepository @Inject constructor(
         return try {
             val dto = remoteDataSource.getGameById(gameId)
             Result.success(dto.toGame())
-        } catch (e: HttpException) {
-            Result.failure(Exception("Error de servidor (${e.code()}): ${e.message()}"))
         } catch (e: Exception) {
-            Result.failure(Exception("Error de conexión: ${e.localizedMessage}"))
+            Result.failure(e)
         }
     }
 }

@@ -100,9 +100,10 @@ class RegisterViewModel @Inject constructor(
 
         viewModelScope.launch {
             val result = authRepository.signUp(currentState.email, currentState.password)
-            result.onSuccess {
+            if (result.isSuccess) {
                 _uiState.update { it.copy(showError = false, navigateToFeed = true) }
-            }.onFailure { error ->
+            } else {
+                val error = result.exceptionOrNull()
                 val errorRes = when (error) {
                     is com.google.firebase.auth.FirebaseAuthUserCollisionException ->
                         R.string.error_email_already_registered

@@ -7,5 +7,6 @@ data class FollowerItem(
     val username: String,
     val handle: String,
     @DrawableRes val avatarImage: Int,
+    val avatarUrl: String? = null,
     val isFollowing: Boolean
 )

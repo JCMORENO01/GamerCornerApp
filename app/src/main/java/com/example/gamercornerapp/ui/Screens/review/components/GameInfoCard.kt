@@ -113,7 +113,7 @@ fun GameInfoCard(
 fun GameInfoCardPreview() {
 
     val game = Game(
-        id = 4,
+        id = "4",
         title = "Elden Ring",
         developer = "FromSoftware",
         year = 2022,

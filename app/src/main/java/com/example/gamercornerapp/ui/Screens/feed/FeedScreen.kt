@@ -27,7 +27,7 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 @Composable
 fun FeedScreen(
-    onGameClick: (Int) -> Unit,
+    onGameClick: (String) -> Unit,
     onUserClick: (String) -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: FeedViewModel = hiltViewModel()
@@ -53,7 +53,7 @@ fun FeedScreenContent(
     errorMessage: String?,
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit,
-    onGameClick: (Int) -> Unit,
+    onGameClick: (String) -> Unit,
     onUserClick: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {

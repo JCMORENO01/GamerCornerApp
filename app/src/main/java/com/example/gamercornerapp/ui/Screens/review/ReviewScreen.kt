@@ -44,7 +44,7 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 @Composable
 fun ReviewScreen(
-    gameId: Int,
+    gameId: String,
     reviewId: String? = null,
     initialOpinion: String? = null,
     initialRating: Int? = null,
@@ -88,7 +88,7 @@ fun ReviewScreen(
             onOpinionChange = viewModel::onOpinionChange,
             onTagToggle = viewModel::onTagToggle,
             onPublishClick = {
-                viewModel.publishReview(gameId, onPublishClick)
+                viewModel.publishReview(gameId)
             },
             modifier = modifier
         )
@@ -100,7 +100,7 @@ fun ReviewScreen(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = stringResource(id = R.string.error_game_not_found),
+                text = uiState.errorMessage ?: stringResource(id = R.string.error_game_not_found),
                 color = MaterialTheme.colorScheme.onBackground
             )
         }
@@ -204,7 +204,7 @@ fun ReviewScreenEldenRingPreview() {
     GamerCornerAppTheme(darkTheme = true) {
         ReviewScreenContent(
             game = Game(
-                id = 1,
+                id = "1",
                 title = "Elden Ring",
                 developer = "FromSoftware",
                 year = 2022,

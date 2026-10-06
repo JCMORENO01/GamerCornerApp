@@ -23,11 +23,11 @@ class StorageRepository @Inject constructor(
             }
             Result.success(url)
         } catch (e: TimeoutCancellationException) {
-            Result.failure(Exception("Tiempo de espera agotado. Verifica que Storage esté activado en Firebase Console o tu conexión."))
+            Result.failure(Exception("Tiempo de espera agotado al subir imagen", e))
         } catch (e: StorageException) {
-            Result.failure(Exception("Error de Firebase Storage: ${e.localizedMessage ?: "Verifica las reglas o la conexión"}"))
+            Result.failure(Exception("Error en Firebase Storage", e))
         } catch (e: Exception) {
-            Result.failure(Exception("Error al subir imagen: ${e.localizedMessage ?: "Inténtalo de nuevo"}"))
+            Result.failure(e)
         }
     }
 }

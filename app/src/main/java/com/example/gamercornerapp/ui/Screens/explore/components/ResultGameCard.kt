@@ -68,31 +68,51 @@ fun ResultGameCard(
 
             Box {
 
-                Image(
-                    painter = painterResource(
-                        id = game.image
-                    ),
-
-                    contentDescription = stringResource(
-                        id = R.string.cd_game_cover,
-                        game.title
-                    ),
-
-                    contentScale = ContentScale.Crop,
-
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(0.8f)
-                        .clip(
-                            RoundedCornerShape(
-                                topStart = 16.dp,
-                                topEnd = 16.dp
+                if (game.imageUrl != null) {
+                    coil.compose.AsyncImage(
+                        model = game.imageUrl,
+                        contentDescription = stringResource(
+                            id = R.string.cd_game_cover,
+                            game.title
+                        ),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(0.8f)
+                            .clip(
+                                RoundedCornerShape(
+                                    topStart = 16.dp,
+                                    topEnd = 16.dp
+                                )
                             )
-                        )
-                        .background(
-                            MaterialTheme.colorScheme.background
-                        )
-                )
+                            .background(
+                                MaterialTheme.colorScheme.background
+                            )
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(
+                            id = game.image
+                        ),
+                        contentDescription = stringResource(
+                            id = R.string.cd_game_cover,
+                            game.title
+                        ),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(0.8f)
+                            .clip(
+                                RoundedCornerShape(
+                                    topStart = 16.dp,
+                                    topEnd = 16.dp
+                                )
+                            )
+                            .background(
+                                MaterialTheme.colorScheme.background
+                            )
+                    )
+                }
 
 
                 // Insignia de calificacion
@@ -233,7 +253,7 @@ fun ResultGameCardPreview() {
 
             ResultGameCard(
                 game = Game(
-                    id = 3,
+                    id = "3",
                     title = "Baldur's Gate 3",
                     developer = "Larian Studios",
                     year = 2023,

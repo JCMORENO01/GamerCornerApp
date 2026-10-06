@@ -53,7 +53,14 @@ fun SelfProfileScreen(
                 .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+            if (uiState.isLoading) {
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+            } else {
+                Text(
+                    text = uiState.errorMessage ?: "No se pudo cargar el perfil",
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
         }
     } else {
         SelfProfileScreenContent(

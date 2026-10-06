@@ -160,7 +160,7 @@ fun FeedPostCard(
                         Spacer(modifier = Modifier.width(4.dp))
 
                         Row {
-                            repeat(5) {
+                            repeat(post.rating.toInt()) {
                                 Icon(
                                     imageVector = Icons.Default.Star,
                                     contentDescription = null,
@@ -278,7 +278,7 @@ fun FeedPostCardPreview() {
                     stats = UserStats(reviewsCount = 128, followersCount = 342, followingCount = 176)
                 ),
                 relativeTime = "Hace 2 horas",
-                game = Game(id = 2, title = "Elden Ring", developer = "FromSoftware", year = 2022, image = R.drawable.mini_elden),
+                game = Game(id = "2", title = "Elden Ring", developer = "FromSoftware", year = 2022, image = R.drawable.mini_elden),
                 rating = 4.8,
                 description = "Una obra maestra.",
                 tags = listOf("RPG", "Mundo Abierto"),

@@ -193,7 +193,7 @@ fun AppNavigation(
                 onEditReviewClick = { review ->
                     navController.navigate(
                         Screen.Review.createRoute(
-                            gameId = 1,
+                            gameId = review.gameId,
                             reviewId = review.id,
                             opinion = review.description,
                             rating = review.rating
@@ -221,10 +221,10 @@ fun AppNavigation(
         composable(
             route = Screen.Videogame.route,
             arguments = listOf(
-                navArgument("gameId") { type = NavType.IntType }
+                navArgument("gameId") { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            val gameId = backStackEntry.arguments?.getInt("gameId") ?: 0
+            val gameId = backStackEntry.arguments?.getString("gameId") ?: ""
             val viewModel: VideogameViewModel = hiltViewModel()
 
             VideogameScreen(
@@ -246,7 +246,7 @@ fun AppNavigation(
         composable(
             route = Screen.Review.route,
             arguments = listOf(
-                navArgument("gameId") { type = NavType.IntType },
+                navArgument("gameId") { type = NavType.StringType },
                 navArgument("reviewId") {
                     type = NavType.StringType
                     nullable = true
@@ -263,7 +263,7 @@ fun AppNavigation(
                 }
             )
         ) { backStackEntry ->
-            val gameId = backStackEntry.arguments?.getInt("gameId") ?: 0
+            val gameId = backStackEntry.arguments?.getString("gameId") ?: ""
             val reviewId = backStackEntry.arguments?.getString("reviewId")
             val opinion = backStackEntry.arguments?.getString("opinion")
             val rating = backStackEntry.arguments?.getInt("rating") ?: 5

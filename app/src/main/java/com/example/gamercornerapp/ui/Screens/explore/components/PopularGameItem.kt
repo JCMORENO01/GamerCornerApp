@@ -85,30 +85,49 @@ fun PopularGameItem(
 
 
             // Portada del juego
-            Image(
-                painter = painterResource(
-                    id = game.image
-                ),
-
-                contentDescription = stringResource(
-                    id = R.string.cd_game_cover,
-                    game.title
-                ),
-
-                contentScale = ContentScale.Crop,
-
-                modifier = Modifier
-                    .size(
-                        width = 48.dp,
-                        height = 60.dp
-                    )
-                    .clip(
-                        RoundedCornerShape(10.dp)
-                    )
-                    .background(
-                        MaterialTheme.colorScheme.background
-                    )
-            )
+            if (game.imageUrl != null) {
+                coil.compose.AsyncImage(
+                    model = game.imageUrl,
+                    contentDescription = stringResource(
+                        id = R.string.cd_game_cover,
+                        game.title
+                    ),
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(
+                            width = 48.dp,
+                            height = 60.dp
+                        )
+                        .clip(
+                            RoundedCornerShape(10.dp)
+                        )
+                        .background(
+                            MaterialTheme.colorScheme.background
+                        )
+                )
+            } else {
+                Image(
+                    painter = painterResource(
+                        id = game.image
+                    ),
+                    contentDescription = stringResource(
+                        id = R.string.cd_game_cover,
+                        game.title
+                    ),
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(
+                            width = 48.dp,
+                            height = 60.dp
+                        )
+                        .clip(
+                            RoundedCornerShape(10.dp)
+                        )
+                        .background(
+                            MaterialTheme.colorScheme.background
+                        )
+                )
+            }
 
 
             Spacer(
@@ -214,7 +233,7 @@ fun PopularGameItemPreview() {
                 rank = 1,
 
                 game = Game(
-                    id = 3,
+                    id = "3",
                     title = "Hogwarts Legacy",
                     developer = "Avalanche Software",
                     year = 2023,

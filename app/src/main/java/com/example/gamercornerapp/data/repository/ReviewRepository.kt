@@ -19,64 +19,29 @@ class ReviewRepository @Inject constructor(
     suspend fun getAllReviewsAsFeed(): Result<List<FeedPost>> {
         return try {
             val dtos = remoteDataSource.getAllReviews()
-            val feedPosts = dtos.map { reviewDto ->
-                var gameDto = reviewDto.game
-                if (gameDto == null) {
-                    // Fetch the game details if they are missing
-                    val gameResult = gameRepository.getGameById(reviewDto.gameId)
-                    if (gameResult.isSuccess) {
-                        // Create a dummy GameDTO from the fetched Game object. 
-                        // It is better to use a mapper or just map it directly.
-                        val game = gameResult.getOrNull()
-                        if (game != null) {
-                            gameDto = com.example.gamercornerapp.data.dto.GameDTO(
-                                id = game.id.toString(),
-                                title = game.title,
-                                developer = game.developer,
-                                year = game.year,
-                                image = game.image.toString(), 
-                                description = game.description,
-                                tags = game.tags ?: emptyList(),
-                                rating = game.rating,
-                                reviewsCount = game.reviewsCount
-                            )
-                        }
-                    }
-                }
-                
-                // create a copy of the DTO with the game populated
-                val populatedDto = reviewDto.copy(game = gameDto)
-                populatedDto.toFeedPost()
-            }
-            Result.success(feedPosts)
-        } catch (e: HttpException) {
-            Result.failure(Exception("Error de servidor (${e.code()}): ${e.message}"))
+            Result.success(dtos.map { reviewDto ->
+                reviewDto.toFeedPost()
+            })
         } catch (e: Exception) {
-            Result.failure(Exception("Error de conexión: ${e.localizedMessage}"))
+            Result.failure(e)
         }
     }
 
     suspend fun getReviewsByGame(gameId: String): Result<List<ReviewItem>> {
         return try {
             val dtos = remoteDataSource.getReviewsByGame(gameId)
-            val reviews = dtos.map { it.toReviewItem() }
-            Result.success(reviews)
-        } catch (e: HttpException) {
-            Result.failure(Exception("Error de servidor (${e.code()}): ${e.message}"))
+            Result.success(dtos.map { it.toReviewItem() })
         } catch (e: Exception) {
-            Result.failure(Exception("Error de conexión: ${e.localizedMessage}"))
+            Result.failure(e)
         }
     }
 
     suspend fun getReviewsByUser(userId: String): Result<List<ReviewItem>> {
         return try {
             val dtos = remoteDataSource.getReviewsByUser(userId)
-            val reviews = dtos.map { it.toReviewItem() }
-            Result.success(reviews)
-        } catch (e: HttpException) {
-            Result.failure(Exception("Error de servidor (${e.code()}): ${e.message}"))
+            Result.success(dtos.map { it.toReviewItem() })
         } catch (e: Exception) {
-            Result.failure(Exception("Error de conexión: ${e.localizedMessage}"))
+            Result.failure(e)
         }
     }
 
@@ -97,10 +62,8 @@ class ReviewRepository @Inject constructor(
             )
             remoteDataSource.createReview(dto)
             Result.success(Unit)
-        } catch (e: HttpException) {
-            Result.failure(Exception("Error de servidor (${e.code()}): ${e.message}"))
         } catch (e: Exception) {
-            Result.failure(Exception("Error de conexión: ${e.localizedMessage}"))
+            Result.failure(e)
         }
     }
 
@@ -122,10 +85,8 @@ class ReviewRepository @Inject constructor(
             )
             remoteDataSource.updateReview(reviewId, dto)
             Result.success(Unit)
-        } catch (e: HttpException) {
-            Result.failure(Exception("Error de servidor (${e.code()}): ${e.message}"))
         } catch (e: Exception) {
-            Result.failure(Exception("Error de conexión: ${e.localizedMessage}"))
+            Result.failure(e)
         }
     }
 
@@ -133,10 +94,8 @@ class ReviewRepository @Inject constructor(
         return try {
             remoteDataSource.deleteReview(reviewId)
             Result.success(Unit)
-        } catch (e: HttpException) {
-            Result.failure(Exception("Error de servidor (${e.code()}): ${e.message}"))
         } catch (e: Exception) {
-            Result.failure(Exception("Error de conexión: ${e.localizedMessage}"))
+            Result.failure(e)
         }
     }
 }

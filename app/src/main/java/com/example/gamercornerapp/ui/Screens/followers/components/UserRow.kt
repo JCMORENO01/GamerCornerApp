@@ -46,15 +46,26 @@ fun UserRow(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Image(
-                painter = painterResource(
-                    id = user.avatarImage
-                ),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-            )
+            if (user.avatarUrl != null) {
+                coil.compose.AsyncImage(
+                    model = user.avatarUrl,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape),
+                    contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                )
+            } else {
+                Image(
+                    painter = painterResource(
+                        id = user.avatarImage
+                    ),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                )
+            }
 
 
             Spacer(

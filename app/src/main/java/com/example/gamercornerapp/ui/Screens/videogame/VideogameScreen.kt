@@ -39,7 +39,7 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 @Composable
 fun VideogameScreen(
-    gameId: Int,
+    gameId: String,
     onBackClick: () -> Unit = {},
     onShareClick: () -> Unit = {},
     onSaveClick: () -> Unit = {},
@@ -78,7 +78,7 @@ fun VideogameScreen(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = stringResource(id = R.string.error_game_not_found),
+                text = uiState.error ?: stringResource(id = R.string.error_game_not_found),
                 color = MaterialTheme.colorScheme.onBackground
             )
         }
@@ -180,7 +180,7 @@ fun VideogameScreenPreview() {
     GamerCornerAppTheme(darkTheme = true) {
         VideogameScreenContent(
             game = Game(
-                id = 1,
+                id = "1",
                 title = "Elden Ring",
                 developer = "FromSoftware",
                 year = 2022,

@@ -101,15 +101,25 @@ private fun GameCommentCardItem(
                         onUserClick(review.authorId)
                     }
                 ) {
-                    // Profile Image
-                    Image(
-                        painter = painterResource(id = if (review.authorImageId != 0) review.authorImageId else R.drawable.messi1),
-                        contentDescription = "Profile",
-                        modifier = Modifier
-                            .size(24.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
+                    if (review.authorImageUrl != null) {
+                        coil.compose.AsyncImage(
+                            model = review.authorImageUrl,
+                            contentDescription = "Profile",
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(id = if (review.authorImageId != 0) review.authorImageId else R.drawable.messi1),
+                            contentDescription = "Profile",
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                     Spacer(modifier = Modifier.width(8.dp))
                     
                     Text(

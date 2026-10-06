@@ -21,37 +21,37 @@ fun ReviewDetailScreen(
     // pero por ahora podemos pasarle el post directamente o un ID para buscarlo.
     post: FeedPost?,
     onBackClick: () -> Unit,
-    onNavigateToGame: (Int) -> Unit,
+    onNavigateToGame: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Detalle de Reseña", fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    titleContentColor = MaterialTheme.colorScheme.onBackground
-                )
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        TopAppBar(
+            title = { Text("Detalle de Reseña", fontWeight = FontWeight.Bold) },
+            navigationIcon = {
+                IconButton(onClick = onBackClick) {
+                    Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.background,
+                titleContentColor = MaterialTheme.colorScheme.onBackground
             )
-        },
-        containerColor = MaterialTheme.colorScheme.background
-    ) { paddingValues ->
+        )
+
         if (post == null) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
-            return@Scaffold
+            return@Column
         }
 
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
                 .padding(16.dp)
         ) {
             // Reutilizamos la misma tarjeta del feed que ya está lista y bonita

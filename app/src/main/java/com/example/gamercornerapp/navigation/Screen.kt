@@ -51,7 +51,7 @@ sealed class Screen(
     data object Videogame : Screen(
         route = "videogame/{gameId}"
     ) {
-        fun createRoute(gameId: Int): String {
+        fun createRoute(gameId: String): String {
             return "videogame/$gameId"
         }
     }
@@ -60,7 +60,7 @@ sealed class Screen(
         route = "review/{gameId}?reviewId={reviewId}&opinion={opinion}&rating={rating}"
     ) {
         fun createRoute(
-            gameId: Int,
+            gameId: String,
             reviewId: String? = null,
             opinion: String? = null,
             rating: Int? = null

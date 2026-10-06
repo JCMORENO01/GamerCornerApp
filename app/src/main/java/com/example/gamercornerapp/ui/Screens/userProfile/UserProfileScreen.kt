@@ -48,6 +48,7 @@ fun UserProfileScreen(
         userProfile = uiState.userProfile,
         reviews = uiState.reviews,
         isLoading = uiState.isLoading,
+        errorMessage = uiState.errorMessage,
         onBackClick = onBackClick,
         modifier = modifier
     )
@@ -59,7 +60,8 @@ fun UserProfileScreenContent(
     reviews: List<ReviewItem>,
     isLoading: Boolean,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    errorMessage: String? = null
 ) {
     Box(
         modifier = modifier
@@ -113,7 +115,7 @@ fun UserProfileScreenContent(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Usuario no encontrado",
+                            text = errorMessage ?: "Usuario no encontrado",
                             color = MaterialTheme.colorScheme.onBackground
                         )
                     }

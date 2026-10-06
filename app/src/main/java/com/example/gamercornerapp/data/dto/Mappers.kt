@@ -18,14 +18,11 @@ fun GameDTO.toGame(): Game {
             "3" -> R.drawable.hog
             "4" -> R.drawable.bal
             "5" -> R.drawable.cyberpunk
-            else -> {
-                val imageInt = image?.toIntOrNull() ?: 0
-                if (imageInt > 2130000000) imageInt else R.drawable.elden
-            }
+            else -> R.drawable.elden
         }
     }
     return Game(
-        id = id.toIntOrNull() ?: 1,
+        id = id,
         title = title,
         developer = developer,
         year = year,
@@ -44,11 +41,11 @@ fun GameDTO.toGame(): Game {
 }
 
 fun UserProfileDTO.toUserProfile(reviewsCount: Int = 0): UserProfile {
-    val bgRes = if (profileBackgroundId > 2130000000) profileBackgroundId else R.drawable.background_maquinitas
+    val bgRes = R.drawable.background_maquinitas
     val imgRes = when (id) {
         "1" -> R.drawable.messi1
         "2" -> R.drawable.messi2
-        else -> if (profileImageId > 2130000000) profileImageId else R.drawable.messi1
+        else -> R.drawable.messi1
     }
     return UserProfile(
         id = id,
@@ -86,7 +83,10 @@ fun ReviewDTO.toReviewItem(): ReviewItem {
         tags = tags,
         authorId = userId, // Added this field
         authorName = user?.username ?: "Usuario",
-        authorImageId = if (user?.profileImageId != null && user.profileImageId > 2130000000) user.profileImageId else R.drawable.messi1
+        authorImageId = R.drawable.messi1,
+        gameId = gameId,
+        gameImageUrl = if (game?.image?.startsWith("http") == true) game.image else null,
+        authorImageUrl = if (user?.profilePictureUrl?.startsWith("http") == true) user.profilePictureUrl else null
     )
 }
 
@@ -104,7 +104,7 @@ fun ReviewDTO.toFeedPost(): FeedPost {
     )
 
     val gameModel = game?.toGame() ?: Game(
-        id = gameId.toIntOrNull() ?: 1,
+        id = gameId,
         title = "Juego",
         developer = "Desarrollador",
         year = 2023,

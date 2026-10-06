@@ -191,7 +191,7 @@ object LocalDataProvider {
             relativeTime = "Hace 2 horas",
 
             game = Game(
-                id = 1,
+                id = "1",
                 title = "Elden Ring",
                 developer = "FromSoftware",
                 year = 2022,
@@ -218,7 +218,7 @@ object LocalDataProvider {
             relativeTime = "Hace 4 horas",
 
             game = Game(
-                id = 2,
+                id = "2",
                 title = "God of War",
                 developer = "Santa Monica Studio",
                 year = 2022,
@@ -321,7 +321,7 @@ object LocalDataProvider {
     val popularGames = listOf(
 
         Game(
-            id = 3,
+            id = "3",
             title = "Hogwarts Legacy",
             developer = "Avalanche Software",
             year = 2023,
@@ -340,7 +340,7 @@ object LocalDataProvider {
         ),
 
         Game(
-            id = 4,
+            id = "4",
             title = "Baldur's Gate 3",
             developer = "Larian Studios",
             year = 2023,
@@ -359,7 +359,7 @@ object LocalDataProvider {
         ),
 
         Game(
-            id = 5,
+            id = "5",
             title = "Cyberpunk 2077",
             developer = "CD Projekt Red",
             year = 2020,
@@ -382,7 +382,7 @@ object LocalDataProvider {
     val exploreResults = listOf(
 
         Game(
-            id = 1,
+            id = "1",
             title = "Elden Ring",
             developer = "FromSoftware",
             year = 2022,
@@ -401,7 +401,7 @@ object LocalDataProvider {
         ),
 
         Game(
-            id = 4,
+            id = "4",
             title = "Baldur's Gate 3",
             developer = "Larian Studios",
             year = 2023,
@@ -420,7 +420,7 @@ object LocalDataProvider {
         ),
 
         Game(
-            id = 3,
+            id = "3",
             title = "Hogwarts Legacy",
             developer = "Avalanche Software",
             year = 2023,
@@ -439,7 +439,7 @@ object LocalDataProvider {
         ),
 
         Game(
-            id = 2,
+            id = "2",
             title = "God of War",
             developer = "Santa Monica Studio",
             year = 2022,
@@ -459,7 +459,7 @@ object LocalDataProvider {
     )
 
 
-    fun getGameById(id: Int): Game? {
+    fun getGameById(id: String): Game? {
         val allGames = exploreResults + popularGames + posts.map { it.game }
         return allGames.find { it.id == id }
     }

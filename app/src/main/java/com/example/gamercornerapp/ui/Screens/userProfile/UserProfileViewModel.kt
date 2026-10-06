@@ -2,7 +2,6 @@ package com.example.gamercornerapp.ui.Screens.userProfile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.gamercornerapp.data.local.LocalDataProvider
 import com.example.gamercornerapp.data.repository.ReviewRepository
 import com.example.gamercornerapp.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,15 +28,28 @@ class UserProfileViewModel @Inject constructor(
             val userResult = userRepository.getUserById(userId)
             val reviewsResult = reviewRepository.getReviewsByUser(userId)
 
-            val userProfile = userResult.getOrNull()
-            val reviews = reviewsResult.getOrElse { emptyList() }
+            if (userResult.isSuccess && reviewsResult.isSuccess) {
+                val userProfile = userResult.getOrNull()
+                val reviews = reviewsResult.getOrNull()
 
-            _uiState.update {
-                it.copy(
-                    userProfile = userProfile,
-                    reviews = reviews,
-                    isLoading = false
-                )
+                if (userProfile != null && reviews != null) {
+                    _uiState.update {
+                        it.copy(
+                            userProfile = userProfile,
+                            reviews = reviews,
+                            isLoading = false,
+                            errorMessage = null
+                        )
+                    }
+                }
+            } else {
+                val error = userResult.exceptionOrNull() ?: reviewsResult.exceptionOrNull()
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = error?.localizedMessage
+                    )
+                }
             }
         }
     }

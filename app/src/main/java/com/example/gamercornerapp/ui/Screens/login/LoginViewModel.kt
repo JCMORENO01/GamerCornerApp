@@ -59,9 +59,10 @@ class LoginViewModel @Inject constructor(
 
         viewModelScope.launch {
             val result = authRepository.signIn(currentState.email, currentState.password)
-            result.onSuccess {
+            if (result.isSuccess) {
                 _uiState.update { it.copy(showError = false, navigateToFeed = true) }
-            }.onFailure { error ->
+            } else {
+                val error = result.exceptionOrNull()
                 // Si lees esto te quiero mucho.
                 val errorRes = when (error) {
                     is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException ->

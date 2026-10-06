@@ -7,6 +7,7 @@ data class SelfProfileState(
     val userProfile: UserProfile? = null,
     val reviews: List<ReviewItem> = emptyList(),
     val selectedTabIndex: Int = 0,
+    val isLoading: Boolean = true,
     val isLoadingImage: Boolean = false,
     val errorMessage: String? = null
 )
