@@ -1,5 +1,7 @@
 package com.example.gamercornerapp.navigation
 
+import android.net.Uri
+
 sealed class Screen(
     val route: String
 ) {
@@ -44,7 +46,7 @@ sealed class Screen(
         route = "user_profile/{userId}"
     ) {
         fun createRoute(userId: String): String {
-            return "user_profile/$userId"
+            return "user_profile/${Uri.encode(userId)}"
         }
     }
 
@@ -52,7 +54,7 @@ sealed class Screen(
         route = "videogame/{gameId}"
     ) {
         fun createRoute(gameId: String): String {
-            return "videogame/$gameId"
+            return "videogame/${Uri.encode(gameId)}"
         }
     }
 
@@ -65,10 +67,11 @@ sealed class Screen(
             opinion: String? = null,
             rating: Int? = null
         ): String {
-            var routeStr = "review/$gameId"
+            val encodedGameId = Uri.encode(gameId)
+            var routeStr = "review/$encodedGameId"
             val params = mutableListOf<String>()
-            if (!reviewId.isNullOrEmpty()) params.add("reviewId=$reviewId")
-            if (!opinion.isNullOrEmpty()) params.add("opinion=$opinion")
+            if (!reviewId.isNullOrEmpty()) params.add("reviewId=${Uri.encode(reviewId)}")
+            if (!opinion.isNullOrEmpty()) params.add("opinion=${Uri.encode(opinion)}")
             if (rating != null) params.add("rating=$rating")
             if (params.isNotEmpty()) {
                 routeStr += "?" + params.joinToString("&")

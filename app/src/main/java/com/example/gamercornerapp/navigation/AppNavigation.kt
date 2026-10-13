@@ -199,6 +199,9 @@ fun AppNavigation(
                             rating = review.rating
                         )
                     )
+                },
+                onReviewClick = { review ->
+                    navController.navigate(Screen.Videogame.createRoute(review.gameId))
                 }
             )
         }
@@ -213,7 +216,10 @@ fun AppNavigation(
             val userId = backStackEntry.arguments?.getString("userId") ?: "1"
             UserProfileScreen(
                 userId = userId,
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                onReviewClick = { review ->
+                    navController.navigate(Screen.Videogame.createRoute(review.gameId))
+                }
             )
         }
 

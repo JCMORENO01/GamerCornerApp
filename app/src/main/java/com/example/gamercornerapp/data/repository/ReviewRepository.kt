@@ -13,7 +13,7 @@ import javax.inject.Singleton
 @Singleton
 class ReviewRepository @Inject constructor(
     private val remoteDataSource: GamerCornerRemoteDataSource,
-    private val gameRepository: GameRepository // Added GameRepository
+    private val gameRepository: GameRepository
 ) {
 
     suspend fun getAllReviewsAsFeed(): Result<List<FeedPost>> {

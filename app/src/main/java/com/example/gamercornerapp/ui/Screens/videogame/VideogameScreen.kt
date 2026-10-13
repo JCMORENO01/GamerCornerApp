@@ -44,7 +44,7 @@ fun VideogameScreen(
     onShareClick: () -> Unit = {},
     onSaveClick: () -> Unit = {},
     onWriteReviewClick: () -> Unit = {},
-    onUserClick: (String) -> Unit = {}, // Added callback
+    onUserClick: (String) -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: VideogameViewModel = hiltViewModel()
 ) {
@@ -93,7 +93,7 @@ fun VideogameScreenContent(
     onShareClick: () -> Unit,
     onSaveClick: () -> Unit,
     onWriteReviewClick: () -> Unit,
-    onUserClick: (String) -> Unit, // Callback added
+    onUserClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(

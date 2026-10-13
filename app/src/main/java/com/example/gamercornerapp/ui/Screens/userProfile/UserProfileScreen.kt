@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
@@ -36,6 +38,7 @@ fun UserProfileScreen(
     userId: String,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onReviewClick: (ReviewItem) -> Unit = {},
     viewModel: UserProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -50,6 +53,7 @@ fun UserProfileScreen(
         isLoading = uiState.isLoading,
         errorMessage = uiState.errorMessage,
         onBackClick = onBackClick,
+        onReviewClick = onReviewClick,
         modifier = modifier
     )
 }
@@ -61,6 +65,7 @@ fun UserProfileScreenContent(
     isLoading: Boolean,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onReviewClick: (ReviewItem) -> Unit = {},
     errorMessage: String? = null
 ) {
     Box(
@@ -69,7 +74,9 @@ fun UserProfileScreenContent(
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
-        Column {
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState())
+        ) {
             IconButton(onClick = onBackClick) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -90,7 +97,7 @@ fun UserProfileScreenContent(
                     ProfileHeaderSection(
                         userProfile = profile,
                         isLoadingImage = false,
-                        isOwnProfile = false, // ¡Aquí está la clave!
+                        isOwnProfile = false,
                         onLogoutClick = {},
                         onImageSelected = {}
                     )
@@ -107,7 +114,8 @@ fun UserProfileScreenContent(
                     ProfileReviewsSection(
                         reviews = reviews,
                         selectedTabIndex = 0,
-                        onTabSelected = {}
+                        onTabSelected = {},
+                        onReviewClick = onReviewClick
                     )
                 } ?: run {
                     Box(

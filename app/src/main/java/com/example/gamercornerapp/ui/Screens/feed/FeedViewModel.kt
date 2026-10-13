@@ -31,14 +31,14 @@ class FeedViewModel @Inject constructor(
                 val feedPosts = result.getOrNull() ?: emptyList()
                 _uiState.update {
                     it.copy(
-                        posts = feedPosts, // Aquí quitamos el LocalDataProvider
+                        posts = feedPosts,
                         isLoading = false
                     )
                 }
             } else {
                 _uiState.update {
                     it.copy(
-                        posts = emptyList(), // Si falla, mostramos lista vacía
+                        posts = emptyList(),
                         isLoading = false,
                         errorMessage = result.exceptionOrNull()?.localizedMessage
                     )

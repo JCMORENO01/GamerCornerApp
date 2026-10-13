@@ -1,7 +1,7 @@
 package com.example.gamercornerapp.data
 
 data class UserProfile(
-    val id: String, // NEW FIELD
+    val id: String,
     val username: String,
     val nickName: String,
     val bio: String,
@@ -27,10 +27,10 @@ data class ReviewItem (
     val relativeDate: String,
     val gameImageId: Int,
     val description: String,
-    val tags: List<String> = emptyList(), //la idea es que al presionar el + el usuario pueda escribir y agregar su propia etiqueta
-    val authorId: String = "1", // NEW FIELD
+    val tags: List<String> = emptyList(),
+    val authorId: String = "1",
     val authorName: String = "Usuario",
-    val authorImageId: Int = 0, // Add these fields to display author in Game Detail
+    val authorImageId: Int = 0,
     val gameId: String = "1",
     val gameImageUrl: String? = null,
     val authorImageUrl: String? = null

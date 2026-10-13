@@ -37,7 +37,7 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 @Composable
 fun VideogameCommentsSection(
     reviews: List<ReviewItem>,
-    onUserClick: (String) -> Unit, // Callback para navegar al usuario
+    onUserClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(

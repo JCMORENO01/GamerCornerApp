@@ -48,7 +48,7 @@ class ExploreViewModel @Inject constructor(
                         resultGames = LocalDataProvider.exploreResults,
                         selectedCategory = LocalDataProvider.exploreCategories.firstOrNull()?.name ?: "",
                         isLoading = false,
-                        searchQuery = error?.localizedMessage ?: "Error desconocido" // Hack para ver el error en pantalla
+                        searchQuery = error?.localizedMessage ?: "Error desconocido"
                     )
                 }
             }

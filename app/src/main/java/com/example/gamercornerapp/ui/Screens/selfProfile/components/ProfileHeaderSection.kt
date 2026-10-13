@@ -50,16 +50,15 @@ fun ProfileHeaderSection(
     userProfile: UserProfile,
     modifier: Modifier = Modifier,
     isLoadingImage: Boolean = false,
-    isOwnProfile: Boolean = true, // Added this flag
+    isOwnProfile: Boolean = true,
     onSettingsClick: () -> Unit = {},
     onLogoutClick: () -> Unit = {},
     onImageSelected: (Uri) -> Unit = {}
 ) {
-    //launcher para seleccionar img de la galeria
     val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
-            uri?.let { onImageSelected(it) } //si se selecciona una foto se dispara la acción
+            uri?.let { onImageSelected(it) }
         }
     )
 

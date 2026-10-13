@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -39,9 +41,10 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 @Composable
 fun SelfProfileScreen(
     onFollowersClick: () -> Unit,
+    modifier: Modifier = Modifier,
     onLogoutClick: () -> Unit = {},
     onEditReviewClick: (ReviewItem) -> Unit = {},
-    modifier: Modifier = Modifier,
+    onReviewClick: (ReviewItem) -> Unit = {},
     viewModel: SelfProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -83,6 +86,7 @@ fun SelfProfileScreen(
             onImageSelected = { uri ->
                 viewModel.uploadImageToFirebase(uri)
             },
+            onReviewClick = onReviewClick,
             modifier = modifier
         )
     }
@@ -98,11 +102,12 @@ fun SelfProfileScreenContent(
     onErrorDismiss: () -> Unit = {},
     onTabSelected: (Int) -> Unit = {},
     onFollowersClick: () -> Unit = {},
+    modifier: Modifier = Modifier,
     onLogoutClick: () -> Unit = {},
     onEditClick: (ReviewItem) -> Unit = {},
     onDeleteClick: (ReviewItem) -> Unit = {},
     onImageSelected: (android.net.Uri) -> Unit = {},
-    modifier: Modifier = Modifier
+    onReviewClick: (ReviewItem) -> Unit = {}
 ) {
     Box(
         modifier = modifier
@@ -110,7 +115,9 @@ fun SelfProfileScreenContent(
             .background(MaterialTheme.colorScheme.background)
             .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 0.dp)
     ) {
-        Column {
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState())
+        ) {
             if (errorMessage != null) {
                 Card(
                     colors = CardDefaults.cardColors(
@@ -165,7 +172,8 @@ fun SelfProfileScreenContent(
                 selectedTabIndex = selectedTabIndex,
                 onTabSelected = onTabSelected,
                 onEditClick = onEditClick,
-                onDeleteClick = onDeleteClick
+                onDeleteClick = onDeleteClick,
+                onReviewClick = onReviewClick
             )
         }
     }

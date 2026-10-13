@@ -17,8 +17,6 @@ import com.example.gamercornerapp.ui.componentes.AppButton
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReviewDetailScreen(
-    // En un futuro, podrías recibir el reviewId y pedirle al ViewModel que lo cargue,
-    // pero por ahora podemos pasarle el post directamente o un ID para buscarlo.
     post: FeedPost?,
     onBackClick: () -> Unit,
     onNavigateToGame: (String) -> Unit,
@@ -54,7 +52,6 @@ fun ReviewDetailScreen(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            // Reutilizamos la misma tarjeta del feed que ya está lista y bonita
             FeedPostCard(
                 post = post,
                 onLikeClick = { /* Lógica de like */ },
@@ -66,7 +63,6 @@ fun ReviewDetailScreen(
             
             Spacer(modifier = Modifier.height(32.dp))
             
-            // Botón que lleva a ver el juego en la pantalla de "VideogameScreen"
             AppButton(
                 text = "Ver detalles de ${post.game.title}",
                 onClick = { onNavigateToGame(post.game.id) }

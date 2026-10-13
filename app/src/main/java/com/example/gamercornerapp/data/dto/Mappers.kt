@@ -10,7 +10,7 @@ import com.example.gamercornerapp.data.UserStats
 
 fun GameDTO.toGame(): Game {
     val imgRes = if (image?.startsWith("http") == true) {
-        R.drawable.elden // Fallback for now if it's a URL, since Game expects an Int resource
+        R.drawable.elden
     } else {
         when (id) {
             "1" -> R.drawable.elden
@@ -30,7 +30,7 @@ fun GameDTO.toGame(): Game {
         imageUrl = if (image?.startsWith("http") == true) image else null,
         rating = rating ?: 4.5,
         reviewsCount = reviewsCount ?: 10,
-        tags = tags ?: emptyList(), // Asignamos lista vacía si es null
+        tags = tags ?: emptyList(),
         description = description ?: "",
         ratingDistribution = listOf(
             GameRatingBar(5, 0.8f),
@@ -81,7 +81,7 @@ fun ReviewDTO.toReviewItem(): ReviewItem {
         gameImageId = gameImg,
         description = description,
         tags = tags,
-        authorId = userId, // Added this field
+        authorId = userId,
         authorName = user?.username ?: "Usuario",
         authorImageId = R.drawable.messi1,
         gameId = gameId,
