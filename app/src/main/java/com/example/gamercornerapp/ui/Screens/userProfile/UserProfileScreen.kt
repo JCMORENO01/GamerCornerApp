@@ -1,20 +1,26 @@
+
 package com.example.gamercornerapp.ui.Screens.userProfile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -54,6 +60,7 @@ fun UserProfileScreen(
         errorMessage = uiState.errorMessage,
         onBackClick = onBackClick,
         onReviewClick = onReviewClick,
+        onFollowClick = viewModel::toggleFollowUser,
         modifier = modifier
     )
 }
@@ -66,6 +73,7 @@ fun UserProfileScreenContent(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     onReviewClick: (ReviewItem) -> Unit = {},
+    onFollowClick: () -> Unit = {},
     errorMessage: String? = null
 ) {
     Box(
@@ -90,9 +98,22 @@ fun UserProfileScreenContent(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 }
             } else {
+                if (errorMessage != null) {
+                    Text(
+                        text = errorMessage,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(
+                            horizontal = 16.dp,
+                            vertical = 8.dp
+                        )
+                    )
+                }
+
                 userProfile?.let { profile ->
                     ProfileHeaderSection(
                         userProfile = profile,
@@ -103,6 +124,28 @@ fun UserProfileScreenContent(
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))
+
+                    // Función para seguir o dejar de seguir
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (profile.isFollowed) {
+                            OutlinedButton(
+                                onClick = onFollowClick
+                            ) {
+                                Text("Siguiendo")
+                            }
+                        } else {
+                            Button(
+                                onClick = onFollowClick
+                            ) {
+                                Text("Seguir")
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     ProfileStatsSection(
                         stats = profile.stats,
@@ -133,7 +176,7 @@ fun UserProfileScreenContent(
     }
 }
 
-@Preview(showBackground = true, name = "UserProfile Preview")
+@Preview(showBackground = true)
 @Composable
 fun UserProfileScreenPreview() {
     GamerCornerAppTheme(darkTheme = true) {

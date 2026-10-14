@@ -5,10 +5,12 @@ import com.example.gamercornerapp.data.FeedPost
 import com.example.gamercornerapp.data.ReviewItem
 import com.example.gamercornerapp.data.datasource.GamerCornerRemoteDataSource
 import com.example.gamercornerapp.data.dto.CreateReviewDTO
-import com.example.gamercornerapp.data.dto.CreateReviewUserDTO
 import com.example.gamercornerapp.data.dto.CreateReviewGameDTO
+import com.example.gamercornerapp.data.dto.CreateReviewUserDTO
 import com.example.gamercornerapp.data.dto.toFeedPost
 import com.example.gamercornerapp.data.dto.toReviewItem
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -24,10 +26,10 @@ class ReviewRepository @Inject constructor(
 
     suspend fun getAllReviewsAsFeed(): Result<List<FeedPost>> {
         return try {
-            val dtos = remoteDataSource.getAllReviews()
+            val reviews = remoteDataSource.getAllReviews()
 
             Result.success(
-                dtos.map { it.toFeedPost() }
+                reviews.map { it.toFeedPost() }
             )
         } catch (e: Exception) {
             Result.failure(e)
@@ -38,10 +40,10 @@ class ReviewRepository @Inject constructor(
         gameId: String
     ): Result<List<ReviewItem>> {
         return try {
-            val dtos = remoteDataSource.getReviewsByGame(gameId)
+            val reviews = remoteDataSource.getReviewsByGame(gameId)
 
             Result.success(
-                dtos.map { it.toReviewItem() }
+                reviews.map { it.toReviewItem() }
             )
         } catch (e: Exception) {
             Result.failure(e)
@@ -52,10 +54,38 @@ class ReviewRepository @Inject constructor(
         userId: String
     ): Result<List<ReviewItem>> {
         return try {
-            val dtos = remoteDataSource.getReviewsByUser(userId)
+            val reviews = remoteDataSource.getReviewsByUser(userId)
 
             Result.success(
-                dtos.map { it.toReviewItem() }
+                reviews.map { it.toReviewItem() }
+            )
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // Función para transformar las reseñas en publicaciones del Feed
+    fun listenAllReviewsAsFeed(): Flow<List<FeedPost>> {
+        return remoteDataSource.listenAllReviews()
+            .map { reviews ->
+                reviews.map { review -> review.toFeedPost() }
+            }
+    }
+
+    // Función para obtener reseñas de usuarios seguidos
+    suspend fun getFollowingReviewsAsFeed(
+        userId: String
+    ): Result<List<FeedPost>> {
+        return try {
+            val followingIds = remoteDataSource
+                .getFollowing(userId)
+                .toSet()
+
+            val reviews = remoteDataSource.getAllReviews()
+                .filter { it.userId in followingIds }
+
+            Result.success(
+                reviews.map { it.toFeedPost() }
             )
         } catch (e: Exception) {
             Result.failure(e)
@@ -105,47 +135,37 @@ class ReviewRepository @Inject constructor(
         reviewId: String? = null
     ): Result<Unit> {
         return try {
-
             require(userId.isNotBlank()) {
-                "No se pudo obtener el usuario actual"
+                "No se pudo obtener el usuario"
             }
 
-            // Obtener los datos del usuario
+            require(authRepository.currentUser?.uid == userId) {
+                "Usuario no autenticado"
+            }
+
             val userDto = remoteDataSource.getUserById(userId)
             val user = userDto.toUserProfile()
 
-            // Obtener los datos del videojuego
             val game = gameRepository.getGameById(gameId)
                 .getOrThrow()
 
-            // Obtener la foto desde Authentication
-            val currentUser = authRepository.currentUser
+            val authPhotoUrl = authRepository.currentUser
+                ?.photoUrl
+                ?.toString()
 
-            val authPhotoUrl = if (currentUser?.uid == userId) {
-                currentUser.photoUrl?.toString()
-            } else {
-                null
-            }
-
-            // Utilizar Firestore si Authentication no tiene foto
-            val profileImageUrl = authPhotoUrl
-                ?: user.profilePictureUrl
-
-            // Desnormalización del usuario
             val reviewUser = CreateReviewUserDTO(
                 username = user.username,
                 nickName = user.nickName,
-                profilePictureUrl = profileImageUrl
+                profilePictureUrl = authPhotoUrl
+                    ?: user.profilePictureUrl
             )
 
-            // Desnormalización del videojuego
             val reviewGame = CreateReviewGameDTO(
                 title = game.title,
                 image = game.imageUrl
             )
 
-            // Fecha de publicación
-            val fechaPublicacion = if (reviewId == null) {
+            val createdAt = if (reviewId == null) {
                 SimpleDateFormat(
                     "yyyy-MM-dd'T'HH:mm:ss",
                     Locale.US
@@ -154,27 +174,27 @@ class ReviewRepository @Inject constructor(
                 null
             }
 
-            // Construcción del DTO
-            val dto = CreateReviewDTO(
+            val review = CreateReviewDTO(
                 description = description,
                 rating = rating,
                 tags = tags,
                 userId = userId,
                 gameId = gameId,
-                createdAt = fechaPublicacion,
+                createdAt = createdAt,
                 user = reviewUser,
                 game = reviewGame
             )
 
-            // Crear o actualizar la reseña
-            if (reviewId != null) {
-                remoteDataSource.updateReview(reviewId, dto)
+            if (reviewId == null) {
+                remoteDataSource.createReview(review)
             } else {
-                remoteDataSource.createReview(dto)
+                remoteDataSource.updateReview(
+                    reviewId,
+                    review
+                )
             }
 
             Result.success(Unit)
-
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -185,6 +205,30 @@ class ReviewRepository @Inject constructor(
     ): Result<Unit> {
         return try {
             remoteDataSource.deleteReview(reviewId)
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // Función para dar o quitar like
+    suspend fun toggleReviewLike(
+        reviewId: String,
+        userId: String
+    ): Result<Unit> {
+        return try {
+            require(reviewId.isNotBlank())
+            require(userId.isNotBlank())
+
+            require(authRepository.currentUser?.uid == userId) {
+                "Usuario no autenticado"
+            }
+
+            remoteDataSource.toggleReviewLike(
+                reviewId,
+                userId
+            )
 
             Result.success(Unit)
         } catch (e: Exception) {

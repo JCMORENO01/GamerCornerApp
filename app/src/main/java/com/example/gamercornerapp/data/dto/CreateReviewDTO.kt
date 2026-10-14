@@ -9,7 +9,10 @@ data class CreateReviewDTO(
     val gameId: String = "",
     val createdAt: String? = null,
     val user: CreateReviewUserDTO? = null,
-    val game: CreateReviewGameDTO? = null
+    val game: CreateReviewGameDTO? = null,
+
+    // Toda reseña comienza con cero likes
+    val likesCount: Long = 0L
 ) {
     constructor() : this("")
 }

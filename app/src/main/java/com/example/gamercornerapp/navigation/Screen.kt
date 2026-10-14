@@ -1,3 +1,4 @@
+
 package com.example.gamercornerapp.navigation
 
 import android.net.Uri
@@ -5,69 +6,46 @@ import android.net.Uri
 sealed class Screen(
     val route: String
 ) {
+    data object Splash : Screen("splash")
 
-    data object Splash : Screen(
-        route = "splash"
-    )
+    data object Start : Screen("start")
 
-    data object Start : Screen(
-        route = "start"
-    )
+    data object Login : Screen("login")
 
-    data object Login : Screen(
-        route = "login"
-    )
+    data object Register : Screen("register")
 
-    data object Register : Screen(
-        route = "register"
-    )
+    data object Feed : Screen("feed")
 
-    data object Feed : Screen(
-        route = "feed"
-    )
+    data object Explore : Screen("explore")
 
-    data object Explore : Screen(
-        route = "explore"
-    )
+    data object Notifications : Screen("notifications")
 
-    data object Notifications : Screen(
-        route = "notifications"
-    )
+    data object Followers : Screen("followers/{userId}") {
+        fun createRoute(userId: String): String {
+            return "followers/${Uri.encode(userId)}"
+        }
+    }
 
-    data object Followers : Screen(
-        route = "followers"
-    )
+    data object SelfProfile : Screen("self_profile")
 
-    data object SelfProfile : Screen(
-        route = "self_profile"
-    )
+    data object EditProfile : Screen("edit_profile")
 
-    data object EditProfile : Screen(
-        route = "edit_profile"
-    )
+    data object SearchUsers : Screen("search_users")
 
-    data object SearchUsers : Screen(
-        route = "search_users"
-    )
-
-    data object UserProfile : Screen(
-        route = "user_profile/{userId}"
-    ) {
+    data object UserProfile : Screen("user_profile/{userId}") {
         fun createRoute(userId: String): String {
             return "user_profile/${Uri.encode(userId)}"
         }
     }
 
-    data object Videogame : Screen(
-        route = "videogame/{gameId}"
-    ) {
+    data object Videogame : Screen("videogame/{gameId}") {
         fun createRoute(gameId: String): String {
             return "videogame/${Uri.encode(gameId)}"
         }
     }
 
     data object Review : Screen(
-        route = "review/{gameId}?reviewId={reviewId}&opinion={opinion}&rating={rating}"
+        "review/{gameId}?reviewId={reviewId}&opinion={opinion}&rating={rating}"
     ) {
         fun createRoute(
             gameId: String,
@@ -77,18 +55,28 @@ sealed class Screen(
         ): String {
             val encodedGameId = Uri.encode(gameId)
             var routeStr = "review/$encodedGameId"
+
             val params = mutableListOf<String>()
-            if (!reviewId.isNullOrEmpty()) params.add("reviewId=${Uri.encode(reviewId)}")
-            if (!opinion.isNullOrEmpty()) params.add("opinion=${Uri.encode(opinion)}")
-            if (rating != null) params.add("rating=$rating")
+
+            if (!reviewId.isNullOrEmpty()) {
+                params.add("reviewId=${Uri.encode(reviewId)}")
+            }
+
+            if (!opinion.isNullOrEmpty()) {
+                params.add("opinion=${Uri.encode(opinion)}")
+            }
+
+            if (rating != null) {
+                params.add("rating=$rating")
+            }
+
             if (params.isNotEmpty()) {
                 routeStr += "?" + params.joinToString("&")
             }
+
             return routeStr
         }
     }
 
-    data object RecoverPassword : Screen(
-        route = "recover_password"
-    )
+    data object RecoverPassword : Screen("recover_password")
 }

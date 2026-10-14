@@ -10,7 +10,13 @@ data class ReviewDTO(
     val gameId: String = "",
     val createdAt: String = "",
     val user: CreateReviewUserDTO? = null,
-    val game: CreateReviewGameDTO? = null
+    val game: CreateReviewGameDTO? = null,
+
+    // Cantidad de likes almacenada en Firestore
+    val likesCount: Long = 0L,
+
+    // Estado del usuario autenticado
+    var isLiked: Boolean = false
 ) {
     constructor() : this("")
 }

@@ -20,7 +20,11 @@ data class UserProfileDTO(
     val profileBackgroundId: Int = 0,
     val profileBgDescription: String? = null,
     val profileImageId: Int = 0,
-    val profilePictureUrl: String? = null
+    val profilePictureUrl: String? = null,
+    val followersCount: Long = 0L,
+    val followingCount: Long = 0L,
+    val FCM_token: String? = null,
+    var isFollowed: Boolean = false
 ) : UserProfileGenericDTO() {
 
     constructor() : this(id = "")
@@ -55,9 +59,14 @@ data class UserProfileDTO(
             profilePictureUrl = profilePictureUrl,
             stats = UserStats(
                 reviewsCount = reviewsCount,
-                followersCount = 0,
-                followingCount = 0
-            )
+                followersCount = followersCount
+                    .coerceIn(0L, Int.MAX_VALUE.toLong())
+                    .toInt(),
+                followingCount = followingCount
+                    .coerceIn(0L, Int.MAX_VALUE.toLong())
+                    .toInt()
+            ),
+            isFollowed = isFollowed
         )
     }
 }

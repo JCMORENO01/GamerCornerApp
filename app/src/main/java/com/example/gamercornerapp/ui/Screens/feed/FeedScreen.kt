@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
@@ -48,6 +50,7 @@ fun FeedScreen(
         onTabSelected = viewModel::onTabSelected,
         onGameClick = onGameClick,
         onUserClick = onUserClick,
+        onLikeClick = viewModel::toggleReviewLike,
         modifier = modifier
     )
 }
@@ -61,6 +64,7 @@ fun FeedScreenContent(
     onTabSelected: (Int) -> Unit,
     onGameClick: (String) -> Unit,
     onUserClick: (String) -> Unit = {},
+    onLikeClick: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -84,45 +88,65 @@ fun FeedScreenContent(
                     color = MaterialTheme.colorScheme.primary
                 )
             }
-        } else if (posts.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
+        } else {
+            if (errorMessage != null) {
                 Text(
-                    text = errorMessage ?: "No hay publicaciones",
-                    color = MaterialTheme.colorScheme.onBackground
+                    text = errorMessage,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(
+                        horizontal = 16.dp,
+                        vertical = 8.dp
+                    )
                 )
             }
-        } else {
-            LazyColumn(
-                contentPadding = PaddingValues(
-                    horizontal = 16.dp,
-                    vertical = 16.dp
-                ),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(
-                    items = posts,
-                    key = { it.id }
-                ) { post ->
-                    FeedPostCard(
-                        post = post,
-                        onAuthorClick = {
-                            onUserClick(post.author.id)
+
+            if (posts.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = if (selectedTabIndex == 1) {
+                            "Todavía no hay publicaciones de usuarios que sigues"
+                        } else {
+                            "No hay publicaciones"
                         },
-                        onCardClick = {
-                            onGameClick(post.game.id)
-                        }
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(
+                        horizontal = 16.dp,
+                        vertical = 16.dp
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(
+                        items = posts,
+                        key = { it.id }
+                    ) { post ->
+                        FeedPostCard(
+                            post = post,
+                            onAuthorClick = {
+                                onUserClick(post.author.id)
+                            },
+                            onCardClick = {
+                                onGameClick(post.game.id)
+                            },
+                            onLikeClick = {
+                                onLikeClick(post.id)
+                            }
+                        )
+                    }
                 }
             }
         }
     }
 }
 
-@Preview(showBackground = true, name = "Feed Dark")
+@Preview(showBackground = true)
 @Composable
 fun FeedScreenPreview() {
     GamerCornerAppTheme(darkTheme = true) {

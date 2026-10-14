@@ -8,6 +8,7 @@ import com.example.gamercornerapp.data.ReviewItem
 import com.example.gamercornerapp.data.UserProfile
 import com.example.gamercornerapp.data.UserStats
 
+// Función para mapear videojuegos
 fun GameDTO.toGame(): Game {
     val imgRes = when (id) {
         "1" -> R.drawable.elden
@@ -35,6 +36,7 @@ fun GameDTO.toGame(): Game {
     )
 }
 
+// Función para mapear reseñas a ReviewItem
 fun ReviewDTO.toReviewItem(): ReviewItem {
     val gameImg = when (gameId) {
         "1" -> R.drawable.mini_elden
@@ -63,10 +65,17 @@ fun ReviewDTO.toReviewItem(): ReviewItem {
             it.startsWith("http")
         },
         authorImageUrl = user?.profilePictureUrl
-            ?.takeIf { it.startsWith("http") }
+            ?.takeIf { it.startsWith("http") },
+
+        likesCount = likesCount
+            .coerceIn(0L, Int.MAX_VALUE.toLong())
+            .toInt(),
+
+        isLiked = isLiked
     )
 }
 
+// Función para mapear reseñas al Feed
 fun ReviewDTO.toFeedPost(): FeedPost {
     val authorProfile = UserProfile(
         id = userId,
@@ -113,7 +122,13 @@ fun ReviewDTO.toFeedPost(): FeedPost {
         rating = rating.toDouble(),
         description = description,
         tags = tags,
-        likesCount = 0,
+
+        likesCount = likesCount
+            .coerceIn(0L, Int.MAX_VALUE.toLong())
+            .toInt(),
+
+        isLiked = isLiked,
+
         commentsCount = 0
     )
 }

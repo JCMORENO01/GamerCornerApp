@@ -1,3 +1,4 @@
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -20,7 +21,8 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner =
+            "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -43,8 +45,8 @@ android {
 
 dependencies {
 
+    // Compose
     implementation(platform(libs.androidx.compose.bom))
-
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui)
@@ -53,7 +55,10 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.material3)
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
+
+    implementation(
+        "androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7"
+    )
 
     // Navegacion
     implementation(libs.androidx.navigation.compose)
@@ -61,10 +66,14 @@ dependencies {
     // Firebase & Coroutines
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
-    implementation("com.google.firebase:firebase-firestore-ktx")
-    implementation("com.google.firebase:firebase-storage-ktx")
+
+    implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-storage")
+
+    // Firebase Cloud Messaging
+    implementation("com.google.firebase:firebase-messaging")
+
     implementation(libs.kotlinx.coroutines.play.services)
-    implementation("com.google.firebase:firebase-storage-ktx")
 
     // Hilt
     implementation(libs.hilt.android)

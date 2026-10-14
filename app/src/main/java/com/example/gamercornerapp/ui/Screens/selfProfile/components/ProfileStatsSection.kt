@@ -1,3 +1,4 @@
+
 package com.example.gamercornerapp.ui.Screens.selfProfile.components
 
 import androidx.compose.foundation.background
@@ -25,14 +26,13 @@ import com.example.gamercornerapp.R
 import com.example.gamercornerapp.data.UserStats
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
-
 @Composable
 fun ProfileStatsSection(
     stats: UserStats,
     onFollowersClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onFollowingClick: () -> Unit = {}
 ) {
-
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -40,14 +40,11 @@ fun ProfileStatsSection(
                 horizontal = 16.dp,
                 vertical = 12.dp
             ),
-
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-
         shape = RoundedCornerShape(20.dp)
     ) {
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -55,42 +52,46 @@ fun ProfileStatsSection(
                     vertical = 18.dp,
                     horizontal = 8.dp
                 ),
-
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-
-
-            // Reseñas
             StatItem(
                 count = stats.reviewsCount,
-                label = stringResource(id = R.string.label_reviews_stat)
+                label = stringResource(
+                    id = R.string.label_reviews_stat
+                )
             )
 
-
-            // Seguidores
+            // Función para abrir seguidores
             Box(
                 modifier = Modifier.clickable {
                     onFollowersClick()
                 }
             ) {
-
                 StatItem(
                     count = stats.followersCount,
-                    label = stringResource(id = R.string.label_followers_stat)
+                    label = stringResource(
+                        id = R.string.label_followers_stat
+                    )
                 )
             }
 
-
-            // Siguiendo
-            StatItem(
-                count = stats.followingCount,
-                label = stringResource(id = R.string.label_following_stat)
-            )
+            // Función para abrir seguidos
+            Box(
+                modifier = Modifier.clickable {
+                    onFollowingClick()
+                }
+            ) {
+                StatItem(
+                    count = stats.followingCount,
+                    label = stringResource(
+                        id = R.string.label_following_stat
+                    )
+                )
+            }
         }
     }
 }
-
 
 @Composable
 private fun StatItem(
@@ -98,13 +99,11 @@ private fun StatItem(
     label: String,
     modifier: Modifier = Modifier
 ) {
-
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-
         Text(
             text = count.toString(),
             style = MaterialTheme.typography.titleLarge,
@@ -112,7 +111,6 @@ private fun StatItem(
             color = MaterialTheme.colorScheme.onSurface,
             fontSize = 20.sp
         )
-
 
         Text(
             text = label,
@@ -125,36 +123,23 @@ private fun StatItem(
     }
 }
 
-
-@Preview(
-    showBackground = true,
-    name = "Profile Stats Dark"
-)
+@Preview(showBackground = true)
 @Composable
 fun ProfileStatsSectionPreview() {
-
-    GamerCornerAppTheme(
-        darkTheme = true
-    ) {
-
+    GamerCornerAppTheme(darkTheme = true) {
         Box(
             modifier = Modifier
-                .background(
-                    MaterialTheme.colorScheme.background
-                )
+                .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp)
         ) {
-
-            val sampleStats = UserStats(
-                reviewsCount = 128,
-                followersCount = 342,
-                followingCount = 176
-            )
-
-
             ProfileStatsSection(
-                stats = sampleStats,
-                onFollowersClick = { }
+                stats = UserStats(
+                    reviewsCount = 128,
+                    followersCount = 342,
+                    followingCount = 176
+                ),
+                onFollowersClick = {},
+                onFollowingClick = {}
             )
         }
     }

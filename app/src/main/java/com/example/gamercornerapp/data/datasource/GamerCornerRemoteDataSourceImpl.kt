@@ -7,6 +7,8 @@ import com.example.gamercornerapp.data.dto.GameDTO
 import com.example.gamercornerapp.data.dto.ReviewDTO
 import com.example.gamercornerapp.data.dto.UserProfileDTO
 import com.example.gamercornerapp.data.dto.UserProfileGenericDTO
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class GamerCornerRemoteDataSourceImpl @Inject constructor(
@@ -58,6 +60,24 @@ class GamerCornerRemoteDataSourceImpl @Inject constructor(
         service.deleteReview(reviewId)
     }
 
+    // Función para dar o quitar like
+    override suspend fun toggleReviewLike(
+        reviewId: String,
+        userId: String
+    ) {
+        throw UnsupportedOperationException(
+            "Los likes no están implementados en Retrofit"
+        )
+    }
+
+    // Función para escuchar reseñas
+    override fun listenAllReviews(): Flow<List<ReviewDTO>> =
+        flow {
+            throw UnsupportedOperationException(
+                "El tiempo real no está implementado en Retrofit"
+            )
+        }
+
     override suspend fun getUserById(
         userId: String
     ): UserProfileGenericDTO {
@@ -87,6 +107,44 @@ class GamerCornerRemoteDataSourceImpl @Inject constructor(
     ) {
         throw UnsupportedOperationException(
             "La actualización de perfiles no está implementada en Retrofit"
+        )
+    }
+
+    // Función para seguir o dejar de seguir
+    override suspend fun toggleFollowUser(
+        currentUserId: String,
+        targetUserId: String
+    ) {
+        throw UnsupportedOperationException(
+            "El seguimiento no está implementado en Retrofit"
+        )
+    }
+
+    // Función para comprobar seguimiento
+    override suspend fun isFollowing(
+        currentUserId: String,
+        targetUserId: String
+    ): Boolean {
+        throw UnsupportedOperationException(
+            "La consulta de seguimiento no está implementada en Retrofit"
+        )
+    }
+
+    // Función para consultar seguidores
+    override suspend fun getFollowers(
+        userId: String
+    ): List<String> {
+        throw UnsupportedOperationException(
+            "Los seguidores no están implementados en Retrofit"
+        )
+    }
+
+    // Función para consultar seguidos
+    override suspend fun getFollowing(
+        userId: String
+    ): List<String> {
+        throw UnsupportedOperationException(
+            "Los seguidos no están implementados en Retrofit"
         )
     }
 }

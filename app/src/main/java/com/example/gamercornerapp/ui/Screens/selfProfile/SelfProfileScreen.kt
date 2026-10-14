@@ -1,11 +1,9 @@
 package com.example.gamercornerapp.ui.Screens.selfProfile
 
+import android.net.Uri
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,13 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,161 +32,146 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 @Composable
 fun SelfProfileScreen(
-    onFollowersClick: () -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: SelfProfileViewModel = hiltViewModel(),
+    onFollowersClick: () -> Unit = {},
     onLogoutClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     onEditReviewClick: (ReviewItem) -> Unit = {},
-    onReviewClick: (ReviewItem) -> Unit = {},
-    viewModel: SelfProfileViewModel = hiltViewModel()
+    onReviewClick: (ReviewItem) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    androidx.compose.runtime.LaunchedEffect(Unit) {
-        viewModel.loadSelfProfile()
-    }
-
-    if (uiState.userProfile == null) {
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
-            contentAlignment = Alignment.Center
-        ) {
-            if (uiState.isLoading) {
-                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-            } else {
-                Text(
-                    text = uiState.errorMessage ?: "No se pudo cargar el perfil",
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
-        }
-    } else {
-        SelfProfileScreenContent(
-            userProfile = uiState.userProfile!!,
-            reviews = uiState.reviews,
-            selectedTabIndex = uiState.selectedTabIndex,
-            isLoadingImage = uiState.isLoadingImage,
-            errorMessage = uiState.errorMessage,
-            onErrorDismiss = viewModel::onErrorDismiss,
-            onTabSelected = viewModel::onTabSelected,
-            onFollowersClick = onFollowersClick,
-            onSettingsClick = onSettingsClick,
-            onLogoutClick = {
-                viewModel.onLogoutClick()
-                onLogoutClick()
-            },
-            onEditClick = onEditReviewClick,
-            onDeleteClick = { review ->
-                viewModel.deleteReview(review.id)
-            },
-            onImageSelected = { uri ->
-                viewModel.uploadImageToFirebase(uri)
-            },
-            onReviewClick = onReviewClick,
-            modifier = modifier
-        )
-    }
+    SelfProfileScreenContent(
+        userProfile = uiState.userProfile,
+        reviews = uiState.reviews,
+        selectedTabIndex = uiState.selectedTabIndex,
+        isLoading = uiState.isLoading,
+        isLoadingImage = uiState.isLoadingImage,
+        errorMessage = uiState.errorMessage,
+        onTabSelected = viewModel::onTabSelected,
+        onFollowersClick = onFollowersClick,
+        onLogoutClick = {
+            viewModel.onLogoutClick()
+            onLogoutClick()
+        },
+        onSettingsClick = onSettingsClick,
+        onImageSelected = viewModel::uploadImageToFirebase,
+        onEditReviewClick = onEditReviewClick,
+        onDeleteReviewClick = { review -> viewModel.deleteReview(review.id) },
+        onReviewClick = onReviewClick,
+        modifier = modifier
+    )
 }
 
 @Composable
 fun SelfProfileScreenContent(
-    userProfile: UserProfile,
+    userProfile: UserProfile?,
     reviews: List<ReviewItem>,
     selectedTabIndex: Int,
-    isLoadingImage: Boolean = false,
-    errorMessage: String? = null,
-    onErrorDismiss: () -> Unit = {},
-    onTabSelected: (Int) -> Unit = {},
-    onFollowersClick: () -> Unit = {},
-    modifier: Modifier = Modifier,
-    onLogoutClick: () -> Unit = {},
-    onSettingsClick: () -> Unit = {},
-    onEditClick: (ReviewItem) -> Unit = {},
-    onDeleteClick: (ReviewItem) -> Unit = {},
-    onImageSelected: (android.net.Uri) -> Unit = {},
-    onReviewClick: (ReviewItem) -> Unit = {}
+    isLoading: Boolean,
+    isLoadingImage: Boolean,
+    errorMessage: String?,
+    onTabSelected: (Int) -> Unit,
+    onFollowersClick: () -> Unit,
+    onLogoutClick: () -> Unit,
+    onSettingsClick: () -> Unit,
+    onImageSelected: (Uri) -> Unit,
+    onEditReviewClick: (ReviewItem) -> Unit,
+    onDeleteReviewClick: (ReviewItem) -> Unit,
+    onReviewClick: (ReviewItem) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 0.dp)
+            .padding(16.dp)
     ) {
-        Column(
-            modifier = Modifier.verticalScroll(rememberScrollState())
-        ) {
-            if (errorMessage != null) {
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.errorContainer
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 12.dp)
-                        .clickable { onErrorDismiss() }
-                ) {
-                    Row(
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center),
+                color = MaterialTheme.colorScheme.primary
+            )
+        } else {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState())
+            ) {
+                if (errorMessage != null) {
+                    Text(
+                        text = errorMessage,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(
+                            horizontal = 16.dp,
+                            vertical = 8.dp
+                        )
+                    )
+                }
+
+                if (userProfile != null) {
+                    ProfileHeaderSection(
+                        userProfile = userProfile,
+                        isLoadingImage = isLoadingImage,
+                        isOwnProfile = true,
+                        onSettingsClick = onSettingsClick,
+                        onLogoutClick = onLogoutClick,
+                        onImageSelected = onImageSelected
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    ProfileStatsSection(
+                        stats = userProfile.stats,
+                        onFollowersClick = onFollowersClick
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    ProfileReviewsSection(
+                        reviews = reviews,
+                        selectedTabIndex = selectedTabIndex,
+                        onTabSelected = onTabSelected,
+                        onReviewClick = onReviewClick,
+                        onEditClick = onEditReviewClick,
+                        onDeleteClick = onDeleteReviewClick
+                    )
+                } else {
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                            .height(180.dp),
+                        contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = errorMessage,
-                            color = MaterialTheme.colorScheme.onErrorContainer,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Cerrar",
-                            tint = MaterialTheme.colorScheme.onErrorContainer
+                            text = errorMessage ?: "Error al cargar perfil",
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     }
                 }
             }
-
-            ProfileHeaderSection(
-                userProfile = userProfile,
-                isLoadingImage = isLoadingImage,
-                onLogoutClick = onLogoutClick,
-                onSettingsClick = onSettingsClick,
-                onImageSelected = onImageSelected
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            ProfileStatsSection(
-                stats = userProfile.stats,
-                onFollowersClick = onFollowersClick
-            )
-
-            Spacer(modifier = Modifier.height(30.dp))
-
-            ProfileReviewsSection(
-                reviews = reviews,
-                selectedTabIndex = selectedTabIndex,
-                onTabSelected = onTabSelected,
-                onEditClick = onEditClick,
-                onDeleteClick = onDeleteClick,
-                onReviewClick = onReviewClick
-            )
         }
     }
 }
 
-@Preview(showBackground = true, name = "Self Profile Dark")
+@Preview(showBackground = true)
 @Composable
 fun SelfProfileScreenPreview() {
     GamerCornerAppTheme(darkTheme = true) {
         SelfProfileScreenContent(
-            userProfile = LocalDataProvider.userProfile,
+            userProfile = LocalDataProvider.katanaGamerProfile,
             reviews = LocalDataProvider.reviews,
-            selectedTabIndex = 0
+            selectedTabIndex = 0,
+            isLoading = false,
+            isLoadingImage = false,
+            errorMessage = null,
+            onTabSelected = {},
+            onFollowersClick = {},
+            onLogoutClick = {},
+            onSettingsClick = {},
+            onImageSelected = {},
+            onEditReviewClick = {},
+            onDeleteReviewClick = {},
+            onReviewClick = {}
         )
     }
 }

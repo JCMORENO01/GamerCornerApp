@@ -1,7 +1,10 @@
+
 package com.example.gamercornerapp.ui.Screens.notifications
 
 import com.example.gamercornerapp.data.NotificationItem
 
 data class NotificationsState(
-    val notifications: List<NotificationItem> = emptyList()
+    val notifications: List<NotificationItem> = emptyList(),
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null
 )

@@ -6,13 +6,16 @@ import com.example.gamercornerapp.data.dto.GameDTO
 import com.example.gamercornerapp.data.dto.ReviewDTO
 import com.example.gamercornerapp.data.dto.UserProfileDTO
 import com.example.gamercornerapp.data.dto.UserProfileGenericDTO
+import kotlinx.coroutines.flow.Flow
 
 interface GamerCornerRemoteDataSource {
 
+    // Videojuegos
     suspend fun getGames(): List<GameDTO>
 
     suspend fun getGameById(gameId: String): GameDTO
 
+    // Reseñas
     suspend fun getAllReviews(): List<ReviewDTO>
 
     suspend fun getReviewsByGame(
@@ -32,10 +35,18 @@ interface GamerCornerRemoteDataSource {
         review: CreateReviewDTO
     )
 
-    suspend fun deleteReview(
-        reviewId: String
+    suspend fun deleteReview(reviewId: String)
+
+    // Likes
+    suspend fun toggleReviewLike(
+        reviewId: String,
+        userId: String
     )
 
+    // Tiempo real
+    fun listenAllReviews(): Flow<List<ReviewDTO>>
+
+    // Usuarios
     suspend fun getUserById(
         userId: String
     ): UserProfileGenericDTO
@@ -53,4 +64,23 @@ interface GamerCornerRemoteDataSource {
         userId: String,
         userProfile: UserProfileDTO
     )
+
+    // Seguimiento
+    suspend fun toggleFollowUser(
+        currentUserId: String,
+        targetUserId: String
+    )
+
+    suspend fun isFollowing(
+        currentUserId: String,
+        targetUserId: String
+    ): Boolean
+
+    suspend fun getFollowers(
+        userId: String
+    ): List<String>
+
+    suspend fun getFollowing(
+        userId: String
+    ): List<String>
 }
