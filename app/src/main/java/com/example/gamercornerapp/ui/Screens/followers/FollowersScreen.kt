@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -28,6 +29,7 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 fun FollowersScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onSearchClick: () -> Unit = {},
     viewModel: FollowersViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -37,6 +39,7 @@ fun FollowersScreen(
         selectedTabIndex = uiState.selectedTabIndex,
         onTabSelected = viewModel::onTabSelected,
         onBackClick = onBackClick,
+        onSearchClick = onSearchClick,
         modifier = modifier
     )
 }
@@ -50,6 +53,7 @@ fun FollowersScreenContent(
     onTabSelected: (Int) -> Unit,
 
     onBackClick: () -> Unit,
+    onSearchClick: () -> Unit = {},
 
     modifier: Modifier = Modifier
 ) {
@@ -72,6 +76,12 @@ fun FollowersScreenContent(
             onBackClick = onBackClick
         )
 
+        androidx.compose.material3.Button(
+            onClick = onSearchClick,
+            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+        ) {
+            androidx.compose.material3.Text("Buscar usuarios...")
+        }
 
         FollowersTabs(
             selectedTabIndex = selectedTabIndex,

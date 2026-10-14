@@ -42,6 +42,14 @@ sealed class Screen(
         route = "self_profile"
     )
 
+    data object EditProfile : Screen(
+        route = "edit_profile"
+    )
+
+    data object SearchUsers : Screen(
+        route = "search_users"
+    )
+
     data object UserProfile : Screen(
         route = "user_profile/{userId}"
     ) {

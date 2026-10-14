@@ -1,6 +1,8 @@
+
 package com.example.gamercornerapp.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -49,12 +51,16 @@ fun AppNavigation(
             SplashScreen(
                 onNavigateToHome = {
                     navController.navigate(Screen.Feed.route) {
-                        popUpTo(Screen.Splash.route) { inclusive = true }
+                        popUpTo(Screen.Splash.route) {
+                            inclusive = true
+                        }
                     }
                 },
                 onNavigateToStart = {
                     navController.navigate(Screen.Start.route) {
-                        popUpTo(Screen.Splash.route) { inclusive = true }
+                        popUpTo(Screen.Splash.route) {
+                            inclusive = true
+                        }
                     }
                 }
             )
@@ -75,6 +81,7 @@ fun AppNavigation(
         // LOGIN
         composable(route = Screen.Login.route) {
             val viewModel: LoginViewModel = hiltViewModel()
+
             LoginScreen(
                 viewModel = viewModel,
                 onLoginClick = {
@@ -97,6 +104,7 @@ fun AppNavigation(
         // RECOVER PASSWORD
         composable(route = Screen.RecoverPassword.route) {
             val viewModel: RecoverPasswordViewModel = hiltViewModel()
+
             RecoverPasswordScreen(
                 viewModel = viewModel,
                 onBackClick = {
@@ -104,7 +112,9 @@ fun AppNavigation(
                 },
                 onLoginClick = {
                     navController.navigate(Screen.Login.route) {
-                        popUpTo(Screen.Login.route) { inclusive = true }
+                        popUpTo(Screen.Login.route) {
+                            inclusive = true
+                        }
                     }
                 },
                 onSendLinkClick = {
@@ -116,6 +126,7 @@ fun AppNavigation(
         // REGISTER
         composable(route = Screen.Register.route) {
             val viewModel: RegisterViewModel = hiltViewModel()
+
             RegisterScreen(
                 viewModel = viewModel,
                 onRegisterClick = {
@@ -135,13 +146,18 @@ fun AppNavigation(
         // FEED
         composable(route = Screen.Feed.route) {
             val viewModel: FeedViewModel = hiltViewModel()
+
             FeedScreen(
                 viewModel = viewModel,
                 onGameClick = { gameId ->
-                    navController.navigate(Screen.Videogame.createRoute(gameId))
+                    navController.navigate(
+                        Screen.Videogame.createRoute(gameId)
+                    )
                 },
                 onUserClick = { userId ->
-                    navController.navigate(Screen.UserProfile.createRoute(userId))
+                    navController.navigate(
+                        Screen.UserProfile.createRoute(userId)
+                    )
                 }
             )
         }
@@ -149,13 +165,18 @@ fun AppNavigation(
         // EXPLORE
         composable(route = Screen.Explore.route) {
             val viewModel: ExploreViewModel = hiltViewModel()
+
             ExploreScreen(
                 viewModel = viewModel,
                 onPopularGameClick = { game ->
-                    navController.navigate(Screen.Videogame.createRoute(game.id))
+                    navController.navigate(
+                        Screen.Videogame.createRoute(game.id)
+                    )
                 },
                 onResultGameClick = { game ->
-                    navController.navigate(Screen.Videogame.createRoute(game.id))
+                    navController.navigate(
+                        Screen.Videogame.createRoute(game.id)
+                    )
                 }
             )
         }
@@ -163,16 +184,21 @@ fun AppNavigation(
         // NOTIFICATIONS
         composable(route = Screen.Notifications.route) {
             val viewModel: NotificationsViewModel = hiltViewModel()
+
             NotificationsScreen(viewModel = viewModel)
         }
 
         // FOLLOWERS
         composable(route = Screen.Followers.route) {
             val viewModel: FollowersViewModel = hiltViewModel()
+
             FollowersScreen(
                 viewModel = viewModel,
                 onBackClick = {
                     navController.popBackStack()
+                },
+                onSearchClick = {
+                    navController.navigate(Screen.SearchUsers.route)
                 }
             )
         }
@@ -180,6 +206,7 @@ fun AppNavigation(
         // SELF PROFILE
         composable(route = Screen.SelfProfile.route) {
             val viewModel: SelfProfileViewModel = hiltViewModel()
+
             SelfProfileScreen(
                 viewModel = viewModel,
                 onFollowersClick = {
@@ -189,6 +216,9 @@ fun AppNavigation(
                     navController.navigate(Screen.Start.route) {
                         popUpTo(0) { inclusive = true }
                     }
+                },
+                onSettingsClick = {
+                    navController.navigate(Screen.EditProfile.route)
                 },
                 onEditReviewClick = { review ->
                     navController.navigate(
@@ -201,7 +231,42 @@ fun AppNavigation(
                     )
                 },
                 onReviewClick = { review ->
-                    navController.navigate(Screen.Videogame.createRoute(review.gameId))
+                    navController.navigate(
+                        Screen.Videogame.createRoute(review.gameId)
+                    )
+                }
+            )
+        }
+
+        // EDIT PROFILE
+        composable(route = Screen.EditProfile.route) {
+            val viewModel:
+                    com.example.gamercornerapp.ui.Screens.editProfile.EditProfileViewModel =
+                hiltViewModel()
+
+            com.example.gamercornerapp.ui.Screens.editProfile.EditProfileScreen(
+                viewModel = viewModel,
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // SEARCH USERS
+        composable(route = Screen.SearchUsers.route) {
+            val viewModel:
+                    com.example.gamercornerapp.ui.Screens.searchUsers.SearchUsersViewModel =
+                hiltViewModel()
+
+            com.example.gamercornerapp.ui.Screens.searchUsers.SearchUsersScreen(
+                viewModel = viewModel,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onUserClick = { userId ->
+                    navController.navigate(
+                        Screen.UserProfile.createRoute(userId)
+                    )
                 }
             )
         }
@@ -210,27 +275,52 @@ fun AppNavigation(
         composable(
             route = Screen.UserProfile.route,
             arguments = listOf(
-                navArgument("userId") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val userId = backStackEntry.arguments?.getString("userId") ?: "1"
-            UserProfileScreen(
-                userId = userId,
-                onBackClick = { navController.popBackStack() },
-                onReviewClick = { review ->
-                    navController.navigate(Screen.Videogame.createRoute(review.gameId))
+                navArgument("userId") {
+                    type = NavType.StringType
                 }
             )
+        ) { backStackEntry ->
+
+            val userId = backStackEntry.arguments
+                ?.getString("userId")
+                ?.takeIf { it.isNotBlank() }
+
+            if (userId != null) {
+
+                UserProfileScreen(
+                    userId = userId,
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onReviewClick = { review ->
+                        navController.navigate(
+                            Screen.Videogame.createRoute(review.gameId)
+                        )
+                    }
+                )
+
+            } else {
+
+                LaunchedEffect(Unit) {
+                    navController.popBackStack()
+                }
+            }
         }
 
         // VIDEOGAME
         composable(
             route = Screen.Videogame.route,
             arguments = listOf(
-                navArgument("gameId") { type = NavType.StringType }
+                navArgument("gameId") {
+                    type = NavType.StringType
+                }
             )
         ) { backStackEntry ->
-            val gameId = backStackEntry.arguments?.getString("gameId") ?: ""
+
+            val gameId = backStackEntry.arguments
+                ?.getString("gameId")
+                ?: ""
+
             val viewModel: VideogameViewModel = hiltViewModel()
 
             VideogameScreen(
@@ -240,19 +330,25 @@ fun AppNavigation(
                     navController.popBackStack()
                 },
                 onWriteReviewClick = {
-                    navController.navigate(Screen.Review.createRoute(gameId))
+                    navController.navigate(
+                        Screen.Review.createRoute(gameId)
+                    )
                 },
                 onUserClick = { userId ->
-                    navController.navigate(Screen.UserProfile.createRoute(userId))
+                    navController.navigate(
+                        Screen.UserProfile.createRoute(userId)
+                    )
                 }
             )
         }
 
-        // REVIEW (Create or Update)
+        // REVIEW (CREATE OR UPDATE)
         composable(
             route = Screen.Review.route,
             arguments = listOf(
-                navArgument("gameId") { type = NavType.StringType },
+                navArgument("gameId") {
+                    type = NavType.StringType
+                },
                 navArgument("reviewId") {
                     type = NavType.StringType
                     nullable = true
@@ -269,10 +365,20 @@ fun AppNavigation(
                 }
             )
         ) { backStackEntry ->
-            val gameId = backStackEntry.arguments?.getString("gameId") ?: ""
-            val reviewId = backStackEntry.arguments?.getString("reviewId")
-            val opinion = backStackEntry.arguments?.getString("opinion")
-            val rating = backStackEntry.arguments?.getInt("rating") ?: 5
+
+            val gameId = backStackEntry.arguments
+                ?.getString("gameId")
+                ?: ""
+
+            val reviewId = backStackEntry.arguments
+                ?.getString("reviewId")
+
+            val opinion = backStackEntry.arguments
+                ?.getString("opinion")
+
+            val rating = backStackEntry.arguments
+                ?.getInt("rating")
+                ?: 5
 
             val viewModel: ReviewViewModel = hiltViewModel()
 

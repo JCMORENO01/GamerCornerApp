@@ -5,6 +5,7 @@ data class UserProfile(
     val username: String,
     val nickName: String,
     val bio: String,
+    val birthDate: String? = null,
     val profileBackgroundId: Int,
     val profileBgDescription: String,
     val profileImageId: Int,

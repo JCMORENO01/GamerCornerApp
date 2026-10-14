@@ -61,6 +61,8 @@ dependencies {
     // Firebase & Coroutines
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-storage-ktx")
     implementation(libs.kotlinx.coroutines.play.services)
     implementation("com.google.firebase:firebase-storage-ktx")
 

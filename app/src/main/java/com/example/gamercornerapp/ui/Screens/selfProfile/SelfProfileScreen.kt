@@ -43,11 +43,16 @@ fun SelfProfileScreen(
     onFollowersClick: () -> Unit,
     modifier: Modifier = Modifier,
     onLogoutClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {},
     onEditReviewClick: (ReviewItem) -> Unit = {},
     onReviewClick: (ReviewItem) -> Unit = {},
     viewModel: SelfProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        viewModel.loadSelfProfile()
+    }
 
     if (uiState.userProfile == null) {
         Box(
@@ -75,6 +80,7 @@ fun SelfProfileScreen(
             onErrorDismiss = viewModel::onErrorDismiss,
             onTabSelected = viewModel::onTabSelected,
             onFollowersClick = onFollowersClick,
+            onSettingsClick = onSettingsClick,
             onLogoutClick = {
                 viewModel.onLogoutClick()
                 onLogoutClick()
@@ -104,6 +110,7 @@ fun SelfProfileScreenContent(
     onFollowersClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     onLogoutClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {},
     onEditClick: (ReviewItem) -> Unit = {},
     onDeleteClick: (ReviewItem) -> Unit = {},
     onImageSelected: (android.net.Uri) -> Unit = {},
@@ -155,6 +162,7 @@ fun SelfProfileScreenContent(
                 userProfile = userProfile,
                 isLoadingImage = isLoadingImage,
                 onLogoutClick = onLogoutClick,
+                onSettingsClick = onSettingsClick,
                 onImageSelected = onImageSelected
             )
 

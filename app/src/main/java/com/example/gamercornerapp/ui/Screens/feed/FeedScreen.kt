@@ -1,3 +1,4 @@
+
 package com.example.gamercornerapp.ui.Screens.feed
 
 import androidx.compose.foundation.background
@@ -12,6 +13,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -33,6 +35,10 @@ fun FeedScreen(
     viewModel: FeedViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadFeed()
+    }
 
     FeedScreenContent(
         posts = uiState.posts,
@@ -74,7 +80,9 @@ fun FeedScreenContent(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                CircularProgressIndicator(
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
         } else if (posts.isEmpty()) {
             Box(
@@ -88,7 +96,10 @@ fun FeedScreenContent(
             }
         } else {
             LazyColumn(
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+                contentPadding = PaddingValues(
+                    horizontal = 16.dp,
+                    vertical = 16.dp
+                ),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
@@ -98,8 +109,12 @@ fun FeedScreenContent(
                 ) { post ->
                     FeedPostCard(
                         post = post,
-                        onAuthorClick = { onUserClick(post.author.id) },
-                        onCardClick = { onGameClick(post.game.id) }
+                        onAuthorClick = {
+                            onUserClick(post.author.id)
+                        },
+                        onCardClick = {
+                            onGameClick(post.game.id)
+                        }
                     )
                 }
             }

@@ -31,10 +31,11 @@ class SelfProfileViewModel @Inject constructor(
 
     fun loadSelfProfile() {
         viewModelScope.launch {
+            val currentUserId = authRepository.currentUser?.uid ?: return@launch
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
-            val userResult = userRepository.getUserById("1")
-            val reviewsResult = reviewRepository.getReviewsByUser("1")
+            val userResult = userRepository.getUserById(currentUserId)
+            val reviewsResult = reviewRepository.getReviewsByUser(currentUserId)
 
             if (userResult.isSuccess && reviewsResult.isSuccess) {
                 var userProfile = userResult.getOrNull()
@@ -96,11 +97,24 @@ class SelfProfileViewModel @Inject constructor(
 
     fun uploadImageToFirebase(uri: Uri) {
         viewModelScope.launch {
+            val currentUserId = authRepository.currentUser?.uid ?: return@launch
             _uiState.update { it.copy(isLoadingImage = true, errorMessage = null) }
             val uploadResult = storageRepository.uploadProfileImage(uri)
             if (uploadResult.isSuccess) {
                 val downloadUrl = uploadResult.getOrNull()!!
                 authRepository.updateProfilePicture(downloadUrl)
+                
+                // Actualizar también en Firestore para mantener consistencia global (desnormalización)
+                val currentProfile = _uiState.value.userProfile
+                if (currentProfile != null) {
+                    userRepository.updateUserProfile(
+                        id = currentUserId,
+                        username = currentProfile.username,
+                        bio = currentProfile.bio,
+                        birthDate = currentProfile.birthDate,
+                        profilePictureUrl = downloadUrl
+                    )
+                }
 
                 _uiState.update { currentState ->
                     currentState.copy(

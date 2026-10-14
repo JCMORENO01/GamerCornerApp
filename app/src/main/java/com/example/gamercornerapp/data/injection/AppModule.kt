@@ -31,6 +31,12 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideFirebaseFirestore(): com.google.firebase.firestore.FirebaseFirestore {
+        return com.google.firebase.firestore.FirebaseFirestore.getInstance()
+    }
+
+    @Provides
+    @Singleton
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
             .baseUrl("http://10.0.2.2:3000/")
@@ -48,7 +54,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideGamerCornerRemoteDataSource(
-        impl: GamerCornerRemoteDataSourceImpl
+        impl: com.example.gamercornerapp.data.datasource.GamerCornerFirestoreDataSourceImpl
     ): GamerCornerRemoteDataSource {
         return impl
     }

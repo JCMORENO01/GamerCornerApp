@@ -1,13 +1,17 @@
+
 package com.example.gamercornerapp.data.datasource
 
+import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.UserProfileChangeRequest
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class AuthRemoteDataSource @Inject constructor(
     private val auth: FirebaseAuth
 ) {
+
     suspend fun signIn(email: String, pass: String) {
         auth.signInWithEmailAndPassword(email, pass).await()
     }
@@ -20,14 +24,15 @@ class AuthRemoteDataSource @Inject constructor(
         auth.signOut()
     }
 
-
     suspend fun updateProfilePicture(photoUrl: String) {
         val user = auth.currentUser
-        val profileUpdates = com.google.firebase.auth.UserProfileChangeRequest.Builder()
-            .setPhotoUri(android.net.Uri.parse(photoUrl))
+            ?: throw Exception("No se pudo obtener el usuario actual")
+
+        val profileUpdates = UserProfileChangeRequest.Builder()
+            .setPhotoUri(Uri.parse(photoUrl))
             .build()
 
-        user?.updateProfile(profileUpdates)?.await()
+        user.updateProfile(profileUpdates).await()
     }
 
     val currentUser: FirebaseUser?

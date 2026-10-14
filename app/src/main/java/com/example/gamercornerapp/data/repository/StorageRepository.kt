@@ -17,7 +17,8 @@ class StorageRepository @Inject constructor(
         return try {
             // Limite de 15 segundos para manejar conexiones a internet (Te quiero mucho Angarita)
             val url = withTimeout(15_000L) {
-                val userId = authRepository.currentUser?.uid ?: "guest_user"
+                val userId = authRepository.currentUser?.uid
+                    ?: throw Exception("No se pudo obtener el usuario actual")
                 val path = "profile_images/$userId.jpg"
                 storageDataSource.uploadImage(imageUri, path)
             }

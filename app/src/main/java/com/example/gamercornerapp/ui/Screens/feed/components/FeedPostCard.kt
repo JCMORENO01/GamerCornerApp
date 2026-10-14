@@ -96,7 +96,7 @@ fun FeedPostCard(
                         .clickable { onAuthorClick() }
                 ) {
                     Text(
-                        text = post.author.username,
+                        text = if (post.author.nickName.startsWith("@")) post.author.nickName else "@${post.author.nickName}",
                         color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold
