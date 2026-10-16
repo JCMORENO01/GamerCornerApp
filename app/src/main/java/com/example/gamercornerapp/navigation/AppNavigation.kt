@@ -3,6 +3,8 @@ package com.example.gamercornerapp.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -189,16 +191,31 @@ fun AppNavigation(
         }
 
         // FOLLOWERS
-        composable(route = Screen.Followers.route) {
+        composable(
+            route = Screen.Followers.route,
+            arguments = listOf(
+                navArgument("userId") {
+                    type = NavType.StringType
+                },
+                navArgument("tabIndex") {
+                    type = NavType.IntType
+                    defaultValue = 0
+                }
+            )
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
             val viewModel: FollowersViewModel = hiltViewModel()
 
             FollowersScreen(
+                userId = userId,
                 viewModel = viewModel,
                 onBackClick = {
                     navController.popBackStack()
                 },
-                onSearchClick = {
-                    navController.navigate(Screen.SearchUsers.route)
+                onUserClick = { selectedUserId ->
+                    navController.navigate(
+                        Screen.UserProfile.createRoute(selectedUserId)
+                    )
                 }
             )
         }
@@ -206,11 +223,15 @@ fun AppNavigation(
         // SELF PROFILE
         composable(route = Screen.SelfProfile.route) {
             val viewModel: SelfProfileViewModel = hiltViewModel()
+            val uiState by viewModel.uiState.collectAsState()
 
             SelfProfileScreen(
                 viewModel = viewModel,
                 onFollowersClick = {
-                    navController.navigate(Screen.Followers.route)
+                    val currentUserId = uiState.userProfile?.id ?: ""
+                    if (currentUserId.isNotBlank()) {
+                        navController.navigate(Screen.Followers.createRoute(currentUserId))
+                    }
                 },
                 onLogoutClick = {
                     navController.navigate(Screen.Start.route) {

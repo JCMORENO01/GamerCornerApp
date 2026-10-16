@@ -244,9 +244,15 @@ class GamerCornerFirestoreDataSourceImpl @Inject constructor(
             .get()
             .await()
 
-        return doc.toObject(UserProfileDTO::class.java)
-            ?.copy(id = doc.id)
+        val userProfile = doc.toObject(UserProfileDTO::class.java)
+            ?.copy(
+                id = doc.id,
+                followersCount = doc.getLong("followersCount") ?: 0L,
+                followingCount = doc.getLong("followingCount") ?: 0L
+            )
             ?: throw Exception("No se pudo obtener el usuario")
+
+        return userProfile
     }
 
     override suspend fun registerUser(

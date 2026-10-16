@@ -4,6 +4,7 @@ package com.example.gamercornerapp.data.dto
 import com.example.gamercornerapp.R
 import com.example.gamercornerapp.data.UserProfile
 import com.example.gamercornerapp.data.UserStats
+import com.google.firebase.firestore.PropertyName
 
 abstract class UserProfileGenericDTO {
     abstract fun toUserProfile(
@@ -23,6 +24,9 @@ data class UserProfileDTO(
     val profilePictureUrl: String? = null,
     val followersCount: Long = 0L,
     val followingCount: Long = 0L,
+
+    @get:PropertyName("fcm_token")
+    @field:PropertyName("fcm_token")
     val FCM_token: String? = null,
     var isFollowed: Boolean = false
 ) : UserProfileGenericDTO() {

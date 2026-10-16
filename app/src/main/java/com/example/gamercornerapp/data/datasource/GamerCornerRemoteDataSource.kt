@@ -43,6 +43,7 @@ interface GamerCornerRemoteDataSource {
         userId: String
     )
 
+
     // Tiempo real
     fun listenAllReviews(): Flow<List<ReviewDTO>>
 
@@ -83,4 +84,5 @@ interface GamerCornerRemoteDataSource {
     suspend fun getFollowing(
         userId: String
     ): List<String>
+
 }
