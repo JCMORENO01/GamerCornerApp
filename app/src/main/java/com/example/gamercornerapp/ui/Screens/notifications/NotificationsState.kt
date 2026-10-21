@@ -1,4 +1,3 @@
-
 package com.example.gamercornerapp.ui.Screens.notifications
 
 import com.example.gamercornerapp.data.NotificationItem

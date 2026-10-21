@@ -6,7 +6,7 @@ admin.initializeApp();
 
 const db = admin.firestore();
 
-// Funcion para notificar cuando alguien recibe un like
+// Notificar cuando alguien recibe un like en una reseña
 exports.sendReviewLikeNotification = onDocumentCreated(
     "reviews/{reviewId}/likes/{userId}",
     async (event) => {
@@ -27,6 +27,7 @@ exports.sendReviewLikeNotification = onDocumentCreated(
         const reviewData = reviewDoc.data();
         const authorId = reviewData.userId;
 
+        // No notificar likes propios
         if (!authorId || authorId === userId) {
             return;
         }
@@ -42,21 +43,45 @@ exports.sendReviewLikeNotification = onDocumentCreated(
         }
 
         const authorData = authorDoc.data();
-        const userToken = authorData.FCM_token;
 
+        // Campo utilizado por UserProfileDTO en Firestore
+        const userToken = authorData.fcm_token;
+
+        const userDoc = await db
+            .collection("users")
+            .doc(userId)
+            .get();
+
+        const username = userDoc.exists
+            ? userDoc.data().username || "Un usuario"
+            : "Un usuario";
+
+        const gameTitle =
+            reviewData.game?.title || "un videojuego";
+
+        // Guardar notificación en Firestore
+        // Usar un ID fijo evita duplicados si la función se reintenta
+        await db
+            .collection("users")
+            .doc(authorId)
+            .collection("notifications")
+            .doc(`like_${reviewId}_${userId}`)
+            .set({
+                type: "LIKE",
+                username: username,
+                actionText: "le dio like a tu reseña de",
+                targetTitle: gameTitle,
+                reviewId: reviewId,
+                fromUserId: userId,
+                createdAt: admin.firestore.FieldValue.serverTimestamp()
+            });
+
+        console.log(
+            `Notificación guardada para ${authorId}`
+        );
+
+        // Enviar notificación push si existe un token
         if (userToken) {
-
-            const userDoc = await db
-                .collection("users")
-                .doc(userId)
-                .get();
-
-            const username = userDoc.exists
-                ? userDoc.data().username || "Un usuario"
-                : "Un usuario";
-
-            const gameTitle =
-                reviewData.game?.title || "un videojuego";
 
             const message = {
                 token: userToken,
@@ -71,12 +96,12 @@ exports.sendReviewLikeNotification = onDocumentCreated(
                 await admin.messaging().send(message);
 
                 console.log(
-                    `Notificacion enviada a ${authorId}`
+                    `Notificación push enviada a ${authorId}`
                 );
 
             } catch (error) {
                 console.error(
-                    "Error al enviar la notificacion:",
+                    "Error al enviar la notificación push:",
                     error
                 );
             }

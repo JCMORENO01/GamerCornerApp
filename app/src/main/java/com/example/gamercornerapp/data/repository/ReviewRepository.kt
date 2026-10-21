@@ -3,7 +3,7 @@ package com.example.gamercornerapp.data.repository
 
 import com.example.gamercornerapp.data.FeedPost
 import com.example.gamercornerapp.data.ReviewItem
-import com.example.gamercornerapp.data.datasource.GamerCornerRemoteDataSource
+import com.example.gamercornerapp.data.datasource.ReviewRemoteDataSource
 import com.example.gamercornerapp.data.dto.CreateReviewDTO
 import com.example.gamercornerapp.data.dto.CreateReviewGameDTO
 import com.example.gamercornerapp.data.dto.CreateReviewUserDTO
@@ -19,8 +19,9 @@ import javax.inject.Singleton
 
 @Singleton
 class ReviewRepository @Inject constructor(
-    private val remoteDataSource: GamerCornerRemoteDataSource,
+    private val remoteDataSource: ReviewRemoteDataSource,
     private val gameRepository: GameRepository,
+    private val userRepository: UserRepository,
     private val authRepository: AuthRepository
 ) {
 
@@ -64,21 +65,23 @@ class ReviewRepository @Inject constructor(
         }
     }
 
-    // Función para transformar las reseñas en publicaciones del Feed
     fun listenAllReviewsAsFeed(): Flow<List<FeedPost>> {
         return remoteDataSource.listenAllReviews()
             .map { reviews ->
-                reviews.map { review -> review.toFeedPost() }
+                reviews.map { review ->
+                    review.toFeedPost()
+                }
             }
     }
 
-    // Función para obtener reseñas de usuarios seguidos
     suspend fun getFollowingReviewsAsFeed(
         userId: String
     ): Result<List<FeedPost>> {
         return try {
-            val followingIds = remoteDataSource
+            val followingIds = userRepository
                 .getFollowing(userId)
+                .getOrThrow()
+                .map { it.id }
                 .toSet()
 
             val reviews = remoteDataSource.getAllReviews()
@@ -143,8 +146,8 @@ class ReviewRepository @Inject constructor(
                 "Usuario no autenticado"
             }
 
-            val userDto = remoteDataSource.getUserById(userId)
-            val user = userDto.toUserProfile()
+            val user = userRepository.getUserById(userId)
+                .getOrThrow()
 
             val game = gameRepository.getGameById(gameId)
                 .getOrThrow()
@@ -205,14 +208,12 @@ class ReviewRepository @Inject constructor(
     ): Result<Unit> {
         return try {
             remoteDataSource.deleteReview(reviewId)
-
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    // Función para dar o quitar like
     suspend fun toggleReviewLike(
         reviewId: String,
         userId: String

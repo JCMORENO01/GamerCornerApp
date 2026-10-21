@@ -1,3 +1,4 @@
+
 package com.example.gamercornerapp.ui.Screens.videogame
 
 import androidx.lifecycle.ViewModel
@@ -17,12 +18,24 @@ class VideogameViewModel @Inject constructor(
     private val gameRepository: GameRepository,
     private val reviewRepository: ReviewRepository
 ) : ViewModel() {
+
     private val _uiState = MutableStateFlow(VideogameState())
-    val uiState: StateFlow<VideogameState> = _uiState.asStateFlow()
+
+    val uiState: StateFlow<VideogameState> =
+        _uiState.asStateFlow()
+
+    private var currentGameId: String? = null
 
     fun loadGame(gameId: String) {
+        currentGameId = gameId
+
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null) }
+            _uiState.update {
+                it.copy(
+                    isLoading = true,
+                    error = null
+                )
+            }
 
             val gameResult = gameRepository.getGameById(gameId)
             val reviewsResult = reviewRepository.getReviewsByGame(gameId)
@@ -40,13 +53,48 @@ class VideogameViewModel @Inject constructor(
                             error = null
                         )
                     }
+                } else {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = "No se pudo cargar el videojuego"
+                        )
+                    }
                 }
             } else {
-                val error = gameResult.exceptionOrNull() ?: reviewsResult.exceptionOrNull()
+                val error = gameResult.exceptionOrNull()
+                    ?: reviewsResult.exceptionOrNull()
+
                 _uiState.update {
                     it.copy(
                         isLoading = false,
                         error = error?.localizedMessage
+                            ?: "No se pudo cargar el videojuego"
+                    )
+                }
+            }
+        }
+    }
+
+    fun refreshReviews() {
+        val gameId = currentGameId ?: return
+
+        viewModelScope.launch {
+            val result = reviewRepository.getReviewsByGame(gameId)
+
+            if (result.isSuccess) {
+                _uiState.update {
+                    it.copy(
+                        reviews = result.getOrNull() ?: emptyList(),
+                        error = null
+                    )
+                }
+            } else {
+                _uiState.update {
+                    it.copy(
+                        error = result.exceptionOrNull()
+                            ?.localizedMessage
+                            ?: "No se pudieron actualizar las reseñas"
                     )
                 }
             }
@@ -56,18 +104,24 @@ class VideogameViewModel @Inject constructor(
     fun deleteReview(reviewId: String) {
         viewModelScope.launch {
             val result = reviewRepository.deleteReview(reviewId)
+
             if (result.isSuccess) {
                 _uiState.update { state ->
-                    val newReviews = mutableListOf<com.example.gamercornerapp.data.ReviewItem>()
-                    for (review in state.reviews) {
-                        if (review.id != reviewId) {
-                            newReviews.add(review)
-                        }
-                    }
-                    state.copy(reviews = newReviews)
+                    state.copy(
+                        reviews = state.reviews.filter {
+                            it.id != reviewId
+                        },
+                        error = null
+                    )
                 }
             } else {
-                _uiState.update { it.copy(error = result.exceptionOrNull()?.localizedMessage) }
+                _uiState.update {
+                    it.copy(
+                        error = result.exceptionOrNull()
+                            ?.localizedMessage
+                            ?: "No se pudo eliminar la reseña"
+                    )
+                }
             }
         }
     }

@@ -2,7 +2,7 @@
 package com.example.gamercornerapp.data.repository
 
 import com.example.gamercornerapp.data.UserProfile
-import com.example.gamercornerapp.data.datasource.GamerCornerRemoteDataSource
+import com.example.gamercornerapp.data.datasource.UserRemoteDataSource
 import com.example.gamercornerapp.data.dto.UserProfileDTO
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.tasks.await
@@ -11,7 +11,7 @@ import javax.inject.Singleton
 
 @Singleton
 class UserRepository @Inject constructor(
-    private val remoteDataSource: GamerCornerRemoteDataSource
+    private val remoteDataSource: UserRemoteDataSource
 ) {
 
     suspend fun getUserById(
@@ -19,13 +19,15 @@ class UserRepository @Inject constructor(
     ): Result<UserProfile> {
         return try {
             val userDto = remoteDataSource.getUserById(userId)
-            Result.success(userDto.toUserProfile())
+
+            Result.success(
+                userDto.toUserProfile()
+            )
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    // Función para consultar el estado de seguimiento
     suspend fun getUserWithFollowState(
         userId: String,
         currentUserId: String?
@@ -54,7 +56,6 @@ class UserRepository @Inject constructor(
         }
     }
 
-    // Función para registrar usuario con token FCM
     suspend fun createUserProfile(
         id: String,
         username: String,
@@ -82,7 +83,10 @@ class UserRepository @Inject constructor(
                 FCM_token = token
             )
 
-            remoteDataSource.registerUser(dto, id)
+            remoteDataSource.registerUser(
+                dto,
+                id
+            )
 
             Result.success(Unit)
         } catch (e: Exception) {
@@ -104,7 +108,6 @@ class UserRepository @Inject constructor(
         }
     }
 
-    // Función para modificar el perfil
     suspend fun updateUserProfile(
         id: String,
         username: String,
@@ -113,9 +116,7 @@ class UserRepository @Inject constructor(
         profilePictureUrl: String? = null
     ): Result<Unit> {
         return try {
-            val existingDto = remoteDataSource
-                .getUserById(id) as? UserProfileDTO
-                ?: throw Exception("No se pudo obtener el perfil")
+            val existingDto = remoteDataSource.getUserById(id)
 
             val updatedDto = existingDto.copy(
                 username = username,
@@ -137,14 +138,11 @@ class UserRepository @Inject constructor(
         }
     }
 
-    // Función para actualizar el token FCM
     suspend fun updateFCMToken(
         userId: String
     ): Result<Unit> {
         return try {
-            val existingDto = remoteDataSource
-                .getUserById(userId) as? UserProfileDTO
-                ?: throw Exception("No se pudo obtener el usuario")
+            val existingDto = remoteDataSource.getUserById(userId)
 
             val token = FirebaseMessaging.getInstance()
                 .token
@@ -165,7 +163,6 @@ class UserRepository @Inject constructor(
         }
     }
 
-    // Función para seguir o dejar de seguir
     suspend fun toggleFollowUser(
         currentUserId: String,
         targetUserId: String
@@ -173,6 +170,7 @@ class UserRepository @Inject constructor(
         return try {
             require(currentUserId.isNotBlank())
             require(targetUserId.isNotBlank())
+
             require(currentUserId != targetUserId) {
                 "No puedes seguirte a ti mismo"
             }
@@ -188,7 +186,6 @@ class UserRepository @Inject constructor(
         }
     }
 
-    // Función para obtener seguidores
     suspend fun getFollowers(
         userId: String
     ): Result<List<UserProfile>> {
@@ -206,7 +203,6 @@ class UserRepository @Inject constructor(
         }
     }
 
-    // Función para obtener seguidos
     suspend fun getFollowing(
         userId: String
     ): Result<List<UserProfile>> {

@@ -15,8 +15,8 @@ data class ReviewDTO(
     // Cantidad de likes almacenada en Firestore
     val likesCount: Long = 0L,
 
-    // Estado del usuario autenticado
-    var isLiked: Boolean = false
+    // Indica si el usuario autenticado dio like
+    val isLiked: Boolean = false
 ) {
     constructor() : this("")
 }

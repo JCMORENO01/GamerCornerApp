@@ -56,58 +56,65 @@ fun NotificationScreenContent(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-
         NotificationsHeader()
 
-        if (errorMessage != null) {
-            Text(
-                text = errorMessage,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(16.dp)
-            )
-        }
-
-        if (isLoading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-
-        } else if (notifications.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Todavía no tienes notificaciones",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-        } else {
-            LazyColumn(
-                contentPadding = PaddingValues(
-                    horizontal = 16.dp,
-                    vertical = 8.dp
-                ),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(
-                    items = notifications,
-                    key = { it.id }
-                ) { notification ->
-
-                    NotificationCardItem(
-                        notification = notification,
-                        onClick = {
-                            onNotificationClick(notification)
-                        }
+        when {
+            isLoading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.primary
                     )
+                }
+            }
+
+            errorMessage != null -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = errorMessage,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+
+            notifications.isEmpty() -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Todavía no tienes notificaciones",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            else -> {
+                LazyColumn(
+                    contentPadding = PaddingValues(
+                        horizontal = 16.dp,
+                        vertical = 8.dp
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(
+                        items = notifications,
+                        key = { it.id }
+                    ) { notification ->
+                        NotificationCardItem(
+                            notification = notification,
+                            onClick = {
+                                onNotificationClick(notification)
+                            }
+                        )
+                    }
                 }
             }
         }

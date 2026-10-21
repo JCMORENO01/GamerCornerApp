@@ -2,71 +2,85 @@
 package com.example.gamercornerapp.ui.Screens.notifications
 
 import androidx.lifecycle.ViewModel
-import com.example.gamercornerapp.R
-import com.example.gamercornerapp.data.NotificationItem
-import com.example.gamercornerapp.ui.Screens.notifications.enums.NotificationType
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
+import androidx.lifecycle.viewModelScope
+import com.example.gamercornerapp.data.repository.AuthRepository
+import com.example.gamercornerapp.data.repository.NotificationRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class NotificationsViewModel @Inject constructor() : ViewModel() {
+class NotificationsViewModel @Inject constructor(
+    private val notificationRepository: NotificationRepository,
+    private val authRepository: AuthRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(NotificationsState())
-    val uiState: StateFlow<NotificationsState> = _uiState.asStateFlow()
 
-    private val db = FirebaseFirestore.getInstance()
-    private val auth = FirebaseAuth.getInstance()
+    val uiState: StateFlow<NotificationsState> =
+        _uiState.asStateFlow()
+
+    private var notificationsJob: Job? = null
 
     init {
         loadNotifications()
     }
 
     private fun loadNotifications() {
-        val userId = auth.currentUser?.uid ?: return
+        val userId = authRepository.currentUser?.uid
 
-        _uiState.update { it.copy(isLoading = true) }
+        if (userId == null) {
+            _uiState.update {
+                it.copy(
+                    notifications = emptyList(),
+                    isLoading = false,
+                    errorMessage = "Usuario no autenticado"
+                )
+            }
+            return
+        }
 
-        // Escuchamos en tiempo real la subcolección de notificaciones del usuario
-        db.collection("users").document(userId)
-            .collection("notifications")
-            .orderBy("createdAt", Query.Direction.DESCENDING)
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    _uiState.update {
-                        it.copy(isLoading = false, errorMessage = error.localizedMessage)
+        notificationsJob?.cancel()
+
+        _uiState.update {
+            it.copy(
+                isLoading = true,
+                errorMessage = null
+            )
+        }
+
+        notificationsJob = viewModelScope.launch {
+            try {
+                notificationRepository
+                    .listenNotifications(userId)
+                    .collect { notifications ->
+                        _uiState.update {
+                            it.copy(
+                                notifications = notifications,
+                                isLoading = false,
+                                errorMessage = null
+                            )
+                        }
                     }
-                    return@addSnapshotListener
-                }
-
-                if (snapshot != null) {
-                    val list = snapshot.documents.map { doc ->
-                        NotificationItem(
-                            id = doc.id,
-                            username = doc.getString("username") ?: "Usuario",
-                            userAvatarImage = R.drawable.messi1, // Tu imagen por defecto
-                            type = NotificationType.LIKE,
-                            actionText = doc.getString("actionText")
-                                ?: "interactuó con tu contenido",
-                            targetTitle = doc.getString("targetTitle") ?: "",
-                            relativeTime = "Reciente"
-                        )
-                    }
-
-                    _uiState.update {
-                        it.copy(
-                            notifications = list,
-                            isLoading = false,
-                            errorMessage = null
-                        )
-                    }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = e.localizedMessage
+                            ?: "Error al cargar las notificaciones"
+                    )
                 }
             }
+        }
+    }
+
+    override fun onCleared() {
+        notificationsJob?.cancel()
+        super.onCleared()
     }
 }

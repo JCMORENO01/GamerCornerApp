@@ -1,11 +1,19 @@
+
 package com.example.gamercornerapp.data.injection
 
 import android.content.Context
-import com.example.gamercornerapp.data.datasource.GamerCornerRemoteDataSource
-import com.example.gamercornerapp.data.datasource.GamerCornerRemoteDataSourceImpl
+import com.example.gamercornerapp.data.datasource.GameRemoteDataSource
+import com.example.gamercornerapp.data.datasource.ReviewRemoteDataSource
+import com.example.gamercornerapp.data.datasource.UserRemoteDataSource
+import com.example.gamercornerapp.data.datasource.NotificationRemoteDataSource
+import com.example.gamercornerapp.data.datasource.impl.firestore.GameFirestoreDataSourceImpl
+import com.example.gamercornerapp.data.datasource.impl.firestore.ReviewFirestoreDataSourceImpl
+import com.example.gamercornerapp.data.datasource.impl.firestore.UserFirestoreDataSourceImpl
+import com.example.gamercornerapp.data.datasource.impl.firestore.NotificationFirestoreDataSourceImpl
 import com.example.gamercornerapp.data.datasource.services.GamerCornerService
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,7 +30,9 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideFirebaseAuth(@ApplicationContext context: Context): FirebaseAuth {
+    fun provideFirebaseAuth(
+        @ApplicationContext context: Context
+    ): FirebaseAuth {
         if (FirebaseApp.getApps(context).isEmpty()) {
             FirebaseApp.initializeApp(context)
         }
@@ -31,8 +41,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideFirebaseFirestore(): com.google.firebase.firestore.FirebaseFirestore {
-        return com.google.firebase.firestore.FirebaseFirestore.getInstance()
+    fun provideFirebaseFirestore(): FirebaseFirestore {
+        return FirebaseFirestore.getInstance()
     }
 
     @Provides
@@ -47,15 +57,41 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideGamerCornerService(retrofit: Retrofit): GamerCornerService {
+    fun provideGamerCornerService(
+        retrofit: Retrofit
+    ): GamerCornerService {
         return retrofit.create(GamerCornerService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideGamerCornerRemoteDataSource(
-        impl: com.example.gamercornerapp.data.datasource.GamerCornerFirestoreDataSourceImpl
-    ): GamerCornerRemoteDataSource {
+    fun provideGameRemoteDataSource(
+        impl: GameFirestoreDataSourceImpl
+    ): GameRemoteDataSource {
+        return impl
+    }
+
+    @Provides
+    @Singleton
+    fun provideReviewRemoteDataSource(
+        impl: ReviewFirestoreDataSourceImpl
+    ): ReviewRemoteDataSource {
+        return impl
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRemoteDataSource(
+        impl: UserFirestoreDataSourceImpl
+    ): UserRemoteDataSource {
+        return impl
+    }
+
+    @Provides
+    @Singleton
+    fun provideNotificationRemoteDataSource(
+        impl: NotificationFirestoreDataSourceImpl
+    ): NotificationRemoteDataSource {
         return impl
     }
 }

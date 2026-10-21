@@ -1,15 +1,15 @@
+
 package com.example.gamercornerapp.data.repository
 
 import com.example.gamercornerapp.data.Game
-import com.example.gamercornerapp.data.datasource.GamerCornerRemoteDataSource
+import com.example.gamercornerapp.data.datasource.GameRemoteDataSource
 import com.example.gamercornerapp.data.dto.toGame
-import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class GameRepository @Inject constructor(
-    private val remoteDataSource: GamerCornerRemoteDataSource
+    private val remoteDataSource: GameRemoteDataSource
 ) {
 
     suspend fun getGames(): Result<List<Game>> {
