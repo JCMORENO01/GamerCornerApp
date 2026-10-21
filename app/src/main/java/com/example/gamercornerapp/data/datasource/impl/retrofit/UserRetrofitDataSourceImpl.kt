@@ -1,10 +1,10 @@
-
 package com.example.gamercornerapp.data.datasource.impl.retrofit
 
 import com.example.gamercornerapp.data.datasource.UserRemoteDataSource
 import com.example.gamercornerapp.data.datasource.services.GamerCornerService
 import com.example.gamercornerapp.data.dto.UserProfileDTO
-import com.example.gamercornerapp.data.dto.UserProfileGenericDTO
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class UserRetrofitDataSourceImpl @Inject constructor(
@@ -13,33 +13,32 @@ class UserRetrofitDataSourceImpl @Inject constructor(
 
     override suspend fun getUserById(
         userId: String
-    ): UserProfileDTO {
-        return service.getUserById(userId)
-    }
+    ): UserProfileDTO =
+        service.getUserByIdRaw(userId).toUserProfileDTO()
 
     override suspend fun registerUser(
         registerUserDto: UserProfileDTO,
         userId: String
     ) {
-        throw UnsupportedOperationException(
-            "El backend Express no tiene declarado el registro de perfiles"
+        service.registerUserRaw(
+            registerUserDto.toBackendBody(userId)
         )
     }
 
     override suspend fun searchUsers(
         query: String
-    ): List<UserProfileDTO> {
-        throw UnsupportedOperationException(
-            "El backend Express no tiene declarada la búsqueda de usuarios"
-        )
-    }
+    ): List<UserProfileDTO> =
+        service.searchUsersRaw(query).map {
+            it.toUserProfileDTO()
+        }
 
     override suspend fun updateUserProfile(
         userId: String,
         userProfile: UserProfileDTO
     ) {
-        throw UnsupportedOperationException(
-            "El backend Express no tiene declarada la edición de perfiles"
+        service.updateUserRaw(
+            userId,
+            userProfile.toBackendBody(userId)
         )
     }
 
@@ -47,8 +46,9 @@ class UserRetrofitDataSourceImpl @Inject constructor(
         userId: String,
         token: String
     ) {
-        throw UnsupportedOperationException(
-            "El backend Express no administra tokens FCM"
+        service.updateFcmTokenRaw(
+            userId,
+            mapOf("token" to token)
         )
     }
 
@@ -56,41 +56,54 @@ class UserRetrofitDataSourceImpl @Inject constructor(
         currentUserId: String,
         targetUserId: String
     ) {
-        throw UnsupportedOperationException(
-            "El backend Express no tiene declarado seguir/dejar de seguir"
+        val status = service.isFollowingRaw(
+            targetUserId,
+            currentUserId
         )
+
+        val body = mapOf(
+            "currentUserId" to currentUserId
+        )
+
+        if (status.bool("isFollowing")) {
+            service.unfollowUserRaw(targetUserId, body)
+        } else {
+            service.followUserRaw(targetUserId, body)
+        }
     }
 
     override suspend fun isFollowing(
         currentUserId: String,
         targetUserId: String
-    ): Boolean {
-        throw UnsupportedOperationException(
-            "El backend Express no tiene declarada esta consulta"
-        )
-    }
+    ): Boolean =
+        service.isFollowingRaw(
+            targetUserId,
+            currentUserId
+        ).bool("isFollowing")
 
     override suspend fun getFollowers(
         userId: String
-    ): List<String> {
-        throw UnsupportedOperationException(
-            "El backend Express no tiene declarada la consulta de seguidores"
-        )
-    }
+    ): List<String> =
+        service.getFollowersRaw(userId).map {
+            it.str("uid").ifBlank {
+                it.str("id")
+            }
+        }
 
     override suspend fun getFollowing(
         userId: String
-    ): List<String> {
-        throw UnsupportedOperationException(
-            "El backend Express no tiene declarada la consulta de seguidos"
-        )
-    }
+    ): List<String> =
+        service.getFollowingRaw(userId).map {
+            it.str("uid").ifBlank {
+                it.str("id")
+            }
+        }
 
+    // Consulta inicial HTTP, no listener en tiempo real.
     override fun listenUserById(
         userId: String
-    ): kotlinx.coroutines.flow.Flow<UserProfileDTO> {
-        throw UnsupportedOperationException(
-            "El backend Express no soporta escuchadores en tiempo real"
-        )
-    }
+    ): Flow<UserProfileDTO> =
+        flow {
+            emit(getUserById(userId))
+        }
 }

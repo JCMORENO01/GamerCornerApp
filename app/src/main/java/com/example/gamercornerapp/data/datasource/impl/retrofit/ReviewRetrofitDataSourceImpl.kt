@@ -1,4 +1,3 @@
-
 package com.example.gamercornerapp.data.datasource.impl.retrofit
 
 import com.example.gamercornerapp.data.datasource.ReviewRemoteDataSource
@@ -6,71 +5,69 @@ import com.example.gamercornerapp.data.datasource.services.GamerCornerService
 import com.example.gamercornerapp.data.dto.CreateReviewDTO
 import com.example.gamercornerapp.data.dto.ReviewDTO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class ReviewRetrofitDataSourceImpl @Inject constructor(
     private val service: GamerCornerService
 ) : ReviewRemoteDataSource {
 
-    override suspend fun getAllReviews(): List<ReviewDTO> {
-        return service.getAllReviews()
-    }
+    override suspend fun getAllReviews(): List<ReviewDTO> =
+        service.getAllReviewsRaw().map { it.toReviewDTO() }
 
-    override suspend fun getReviewsByGame(
-        gameId: String
-    ): List<ReviewDTO> {
-        return service.getReviewsByGame(gameId)
-    }
+    override suspend fun getReviewsByGame(gameId: String): List<ReviewDTO> =
+        service.getReviewsByGameRaw(gameId).map { it.toReviewDTO() }
 
-    override suspend fun getReviewsByUser(
-        userId: String
-    ): List<ReviewDTO> {
-        return service.getReviewsByUser(userId)
-    }
+    override suspend fun getReviewsByUser(userId: String): List<ReviewDTO> =
+        service.getReviewsByUserRaw(userId).map { it.toReviewDTO() }
 
-    override suspend fun createReview(
-        review: CreateReviewDTO
-    ) {
-        service.createReview(review)
+    override suspend fun createReview(review: CreateReviewDTO) {
+        service.createReviewRaw(review.toBackendBody())
     }
 
     override suspend fun updateReview(
         reviewId: String,
         review: CreateReviewDTO
     ) {
-        service.updateReview(reviewId, review)
+        service.updateReviewRaw(reviewId, review.toBackendBody())
     }
 
-    override suspend fun deleteReview(
-        reviewId: String
-    ) {
-        service.deleteReview(reviewId)
+    override suspend fun deleteReview(reviewId: String) {
+        service.deleteReviewRaw(reviewId)
     }
 
     override suspend fun toggleReviewLike(
         reviewId: String,
         userId: String
     ) {
-        throw UnsupportedOperationException(
-            "El backend Express no tiene declarado un endpoint de likes"
-        )
+        val status = service.getReviewLikeStatusRaw(reviewId, userId)
+        val body = mapOf("userId" to userId)
+
+        if (status.bool("hasLiked")) {
+            service.unlikeReviewRaw(reviewId, body)
+        } else {
+            service.likeReviewRaw(reviewId, body)
+        }
     }
 
-    override fun listenAllReviews(): Flow<List<ReviewDTO>> {
-        throw UnsupportedOperationException(
-            "La implementación Retrofit todavía no tiene tiempo real"
-        )
-    }
+    // Retrofit HTTP no proporciona listeners push.
+    // Estos Flows emiten una consulta inicial.
+    override fun listenAllReviews(): Flow<List<ReviewDTO>> =
+        flow {
+            emit(getAllReviews())
+        }
 
-    override fun listenReviewsByGame(gameId: String): Flow<List<ReviewDTO>> {
-        throw UnsupportedOperationException(
-            "La implementación Retrofit todavía no tiene tiempo real"
-        )
-    }
+    override fun listenReviewsByGame(
+        gameId: String
+    ): Flow<List<ReviewDTO>> =
+        flow {
+            emit(getReviewsByGame(gameId))
+        }
 
-    override fun listenReviewsByUser(userId: String): Flow<List<ReviewDTO>> {
-        throw UnsupportedOperationException(
-            "La implementación Retrofit todavía no tiene tiempo real"
-        )
-    }
+    override fun listenReviewsByUser(
+        userId: String
+    ): Flow<List<ReviewDTO>> =
+        flow {
+            emit(getReviewsByUser(userId))
+        }
 }

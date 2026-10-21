@@ -1,4 +1,3 @@
-
 package com.example.gamercornerapp.data.datasource.impl.retrofit
 
 import com.example.gamercornerapp.data.datasource.GameRemoteDataSource
@@ -10,13 +9,9 @@ class GameRetrofitDataSourceImpl @Inject constructor(
     private val service: GamerCornerService
 ) : GameRemoteDataSource {
 
-    override suspend fun getGames(): List<GameDTO> {
-        return service.getGames()
-    }
+    override suspend fun getGames(): List<GameDTO> =
+        service.getGamesRaw().map { it.toGameDTO() }
 
-    override suspend fun getGameById(
-        gameId: String
-    ): GameDTO {
-        return service.getGameById(gameId)
-    }
+    override suspend fun getGameById(gameId: String): GameDTO =
+        service.getGameByIdRaw(gameId).toGameDTO()
 }
