@@ -74,6 +74,24 @@ class ReviewRepository @Inject constructor(
             }
     }
 
+    fun listenReviewsByGame(gameId: String): Flow<List<ReviewItem>> {
+        return remoteDataSource.listenReviewsByGame(gameId)
+            .map { reviews ->
+                reviews.map { review ->
+                    review.toReviewItem()
+                }
+            }
+    }
+
+    fun listenReviewsByUser(userId: String): Flow<List<ReviewItem>> {
+        return remoteDataSource.listenReviewsByUser(userId)
+            .map { reviews ->
+                reviews.map { review ->
+                    review.toReviewItem()
+                }
+            }
+    }
+
     suspend fun getFollowingReviewsAsFeed(
         userId: String
     ): Result<List<FeedPost>> {

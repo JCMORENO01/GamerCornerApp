@@ -36,4 +36,12 @@ interface ReviewRemoteDataSource {
     )
 
     fun listenAllReviews(): Flow<List<ReviewDTO>>
+
+    fun listenReviewsByGame(
+        gameId: String
+    ): Flow<List<ReviewDTO>>
+
+    fun listenReviewsByUser(
+        userId: String
+    ): Flow<List<ReviewDTO>>
 }

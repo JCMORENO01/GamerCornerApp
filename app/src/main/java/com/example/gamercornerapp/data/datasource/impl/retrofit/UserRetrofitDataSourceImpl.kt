@@ -85,4 +85,12 @@ class UserRetrofitDataSourceImpl @Inject constructor(
             "El backend Express no tiene declarada la consulta de seguidos"
         )
     }
+
+    override fun listenUserById(
+        userId: String
+    ): kotlinx.coroutines.flow.Flow<UserProfileDTO> {
+        throw UnsupportedOperationException(
+            "El backend Express no soporta escuchadores en tiempo real"
+        )
+    }
 }

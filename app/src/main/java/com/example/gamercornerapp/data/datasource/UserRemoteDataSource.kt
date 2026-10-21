@@ -43,4 +43,8 @@ interface UserRemoteDataSource {
     suspend fun getFollowing(
         userId: String
     ): List<String>
+
+    fun listenUserById(
+        userId: String
+    ): kotlinx.coroutines.flow.Flow<UserProfileDTO>
 }

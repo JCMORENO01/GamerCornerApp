@@ -220,4 +220,50 @@ class ReviewFirestoreDataSourceImpl @Inject constructor(
         }.mapLatest { documents ->
             mapReviews(documents)
         }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun listenReviewsByGame(gameId: String): Flow<List<ReviewDTO>> =
+        callbackFlow<List<DocumentSnapshot>> {
+            val listener = db.collection("reviews")
+                .whereEqualTo("gameId", gameId)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        close(error)
+                        return@addSnapshotListener
+                    }
+
+                    if (snapshot != null) {
+                        trySend(snapshot.documents)
+                    }
+                }
+
+            awaitClose {
+                listener.remove()
+            }
+        }.mapLatest { documents ->
+            mapReviews(documents)
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun listenReviewsByUser(userId: String): Flow<List<ReviewDTO>> =
+        callbackFlow<List<DocumentSnapshot>> {
+            val listener = db.collection("reviews")
+                .whereEqualTo("userId", userId)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        close(error)
+                        return@addSnapshotListener
+                    }
+
+                    if (snapshot != null) {
+                        trySend(snapshot.documents)
+                    }
+                }
+
+            awaitClose {
+                listener.remove()
+            }
+        }.mapLatest { documents ->
+            mapReviews(documents)
+        }
 }

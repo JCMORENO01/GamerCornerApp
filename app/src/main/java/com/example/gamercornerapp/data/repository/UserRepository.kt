@@ -5,6 +5,8 @@ import com.example.gamercornerapp.data.UserProfile
 import com.example.gamercornerapp.data.datasource.UserRemoteDataSource
 import com.example.gamercornerapp.data.dto.UserProfileDTO
 import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -26,6 +28,11 @@ class UserRepository @Inject constructor(
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    fun listenUserById(userId: String): Flow<UserProfile> {
+        return remoteDataSource.listenUserById(userId)
+            .map { it.toUserProfile() }
     }
 
     suspend fun getUserWithFollowState(

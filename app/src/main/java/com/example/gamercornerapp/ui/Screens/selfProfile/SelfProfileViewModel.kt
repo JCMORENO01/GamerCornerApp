@@ -8,9 +8,11 @@ import com.example.gamercornerapp.data.repository.ReviewRepository
 import com.example.gamercornerapp.data.repository.StorageRepository
 import com.example.gamercornerapp.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,77 +27,91 @@ class SelfProfileViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SelfProfileState())
     val uiState: StateFlow<SelfProfileState> = _uiState.asStateFlow()
 
+    private var userJob: Job? = null
+    private var reviewsJob: Job? = null
+
     init {
         loadSelfProfile()
     }
 
     fun loadSelfProfile() {
-        viewModelScope.launch {
-            val currentUserId = authRepository.currentUser?.uid
-            if (currentUserId == null) {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = "Usuario no autenticado. Por favor inicia sesión."
-                    )
-                }
-                return@launch
+        val currentUserId = authRepository.currentUser?.uid
+        if (currentUserId == null) {
+            _uiState.update {
+                it.copy(
+                    isLoading = false,
+                    errorMessage = "Usuario no autenticado. Por favor inicia sesión."
+                )
             }
+            return
+        }
 
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+        userJob?.cancel()
+        reviewsJob?.cancel()
 
-            val userResult = userRepository.getUserById(currentUserId)
-            val reviewsResult = reviewRepository.getReviewsByUser(currentUserId)
+        _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
-            if (userResult.isSuccess) {
-                var userProfile = userResult.getOrNull()
-                val reviews = reviewsResult.getOrDefault(emptyList())
-
-                val currentPhotoUrl = authRepository.currentUser?.photoUrl?.toString()
-                if (currentPhotoUrl != null && userProfile != null) {
-                    userProfile = userProfile.copy(profilePictureUrl = currentPhotoUrl)
-                }
-
-                if (userProfile != null) {
+        // Escuchar cambios en el perfil del usuario en tiempo real (por ejemplo, biografía)
+        userJob = viewModelScope.launch {
+            userRepository.listenUserById(currentUserId)
+                .catch { error ->
                     _uiState.update {
                         it.copy(
-                            userProfile = userProfile.copy(
-                                stats = userProfile.stats.copy(
-                                    reviewsCount = reviews.size
+                            isLoading = false,
+                            errorMessage = error.localizedMessage ?: "No se pudo obtener el usuario"
+                        )
+                    }
+                }
+                .collect { userProfile ->
+                    var updatedProfile = userProfile
+                    val currentPhotoUrl = authRepository.currentUser?.photoUrl?.toString()
+                    if (currentPhotoUrl != null) {
+                        updatedProfile = updatedProfile.copy(profilePictureUrl = currentPhotoUrl)
+                    }
+
+                    _uiState.update { state ->
+                        state.copy(
+                            userProfile = updatedProfile.copy(
+                                stats = updatedProfile.stats.copy(
+                                    reviewsCount = state.reviews.size
                                 )
                             ),
-                            reviews = reviews,
                             isLoading = false,
                             errorMessage = null
                         )
                     }
                 }
-            } else {
-                val error = userResult.exceptionOrNull()
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = error?.localizedMessage ?: "No se pudo obtener el usuario"
-                    )
+        }
+
+        // Escuchar reseñas del usuario en tiempo real
+        reviewsJob = viewModelScope.launch {
+            reviewRepository.listenReviewsByUser(currentUserId)
+                .catch { error ->
+                    _uiState.update {
+                        it.copy(errorMessage = error.localizedMessage)
+                    }
                 }
-            }
+                .collect { reviews ->
+                    _uiState.update { state ->
+                        val currentProf = state.userProfile
+                        state.copy(
+                            userProfile = currentProf?.copy(
+                                stats = currentProf.stats.copy(
+                                    reviewsCount = reviews.size
+                                )
+                            ),
+                            reviews = reviews,
+                            isLoading = false
+                        )
+                    }
+                }
         }
     }
 
     fun deleteReview(reviewId: String) {
         viewModelScope.launch {
             val result = reviewRepository.deleteReview(reviewId)
-            if (result.isSuccess) {
-                _uiState.update { state ->
-                    val newReviews = mutableListOf<com.example.gamercornerapp.data.ReviewItem>()
-                    for (review in state.reviews) {
-                        if (review.id != reviewId) {
-                            newReviews.add(review)
-                        }
-                    }
-                    state.copy(reviews = newReviews)
-                }
-            } else {
+            if (result.isFailure) {
                 _uiState.update { it.copy(errorMessage = result.exceptionOrNull()?.localizedMessage) }
             }
         }
@@ -118,7 +134,6 @@ class SelfProfileViewModel @Inject constructor(
                 val downloadUrl = uploadResult.getOrNull()!!
                 authRepository.updateProfilePicture(downloadUrl)
                 
-                // Actualizar también en Firestore para mantener consistencia global (desnormalización)
                 val currentProfile = _uiState.value.userProfile
                 if (currentProfile != null) {
                     userRepository.updateUserProfile(

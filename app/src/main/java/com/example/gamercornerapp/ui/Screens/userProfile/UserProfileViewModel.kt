@@ -1,4 +1,3 @@
-
 package com.example.gamercornerapp.ui.Screens.userProfile
 
 import androidx.lifecycle.ViewModel
@@ -7,9 +6,11 @@ import com.example.gamercornerapp.data.repository.AuthRepository
 import com.example.gamercornerapp.data.repository.ReviewRepository
 import com.example.gamercornerapp.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,10 +29,14 @@ class UserProfileViewModel @Inject constructor(
 
     private var currentProfileId: String? = null
     private var isUpdatingFollow = false
+    private var reviewsJob: Job? = null
 
     // Función para cargar el perfil de un usuario
-    fun loadUserProfile(userId: String) {
+    fun loadUserProfile(userId: String, forceReload: Boolean = false) {
+        if (!forceReload && currentProfileId == userId && _uiState.value.userProfile != null) return
         currentProfileId = userId
+
+        reviewsJob?.cancel()
 
         viewModelScope.launch {
             _uiState.update {
@@ -48,31 +53,50 @@ class UserProfileViewModel @Inject constructor(
                 currentUserId
             )
 
-            val reviewsResult = reviewRepository
-                .getReviewsByUser(userId)
-
-            if (userResult.isSuccess && reviewsResult.isSuccess) {
+            if (userResult.isSuccess) {
                 val userProfile = userResult.getOrNull()
-                val reviews = reviewsResult.getOrNull()
 
-                if (userProfile != null && reviews != null) {
+                if (userProfile != null) {
+                    val baseProfile = userProfile
                     _uiState.update {
                         it.copy(
-                            userProfile = userProfile.copy(
-                                stats = userProfile.stats.copy(
-                                    reviewsCount = reviews.size
-                                )
-                            ),
-                            reviews = reviews,
+                            userProfile = baseProfile,
                             currentUserId = currentUserId,
                             isLoading = false,
                             errorMessage = null
                         )
                     }
+
+                    // Suscribirse a reseñas del usuario en tiempo real
+                    reviewsJob = viewModelScope.launch {
+                        reviewRepository.listenReviewsByUser(userId)
+                            .catch { error ->
+                                _uiState.update {
+                                    it.copy(
+                                        errorMessage = error.localizedMessage
+                                            ?: "Error al cargar reseñas"
+                                    )
+                                }
+                            }
+                            .collect { reviews ->
+                                _uiState.update { state ->
+                                    val currentProf = state.userProfile ?: baseProfile
+                                    state.copy(
+                                        userProfile = currentProf.copy(
+                                            stats = currentProf.stats.copy(
+                                                reviewsCount = reviews.size
+                                            )
+                                        ),
+                                        reviews = reviews,
+                                        isLoading = false,
+                                        errorMessage = null
+                                    )
+                                }
+                            }
+                    }
                 }
             } else {
                 val error = userResult.exceptionOrNull()
-                    ?: reviewsResult.exceptionOrNull()
 
                 _uiState.update {
                     it.copy(
@@ -102,6 +126,28 @@ class UserProfileViewModel @Inject constructor(
 
         isUpdatingFollow = true
 
+        // Actualización optimista de la UI
+        val currentProfile = _uiState.value.userProfile
+        if (currentProfile != null) {
+            val newIsFollowed = !currentProfile.isFollowed
+            val newFollowersCount = if (newIsFollowed) {
+                currentProfile.stats.followersCount + 1
+            } else {
+                (currentProfile.stats.followersCount - 1).coerceAtLeast(0)
+            }
+
+            _uiState.update { state ->
+                state.copy(
+                    userProfile = currentProfile.copy(
+                        isFollowed = newIsFollowed,
+                        stats = currentProfile.stats.copy(
+                            followersCount = newFollowersCount
+                        )
+                    )
+                )
+            }
+        }
+
         viewModelScope.launch {
             try {
                 val result = userRepository.toggleFollowUser(
@@ -110,8 +156,14 @@ class UserProfileViewModel @Inject constructor(
                 )
 
                 if (result.isSuccess) {
-                    loadUserProfile(targetUserId)
+                    loadUserProfile(targetUserId, forceReload = true)
                 } else {
+                    // Revertir en caso de fallo
+                    if (currentProfile != null) {
+                        _uiState.update { state ->
+                            state.copy(userProfile = currentProfile)
+                        }
+                    }
                     _uiState.update {
                         it.copy(
                             errorMessage = result.exceptionOrNull()

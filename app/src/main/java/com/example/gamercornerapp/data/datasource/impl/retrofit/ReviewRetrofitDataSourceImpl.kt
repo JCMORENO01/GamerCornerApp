@@ -61,4 +61,16 @@ class ReviewRetrofitDataSourceImpl @Inject constructor(
             "La implementación Retrofit todavía no tiene tiempo real"
         )
     }
+
+    override fun listenReviewsByGame(gameId: String): Flow<List<ReviewDTO>> {
+        throw UnsupportedOperationException(
+            "La implementación Retrofit todavía no tiene tiempo real"
+        )
+    }
+
+    override fun listenReviewsByUser(userId: String): Flow<List<ReviewDTO>> {
+        throw UnsupportedOperationException(
+            "La implementación Retrofit todavía no tiene tiempo real"
+        )
+    }
 }

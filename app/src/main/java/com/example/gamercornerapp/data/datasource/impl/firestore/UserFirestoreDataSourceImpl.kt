@@ -6,6 +6,10 @@ import com.example.gamercornerapp.data.dto.UserProfileDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -295,4 +299,29 @@ class UserFirestoreDataSourceImpl @Inject constructor(
     ) {
         registerUser(userProfile, userId)
     }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun listenUserById(userId: String): Flow<UserProfileDTO> =
+        callbackFlow {
+            val listener = db.collection("users")
+                .document(userId)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        close(error)
+                        return@addSnapshotListener
+                    }
+
+                    if (snapshot != null && snapshot.exists()) {
+                        val dto = snapshot.toObject(UserProfileDTO::class.java)
+                            ?.copy(id = snapshot.id)
+                        if (dto != null) {
+                            trySend(dto)
+                        }
+                    }
+                }
+
+            awaitClose {
+                listener.remove()
+            }
+        }
 }

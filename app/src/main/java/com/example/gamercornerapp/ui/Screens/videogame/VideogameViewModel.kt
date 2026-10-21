@@ -8,9 +8,11 @@ import com.example.gamercornerapp.data.ReviewItem
 import com.example.gamercornerapp.data.repository.GameRepository
 import com.example.gamercornerapp.data.repository.ReviewRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,9 +29,13 @@ class VideogameViewModel @Inject constructor(
         _uiState.asStateFlow()
 
     private var currentGameId: String? = null
+    private var reviewsJob: Job? = null
 
     fun loadGame(gameId: String) {
+        if (currentGameId == gameId && _uiState.value.game != null) return
         currentGameId = gameId
+
+        reviewsJob?.cancel()
 
         viewModelScope.launch {
             _uiState.update {
@@ -40,33 +46,44 @@ class VideogameViewModel @Inject constructor(
             }
 
             val gameResult = gameRepository.getGameById(gameId)
-            val reviewsResult = reviewRepository.getReviewsByGame(gameId)
 
-            if (gameResult.isSuccess && reviewsResult.isSuccess) {
-                val game = gameResult.getOrNull()
-                val reviews = reviewsResult.getOrNull()
+            if (gameResult.isSuccess) {
+                val game = gameResult.getOrThrow()
 
-                if (game != null && reviews != null) {
-                    val updatedGame = calculateUpdatedGame(game, reviews)
-                    _uiState.update {
-                        it.copy(
-                            game = updatedGame,
-                            reviews = reviews,
-                            isLoading = false,
-                            error = null
-                        )
-                    }
-                } else {
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            error = "No se pudo cargar el videojuego"
-                        )
-                    }
+                _uiState.update {
+                    it.copy(
+                        game = game,
+                        isLoading = false,
+                        error = null
+                    )
+                }
+
+                // Suscribirse a las reseñas en tiempo real
+                reviewsJob = viewModelScope.launch {
+                    reviewRepository.listenReviewsByGame(gameId)
+                        .catch { error ->
+                            _uiState.update {
+                                it.copy(
+                                    error = error.localizedMessage
+                                        ?: "Error al escuchar reseñas"
+                                )
+                            }
+                        }
+                        .collect { reviews ->
+                            _uiState.update { state ->
+                                val baseGame = state.game ?: game
+                                val updatedGame = calculateUpdatedGame(baseGame, reviews)
+                                state.copy(
+                                    game = updatedGame,
+                                    reviews = reviews,
+                                    isLoading = false,
+                                    error = null
+                                )
+                            }
+                        }
                 }
             } else {
                 val error = gameResult.exceptionOrNull()
-                    ?: reviewsResult.exceptionOrNull()
 
                 _uiState.update {
                     it.copy(
@@ -79,59 +96,11 @@ class VideogameViewModel @Inject constructor(
         }
     }
 
-    fun refreshReviews() {
-        val gameId = currentGameId ?: return
-
-        viewModelScope.launch {
-            val result = reviewRepository.getReviewsByGame(gameId)
-
-            if (result.isSuccess) {
-                val reviews = result.getOrNull() ?: emptyList()
-                _uiState.update { state ->
-                    val currentGame = state.game
-                    val updatedGame = if (currentGame != null) {
-                        calculateUpdatedGame(currentGame, reviews)
-                    } else null
-
-                    state.copy(
-                        game = updatedGame ?: state.game,
-                        reviews = reviews,
-                        error = null
-                    )
-                }
-            } else {
-                _uiState.update {
-                    it.copy(
-                        error = result.exceptionOrNull()
-                            ?.localizedMessage
-                            ?: "No se pudieron actualizar las reseñas"
-                    )
-                }
-            }
-        }
-    }
-
     fun deleteReview(reviewId: String) {
         viewModelScope.launch {
             val result = reviewRepository.deleteReview(reviewId)
 
-            if (result.isSuccess) {
-                _uiState.update { state ->
-                    val newReviews = state.reviews.filter {
-                        it.id != reviewId
-                    }
-                    val currentGame = state.game
-                    val updatedGame = if (currentGame != null) {
-                        calculateUpdatedGame(currentGame, newReviews)
-                    } else null
-
-                    state.copy(
-                        game = updatedGame ?: state.game,
-                        reviews = newReviews,
-                        error = null
-                    )
-                }
-            } else {
+            if (result.isFailure) {
                 _uiState.update {
                     it.copy(
                         error = result.exceptionOrNull()
