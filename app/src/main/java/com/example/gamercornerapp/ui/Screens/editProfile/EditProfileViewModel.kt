@@ -1,3 +1,4 @@
+
 package com.example.gamercornerapp.ui.Screens.editProfile
 
 import androidx.lifecycle.ViewModel
@@ -19,15 +20,37 @@ class EditProfileViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(EditProfileState())
-    val uiState: StateFlow<EditProfileState> = _uiState.asStateFlow()
+    val uiState: StateFlow<EditProfileState> =
+        _uiState.asStateFlow()
 
     fun loadProfile() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            val currentUserId = authRepository.currentUser?.uid ?: return@launch
-            val result = userRepository.getUserById(currentUserId)
+            _uiState.update {
+                it.copy(
+                    isLoading = true,
+                    errorMessage = null
+                )
+            }
+
+            val currentUserId =
+                authRepository.currentUser?.uid
+
+            if (currentUserId == null) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "Debes iniciar sesión"
+                    )
+                }
+                return@launch
+            }
+
+            val result =
+                userRepository.getUserById(currentUserId)
+
             if (result.isSuccess) {
                 val user = result.getOrNull()
+
                 if (user != null) {
                     _uiState.update {
                         it.copy(
@@ -37,47 +60,98 @@ class EditProfileViewModel @Inject constructor(
                             isLoading = false
                         )
                     }
+                } else {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = "Perfil no encontrado"
+                        )
+                    }
                 }
             } else {
                 _uiState.update {
-                    it.copy(isLoading = false, errorMessage = result.exceptionOrNull()?.localizedMessage)
+                    it.copy(
+                        isLoading = false,
+                        errorMessage =
+                            result.exceptionOrNull()?.localizedMessage
+                    )
                 }
             }
         }
     }
 
     fun onUsernameChange(username: String) {
-        _uiState.update { it.copy(username = username) }
+        _uiState.update {
+            it.copy(username = username)
+        }
     }
 
     fun onBioChange(bio: String) {
-        _uiState.update { it.copy(bio = bio) }
+        _uiState.update {
+            it.copy(bio = bio)
+        }
     }
-    
+
     fun onBirthDateChange(birthDate: String) {
-        _uiState.update { it.copy(birthDate = birthDate) }
+        _uiState.update {
+            it.copy(birthDate = birthDate)
+        }
     }
 
     fun saveProfile() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            val currentUserId = authRepository.currentUser?.uid ?: return@launch
+            _uiState.update {
+                it.copy(
+                    isLoading = true,
+                    errorMessage = null
+                )
+            }
+
+            val currentUserId =
+                authRepository.currentUser?.uid
+
+            if (currentUserId == null) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "Debes iniciar sesión"
+                    )
+                }
+                return@launch
+            }
+
             val currentState = _uiState.value
-            val result = userRepository.updateUserProfile(
-                id = currentUserId,
-                username = currentState.username,
-                bio = currentState.bio,
-                birthDate = currentState.birthDate
-            )
+
+            val result =
+                userRepository.updateUserProfile(
+                    id = currentUserId,
+                    username = currentState.username,
+                    bio = currentState.bio,
+                    birthDate = currentState.birthDate
+                )
+
             if (result.isSuccess) {
-                _uiState.update { it.copy(isLoading = false, isSuccess = true) }
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        isSuccess = true
+                    )
+                }
             } else {
-                _uiState.update { it.copy(isLoading = false, errorMessage = result.exceptionOrNull()?.localizedMessage) }
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage =
+                            result.exceptionOrNull()?.localizedMessage
+                    )
+                }
             }
         }
     }
 
     fun onErrorDismiss() {
-        _uiState.update { it.copy(errorMessage = null) }
+        _uiState.update {
+            it.copy(errorMessage = null)
+        }
     }
 }

@@ -1,9 +1,12 @@
+
 package com.example.gamercornerapp.ui.Screens.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gamercornerapp.R
 import com.example.gamercornerapp.data.repository.AuthRepository
+import com.example.gamercornerapp.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,8 +17,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
+
     private val _uiState = MutableStateFlow(LoginState())
     val uiState: StateFlow<LoginState> = _uiState.asStateFlow()
 
@@ -28,7 +33,9 @@ class LoginViewModel @Inject constructor(
     }
 
     fun togglePasswordVisibility() {
-        _uiState.update { it.copy(showPassword = !it.showPassword) }
+        _uiState.update {
+            it.copy(showPassword = !it.showPassword)
+        }
     }
 
     fun onAnimationFinished() {
@@ -37,17 +44,24 @@ class LoginViewModel @Inject constructor(
 
     fun onLoginClick() {
         val currentState = _uiState.value
-        if (currentState.email.isEmpty() || currentState.password.isEmpty()) {
-            _uiState.update { 
+
+        if (
+            currentState.email.isEmpty() ||
+            currentState.password.isEmpty()
+        ) {
+            _uiState.update {
                 it.copy(
-                    showError = true, 
+                    showError = true,
                     errorRes = R.string.error_all_fields_required
                 )
             }
             return
         }
 
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(currentState.email).matches()) {
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(
+                currentState.email
+            ).matches()
+        ) {
             _uiState.update {
                 it.copy(
                     showError = true,
@@ -58,33 +72,70 @@ class LoginViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            val result = authRepository.signIn(currentState.email, currentState.password)
+            val result = authRepository.signIn(
+                currentState.email,
+                currentState.password
+            )
+
             if (result.isSuccess) {
-                _uiState.update { it.copy(showError = false, navigateToFeed = true) }
+                authRepository.currentUser?.uid?.let { uid ->
+                    // Verificar/crear perfil si no existe en Firestore
+                    userRepository.getUserById(uid).onFailure {
+                        val emailName = currentState.email.substringBefore("@")
+                            .takeIf { it.isNotBlank() } ?: "Usuario"
+                        userRepository.createUserProfile(
+                            id = uid,
+                            username = emailName,
+                            nickName = emailName
+                        )
+                    }
+
+                    userRepository.updateFCMToken(uid)
+                        .onFailure { error ->
+                            Log.w(
+                                "GamerCornerFCM",
+                                "No se pudo actualizar FCM al iniciar sesión",
+                                error
+                            )
+                        }
+                }
+
+                _uiState.update {
+                    it.copy(
+                        showError = false,
+                        navigateToFeed = true
+                    )
+                }
             } else {
                 val error = result.exceptionOrNull()
-                // Si lees esto te quiero mucho.
+
                 val errorRes = when (error) {
                     is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException ->
                         R.string.error_invalid_credentials
+
                     is com.google.firebase.auth.FirebaseAuthInvalidUserException ->
                         R.string.error_user_not_found
+
                     is com.google.firebase.FirebaseNetworkException ->
                         R.string.error_network
+
                     else ->
                         R.string.error_invalid_credentials
                 }
-                _uiState.update { 
+
+                _uiState.update {
                     it.copy(
-                        showError = true, 
+                        showError = true,
                         errorRes = errorRes
-                    ) 
+                    )
                 }
             }
         }
     }
 
     fun onNavigationHandled() {
-        _uiState.update { it.copy(navigateToFeed = false) }
+        _uiState.update {
+            it.copy(navigateToFeed = false)
+        }
     }
 }

@@ -3,11 +3,9 @@ package com.example.gamercornerapp.data.datasource.impl.firestore
 
 import com.example.gamercornerapp.data.datasource.UserRemoteDataSource
 import com.example.gamercornerapp.data.dto.UserProfileDTO
-import com.example.gamercornerapp.data.dto.UserProfileGenericDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -24,15 +22,67 @@ class UserFirestoreDataSourceImpl @Inject constructor(
             .get()
             .await()
 
-        val userProfile = doc.toObject(UserProfileDTO::class.java)
-            ?.copy(
-                id = doc.id,
-                followersCount = doc.getLong("followersCount") ?: 0L,
-                followingCount = doc.getLong("followingCount") ?: 0L
-            )
-            ?: throw Exception("No se pudo obtener el usuario")
+        if (!doc.exists()) {
+            val currentUser = auth.currentUser
+            if (currentUser != null && currentUser.uid == userId) {
+                val emailName = currentUser.email?.substringBefore("@")
+                    ?.takeIf { it.isNotBlank() } ?: "Usuario"
+                val displayName = currentUser.displayName?.takeIf { it.isNotBlank() }
+                    ?: emailName
+                val photoUrl = currentUser.photoUrl?.toString()
 
-        return userProfile
+                val defaultDto = UserProfileDTO(
+                    id = userId,
+                    username = displayName,
+                    nickName = emailName,
+                    bio = "¡Hola! Estoy usando GamerCorner.",
+                    profilePictureUrl = photoUrl,
+                    followersCount = 0L,
+                    followingCount = 0L
+                )
+
+                try {
+                    db.collection("users")
+                        .document(userId)
+                        .set(defaultDto)
+                        .await()
+                } catch (e: Exception) {
+                    // Si falla la escritura por permisos/red, retornamos el DTO de todas formas
+                }
+
+                return defaultDto
+            } else {
+                throw Exception("No se encontró el perfil de usuario")
+            }
+        }
+
+        val userProfile = try {
+            doc.toObject(UserProfileDTO::class.java)
+        } catch (e: Exception) {
+            null
+        } ?: UserProfileDTO(
+            id = doc.id,
+            username = doc.getString("username")
+                ?: doc.getString("fullName")
+                ?: "",
+            nickName = doc.getString("nickName")
+                ?: doc.getString("nickname")
+                ?: "",
+            bio = doc.getString("bio"),
+            birthDate = doc.getString("birthDate"),
+            profileBackgroundId = (doc.getLong("profileBackgroundId") ?: 0L).toInt(),
+            profileBgDescription = doc.getString("profileBgDescription"),
+            profileImageId = (doc.getLong("profileImageId") ?: 0L).toInt(),
+            profilePictureUrl = doc.getString("profilePictureUrl"),
+            followersCount = doc.getLong("followersCount") ?: 0L,
+            followingCount = doc.getLong("followingCount") ?: 0L
+        )
+
+        return userProfile.copy(
+            id = doc.id,
+            followersCount = doc.getLong("followersCount") ?: userProfile.followersCount,
+            followingCount = doc.getLong("followingCount") ?: userProfile.followingCount
+        )
     }
 
     override suspend fun registerUser(
@@ -53,9 +103,9 @@ class UserFirestoreDataSourceImpl @Inject constructor(
         }
 
         val snapshot = db.collection("users")
-            .whereGreaterThanOrEqualTo("username", query)
+            .whereGreaterThanOrEqualTo("nickName", query)
             .whereLessThanOrEqualTo(
-                "username",
+                "nickName",
                 query + "\uf8ff"
             )
             .get()
@@ -71,9 +121,38 @@ class UserFirestoreDataSourceImpl @Inject constructor(
         userId: String,
         userProfile: UserProfileDTO
     ) {
+        require(auth.currentUser?.uid == userId) {
+            "Usuario no autenticado"
+        }
+
         db.collection("users")
             .document(userId)
-            .set(userProfile, SetOptions.merge())
+            .update(
+                mapOf(
+                    "username" to userProfile.username,
+                    "nickName" to userProfile.nickName,
+                    "bio" to userProfile.bio,
+                    "birthDate" to userProfile.birthDate,
+                    "profileBackgroundId" to userProfile.profileBackgroundId,
+                    "profileBgDescription" to userProfile.profileBgDescription,
+                    "profileImageId" to userProfile.profileImageId,
+                    "profilePictureUrl" to userProfile.profilePictureUrl
+                )
+            )
+            .await()
+    }
+
+    override suspend fun updateFCMToken(
+        userId: String,
+        token: String
+    ) {
+        require(auth.currentUser?.uid == userId) {
+            "Usuario no autenticado"
+        }
+
+        db.collection("users")
+            .document(userId)
+            .update("fcm_token", token)
             .await()
     }
 
@@ -83,6 +162,7 @@ class UserFirestoreDataSourceImpl @Inject constructor(
     ) {
         require(currentUserId.isNotBlank())
         require(targetUserId.isNotBlank())
+
         require(currentUserId != targetUserId) {
             "No puedes seguirte a ti mismo"
         }
@@ -106,6 +186,7 @@ class UserFirestoreDataSourceImpl @Inject constructor(
             .document(currentUserId)
 
         db.runTransaction { transaction ->
+
             val currentUserDoc = transaction.get(currentUserRef)
             val targetUserDoc = transaction.get(targetUserRef)
             val followingDoc = transaction.get(followingRef)

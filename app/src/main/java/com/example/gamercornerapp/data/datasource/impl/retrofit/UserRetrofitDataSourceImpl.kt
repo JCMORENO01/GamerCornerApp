@@ -43,6 +43,15 @@ class UserRetrofitDataSourceImpl @Inject constructor(
         )
     }
 
+    override suspend fun updateFCMToken(
+        userId: String,
+        token: String
+    ) {
+        throw UnsupportedOperationException(
+            "El backend Express no administra tokens FCM"
+        )
+    }
+
     override suspend fun toggleFollowUser(
         currentUserId: String,
         targetUserId: String

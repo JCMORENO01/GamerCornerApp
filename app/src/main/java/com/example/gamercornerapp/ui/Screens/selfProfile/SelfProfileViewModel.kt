@@ -31,22 +31,32 @@ class SelfProfileViewModel @Inject constructor(
 
     fun loadSelfProfile() {
         viewModelScope.launch {
-            val currentUserId = authRepository.currentUser?.uid ?: return@launch
+            val currentUserId = authRepository.currentUser?.uid
+            if (currentUserId == null) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "Usuario no autenticado. Por favor inicia sesión."
+                    )
+                }
+                return@launch
+            }
+
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
             val userResult = userRepository.getUserById(currentUserId)
             val reviewsResult = reviewRepository.getReviewsByUser(currentUserId)
 
-            if (userResult.isSuccess && reviewsResult.isSuccess) {
+            if (userResult.isSuccess) {
                 var userProfile = userResult.getOrNull()
-                val reviews = reviewsResult.getOrNull()
+                val reviews = reviewsResult.getOrDefault(emptyList())
 
                 val currentPhotoUrl = authRepository.currentUser?.photoUrl?.toString()
                 if (currentPhotoUrl != null && userProfile != null) {
                     userProfile = userProfile.copy(profilePictureUrl = currentPhotoUrl)
                 }
 
-                if (userProfile != null && reviews != null) {
+                if (userProfile != null) {
                     _uiState.update {
                         it.copy(
                             userProfile = userProfile,
@@ -57,11 +67,11 @@ class SelfProfileViewModel @Inject constructor(
                     }
                 }
             } else {
-                val error = userResult.exceptionOrNull() ?: reviewsResult.exceptionOrNull()
+                val error = userResult.exceptionOrNull()
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = error?.localizedMessage
+                        errorMessage = error?.localizedMessage ?: "No se pudo obtener el usuario"
                     )
                 }
             }

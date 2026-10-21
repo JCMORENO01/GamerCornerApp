@@ -31,8 +31,6 @@ data class UserProfileDTO(
     var isFollowed: Boolean = false
 ) : UserProfileGenericDTO() {
 
-    constructor() : this(id = "")
-
     override fun toUserProfile(
         reviewsCount: Int
     ): UserProfile {

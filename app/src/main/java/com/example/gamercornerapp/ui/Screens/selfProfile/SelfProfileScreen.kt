@@ -11,10 +11,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -22,6 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.gamercornerapp.data.ReviewItem
 import com.example.gamercornerapp.data.UserProfile
 import com.example.gamercornerapp.data.local.LocalDataProvider
@@ -41,6 +46,19 @@ fun SelfProfileScreen(
     onReviewClick: (ReviewItem) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.loadSelfProfile()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     SelfProfileScreenContent(
         userProfile = uiState.userProfile,
@@ -97,18 +115,18 @@ fun SelfProfileScreenContent(
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState())
             ) {
-                if (errorMessage != null) {
-                    Text(
-                        text = errorMessage,
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.padding(
-                            horizontal = 16.dp,
-                            vertical = 8.dp
-                        )
-                    )
-                }
-
                 if (userProfile != null) {
+                    if (errorMessage != null) {
+                        Text(
+                            text = errorMessage,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.padding(
+                                horizontal = 16.dp,
+                                vertical = 8.dp
+                            )
+                        )
+                    }
+
                     ProfileHeaderSection(
                         userProfile = userProfile,
                         isLoadingImage = isLoadingImage,
@@ -139,13 +157,22 @@ fun SelfProfileScreenContent(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(180.dp),
+                            .height(240.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text = errorMessage ?: "Error al cargar perfil",
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = errorMessage ?: "Error al cargar perfil",
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Button(onClick = onLogoutClick) {
+                                Text("Cerrar sesión")
+                            }
+                        }
                     }
                 }
             }

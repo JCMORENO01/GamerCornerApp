@@ -13,6 +13,4 @@ data class CreateReviewDTO(
 
     // Toda reseña comienza con cero likes
     val likesCount: Long = 0L
-) {
-    constructor() : this("")
-}
+)

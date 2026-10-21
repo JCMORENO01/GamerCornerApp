@@ -142,20 +142,11 @@ class UserRepository @Inject constructor(
         userId: String
     ): Result<Unit> {
         return try {
-            val existingDto = remoteDataSource.getUserById(userId)
-
             val token = FirebaseMessaging.getInstance()
                 .token
                 .await()
 
-            val updatedDto = existingDto.copy(
-                FCM_token = token
-            )
-
-            remoteDataSource.updateUserProfile(
-                userId,
-                updatedDto
-            )
+            remoteDataSource.updateFCMToken(userId, token)
 
             Result.success(Unit)
         } catch (e: Exception) {

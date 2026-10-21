@@ -192,6 +192,18 @@ class FeedViewModel @Inject constructor(
 
         if (!pendingLikes.add(reviewId)) return
 
+        // Actualización optimista de la UI
+        allPosts = allPosts.map { post ->
+            if (post.id == reviewId) {
+                val newIsLiked = !post.isLiked
+                val newCount = if (newIsLiked) post.likesCount + 1 else (post.likesCount - 1).coerceAtLeast(0)
+                post.copy(isLiked = newIsLiked, likesCount = newCount)
+            } else {
+                post
+            }
+        }
+        updateVisiblePosts()
+
         viewModelScope.launch {
             try {
                 val result = reviewRepository.toggleReviewLike(
@@ -200,6 +212,18 @@ class FeedViewModel @Inject constructor(
                 )
 
                 if (result.isFailure) {
+                    // Revertir cambio optimista en caso de error
+                    allPosts = allPosts.map { post ->
+                        if (post.id == reviewId) {
+                            val revertedIsLiked = !post.isLiked
+                            val revertedCount = if (revertedIsLiked) post.likesCount + 1 else (post.likesCount - 1).coerceAtLeast(0)
+                            post.copy(isLiked = revertedIsLiked, likesCount = revertedCount)
+                        } else {
+                            post
+                        }
+                    }
+                    updateVisiblePosts()
+
                     _uiState.update {
                         it.copy(
                             errorMessage = result.exceptionOrNull()

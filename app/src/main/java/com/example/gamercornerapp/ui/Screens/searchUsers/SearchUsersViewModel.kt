@@ -1,9 +1,11 @@
+
 package com.example.gamercornerapp.ui.Screens.searchUsers
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gamercornerapp.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,25 +19,60 @@ class SearchUsersViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUsersState())
-    val uiState: StateFlow<SearchUsersState> = _uiState.asStateFlow()
+    val uiState: StateFlow<SearchUsersState> =
+        _uiState.asStateFlow()
+
+    private var searchJob: Job? = null
 
     fun onQueryChange(newQuery: String) {
-        _uiState.update { it.copy(query = newQuery) }
+        _uiState.update {
+            it.copy(query = newQuery)
+        }
+
         performSearch(newQuery)
     }
 
     private fun performSearch(query: String) {
+        searchJob?.cancel()
+
         if (query.length < 3) {
-            _uiState.update { it.copy(searchResults = emptyList(), errorMessage = null) }
+            _uiState.update {
+                it.copy(
+                    searchResults = emptyList(),
+                    errorMessage = null,
+                    isLoading = false
+                )
+            }
             return
         }
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            val result = userRepository.searchUsers(query)
+
+        searchJob = viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    isLoading = true,
+                    errorMessage = null
+                )
+            }
+
+            val result =
+                userRepository.searchUsers(query)
+
             if (result.isSuccess) {
-                _uiState.update { it.copy(searchResults = result.getOrNull() ?: emptyList(), isLoading = false) }
+                _uiState.update {
+                    it.copy(
+                        searchResults =
+                            result.getOrNull() ?: emptyList(),
+                        isLoading = false
+                    )
+                }
             } else {
-                _uiState.update { it.copy(isLoading = false, errorMessage = result.exceptionOrNull()?.localizedMessage) }
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage =
+                            result.exceptionOrNull()?.localizedMessage
+                    )
+                }
             }
         }
     }

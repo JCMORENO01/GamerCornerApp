@@ -24,6 +24,8 @@ interface UserRemoteDataSource {
         userProfile: UserProfileDTO
     )
 
+    suspend fun updateFCMToken(userId: String, token: String)
+
     suspend fun toggleFollowUser(
         currentUserId: String,
         targetUserId: String

@@ -28,18 +28,26 @@ class ReviewFirestoreDataSourceImpl @Inject constructor(
         val review = doc.toObject(ReviewDTO::class.java)
             ?: return null
 
+        val likesCountFromDoc = doc.getLong("likesCount")
+            ?: review.likesCount
+
         val liked = if (!currentUserId.isNullOrBlank()) {
-            doc.reference.collection("likes")
-                .document(currentUserId)
-                .get()
-                .await()
-                .exists()
+            try {
+                doc.reference.collection("likes")
+                    .document(currentUserId)
+                    .get()
+                    .await()
+                    .exists()
+            } catch (e: Exception) {
+                false
+            }
         } else {
             false
         }
 
         return review.copy(
             id = doc.id,
+            likesCount = likesCountFromDoc,
             isLiked = liked
         )
     }

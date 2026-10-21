@@ -17,6 +17,4 @@ data class ReviewDTO(
 
     // Indica si el usuario autenticado dio like
     val isLiked: Boolean = false
-) {
-    constructor() : this("")
-}
+)
