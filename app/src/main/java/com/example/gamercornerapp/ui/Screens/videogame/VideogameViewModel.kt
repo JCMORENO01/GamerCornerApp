@@ -1,8 +1,10 @@
-
 package com.example.gamercornerapp.ui.Screens.videogame
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.gamercornerapp.data.Game
+import com.example.gamercornerapp.data.GameRatingBar
+import com.example.gamercornerapp.data.ReviewItem
 import com.example.gamercornerapp.data.repository.GameRepository
 import com.example.gamercornerapp.data.repository.ReviewRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,9 +47,10 @@ class VideogameViewModel @Inject constructor(
                 val reviews = reviewsResult.getOrNull()
 
                 if (game != null && reviews != null) {
+                    val updatedGame = calculateUpdatedGame(game, reviews)
                     _uiState.update {
                         it.copy(
-                            game = game,
+                            game = updatedGame,
                             reviews = reviews,
                             isLoading = false,
                             error = null
@@ -83,9 +86,16 @@ class VideogameViewModel @Inject constructor(
             val result = reviewRepository.getReviewsByGame(gameId)
 
             if (result.isSuccess) {
-                _uiState.update {
-                    it.copy(
-                        reviews = result.getOrNull() ?: emptyList(),
+                val reviews = result.getOrNull() ?: emptyList()
+                _uiState.update { state ->
+                    val currentGame = state.game
+                    val updatedGame = if (currentGame != null) {
+                        calculateUpdatedGame(currentGame, reviews)
+                    } else null
+
+                    state.copy(
+                        game = updatedGame ?: state.game,
+                        reviews = reviews,
                         error = null
                     )
                 }
@@ -107,10 +117,17 @@ class VideogameViewModel @Inject constructor(
 
             if (result.isSuccess) {
                 _uiState.update { state ->
+                    val newReviews = state.reviews.filter {
+                        it.id != reviewId
+                    }
+                    val currentGame = state.game
+                    val updatedGame = if (currentGame != null) {
+                        calculateUpdatedGame(currentGame, newReviews)
+                    } else null
+
                     state.copy(
-                        reviews = state.reviews.filter {
-                            it.id != reviewId
-                        },
+                        game = updatedGame ?: state.game,
+                        reviews = newReviews,
                         error = null
                     )
                 }
@@ -124,5 +141,30 @@ class VideogameViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun calculateUpdatedGame(
+        game: Game,
+        reviews: List<ReviewItem>
+    ): Game {
+        if (reviews.isEmpty()) return game
+
+        val totalCount = reviews.size
+        val averageRating = reviews.map { it.rating }.average()
+
+        val countsByStar = reviews.groupingBy { it.rating }.eachCount()
+        val distribution = (5 downTo 1).map { star ->
+            val countForStar = countsByStar[star] ?: 0
+            GameRatingBar(
+                stars = star,
+                percentage = countForStar.toFloat() / totalCount
+            )
+        }
+
+        return game.copy(
+            rating = averageRating,
+            reviewsCount = totalCount,
+            ratingDistribution = distribution
+        )
     }
 }

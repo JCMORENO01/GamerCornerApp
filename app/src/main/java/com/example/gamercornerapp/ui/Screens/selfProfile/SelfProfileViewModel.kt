@@ -59,7 +59,11 @@ class SelfProfileViewModel @Inject constructor(
                 if (userProfile != null) {
                     _uiState.update {
                         it.copy(
-                            userProfile = userProfile,
+                            userProfile = userProfile.copy(
+                                stats = userProfile.stats.copy(
+                                    reviewsCount = reviews.size
+                                )
+                            ),
                             reviews = reviews,
                             isLoading = false,
                             errorMessage = null

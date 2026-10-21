@@ -20,9 +20,9 @@ sealed class Screen(
 
     data object Notifications : Screen("notifications")
 
-    data object Followers : Screen("followers/{userId}") {
-        fun createRoute(userId: String): String {
-            return "followers/${Uri.encode(userId)}"
+    data object Followers : Screen("followers/{userId}?tabIndex={tabIndex}") {
+        fun createRoute(userId: String, tabIndex: Int = 0): String {
+            return "followers/${Uri.encode(userId)}?tabIndex=$tabIndex"
         }
     }
 

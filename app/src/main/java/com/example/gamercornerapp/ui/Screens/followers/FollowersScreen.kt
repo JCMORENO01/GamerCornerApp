@@ -34,13 +34,14 @@ fun FollowersScreen(
     modifier: Modifier = Modifier,
     onSearchClick: () -> Unit = {},
     userId: String = "",
+    tabIndex: Int = 0,
     onUserClick: (String) -> Unit = {},
     viewModel: FollowersViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(userId) {
-        viewModel.loadFollowers(userId)
+    LaunchedEffect(userId, tabIndex) {
+        viewModel.loadFollowers(userId, tabIndex)
     }
 
     FollowersScreenContent(

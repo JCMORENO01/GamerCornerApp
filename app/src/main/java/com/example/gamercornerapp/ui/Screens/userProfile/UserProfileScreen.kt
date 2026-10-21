@@ -4,7 +4,6 @@ package com.example.gamercornerapp.ui.Screens.userProfile
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,6 +46,8 @@ fun UserProfileScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     onReviewClick: (ReviewItem) -> Unit = {},
+    onFollowersClick: () -> Unit = {},
+    onFollowingClick: () -> Unit = {},
     viewModel: UserProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -64,14 +65,19 @@ fun UserProfileScreen(
         }
     }
 
+    val isOwnProfile = uiState.userProfile?.id == uiState.currentUserId
+
     UserProfileScreenContent(
         userProfile = uiState.userProfile,
         reviews = uiState.reviews,
         isLoading = uiState.isLoading,
+        isOwnProfile = isOwnProfile,
         errorMessage = uiState.errorMessage,
         onBackClick = onBackClick,
         onReviewClick = onReviewClick,
         onFollowClick = viewModel::toggleFollowUser,
+        onFollowersClick = onFollowersClick,
+        onFollowingClick = onFollowingClick,
         modifier = modifier
     )
 }
@@ -83,8 +89,11 @@ fun UserProfileScreenContent(
     isLoading: Boolean,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
+    isOwnProfile: Boolean = false,
     onReviewClick: (ReviewItem) -> Unit = {},
     onFollowClick: () -> Unit = {},
+    onFollowersClick: () -> Unit = {},
+    onFollowingClick: () -> Unit = {},
     errorMessage: String? = null
 ) {
     Box(
@@ -129,29 +138,31 @@ fun UserProfileScreenContent(
                     ProfileHeaderSection(
                         userProfile = profile,
                         isLoadingImage = false,
-                        isOwnProfile = false,
+                        isOwnProfile = isOwnProfile,
                         onLogoutClick = {},
                         onImageSelected = {}
                     )
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                    if (!isOwnProfile) {
+                        Spacer(modifier = Modifier.height(20.dp))
 
-                    // Función para seguir o dejar de seguir
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        if (profile.isFollowed) {
-                            OutlinedButton(
-                                onClick = onFollowClick
-                            ) {
-                                Text("Siguiendo")
-                            }
-                        } else {
-                            Button(
-                                onClick = onFollowClick
-                            ) {
-                                Text("Seguir")
+                        // Función para seguir o dejar de seguir
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (profile.isFollowed) {
+                                OutlinedButton(
+                                    onClick = onFollowClick
+                                ) {
+                                    Text("Siguiendo")
+                                }
+                            } else {
+                                Button(
+                                    onClick = onFollowClick
+                                ) {
+                                    Text("Seguir")
+                                }
                             }
                         }
                     }
@@ -160,7 +171,8 @@ fun UserProfileScreenContent(
 
                     ProfileStatsSection(
                         stats = profile.stats,
-                        onFollowersClick = {}
+                        onFollowersClick = onFollowersClick,
+                        onFollowingClick = onFollowingClick
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))

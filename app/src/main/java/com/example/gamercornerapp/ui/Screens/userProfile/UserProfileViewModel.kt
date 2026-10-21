@@ -64,6 +64,7 @@ class UserProfileViewModel @Inject constructor(
                                 )
                             ),
                             reviews = reviews,
+                            currentUserId = currentUserId,
                             isLoading = false,
                             errorMessage = null
                         )

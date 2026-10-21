@@ -30,7 +30,7 @@ class FollowersViewModel @Inject constructor(
     private val pendingFollows = mutableSetOf<String>()
 
     // Función para cargar seguidores y seguidos
-    fun loadFollowers(userId: String) {
+    fun loadFollowers(userId: String, initialTabIndex: Int = 0) {
         if (userId.isBlank()) {
             _uiState.update {
                 it.copy(
@@ -48,6 +48,7 @@ class FollowersViewModel @Inject constructor(
             _uiState.update {
                 it.copy(
                     isLoading = true,
+                    selectedTabIndex = initialTabIndex,
                     errorMessage = null
                 )
             }

@@ -40,6 +40,7 @@ fun SelfProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: SelfProfileViewModel = hiltViewModel(),
     onFollowersClick: () -> Unit = {},
+    onFollowingClick: () -> Unit = {},
     onLogoutClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     onEditReviewClick: (ReviewItem) -> Unit = {},
@@ -69,6 +70,7 @@ fun SelfProfileScreen(
         errorMessage = uiState.errorMessage,
         onTabSelected = viewModel::onTabSelected,
         onFollowersClick = onFollowersClick,
+        onFollowingClick = onFollowingClick,
         onLogoutClick = {
             viewModel.onLogoutClick()
             onLogoutClick()
@@ -92,6 +94,7 @@ fun SelfProfileScreenContent(
     errorMessage: String?,
     onTabSelected: (Int) -> Unit,
     onFollowersClick: () -> Unit,
+    onFollowingClick: () -> Unit = {},
     onLogoutClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onImageSelected: (Uri) -> Unit,
@@ -140,7 +143,8 @@ fun SelfProfileScreenContent(
 
                     ProfileStatsSection(
                         stats = userProfile.stats,
-                        onFollowersClick = onFollowersClick
+                        onFollowersClick = onFollowersClick,
+                        onFollowingClick = onFollowingClick
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))
