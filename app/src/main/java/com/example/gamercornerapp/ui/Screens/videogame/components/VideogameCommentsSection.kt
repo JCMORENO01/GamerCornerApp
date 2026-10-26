@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -38,6 +40,7 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 fun VideogameCommentsSection(
     reviews: List<ReviewItem>,
     onUserClick: (String) -> Unit,
+    onLikeClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -64,7 +67,8 @@ fun VideogameCommentsSection(
                 reviews.forEach { review ->
                     GameCommentCardItem(
                         review = review,
-                        onUserClick = onUserClick
+                        onUserClick = onUserClick,
+                        onLikeClick = onLikeClick
                     )
                 }
             }
@@ -76,6 +80,7 @@ fun VideogameCommentsSection(
 private fun GameCommentCardItem(
     review: ReviewItem,
     onUserClick: (String) -> Unit,
+    onLikeClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -166,6 +171,30 @@ private fun GameCommentCardItem(
                 color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 14.sp
             )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = if (review.isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    contentDescription = "Like",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .size(18.dp)
+                        .clickable { onLikeClick(review.id) }
+                )
+
+                Spacer(modifier = Modifier.width(6.dp))
+
+                Text(
+                    text = review.likesCount.toString(),
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
         }
     }
 }
@@ -185,7 +214,8 @@ fun VideogameCommentsSectionPreview() {
                     description = "¡Excelente juego, totalmente recomendado!"
                 )
             ),
-            onUserClick = {}
+            onUserClick = {},
+            onLikeClick = {}
         )
     }
 }

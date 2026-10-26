@@ -58,36 +58,30 @@ class UserProfileViewModel @Inject constructor(
 
                 if (userProfile != null) {
                     val baseProfile = userProfile
-                    _uiState.update {
-                        it.copy(
-                            userProfile = baseProfile,
-                            currentUserId = currentUserId,
-                            isLoading = false,
-                            errorMessage = null
-                        )
-                    }
 
-                    // Suscribirse a reseñas del usuario en tiempo real
+                    // Suscribirse al flujo de reseñas manteniendo isLoading = true hasta tenerlas listas
                     reviewsJob = viewModelScope.launch {
                         reviewRepository.listenReviewsByUser(userId)
                             .catch { error ->
                                 _uiState.update {
                                     it.copy(
+                                        isLoading = false,
                                         errorMessage = error.localizedMessage
                                             ?: "Error al cargar reseñas"
                                     )
                                 }
                             }
                             .collect { reviews ->
+                                val updatedProfile = baseProfile.copy(
+                                    stats = baseProfile.stats.copy(
+                                        reviewsCount = reviews.size
+                                    )
+                                )
                                 _uiState.update { state ->
-                                    val currentProf = state.userProfile ?: baseProfile
                                     state.copy(
-                                        userProfile = currentProf.copy(
-                                            stats = currentProf.stats.copy(
-                                                reviewsCount = reviews.size
-                                            )
-                                        ),
+                                        userProfile = updatedProfile,
                                         reviews = reviews,
+                                        currentUserId = currentUserId,
                                         isLoading = false,
                                         errorMessage = null
                                     )

@@ -174,11 +174,14 @@ class ReviewRepository @Inject constructor(
                 ?.photoUrl
                 ?.toString()
 
+            val profilePicUrl = user.profilePictureUrl
+                ?.takeIf { it.isNotBlank() }
+                ?: authPhotoUrl
+
             val reviewUser = CreateReviewUserDTO(
                 username = user.username,
                 nickName = user.nickName,
-                profilePictureUrl = authPhotoUrl
-                    ?: user.profilePictureUrl
+                profilePictureUrl = profilePicUrl
             )
 
             val reviewGame = CreateReviewGameDTO(

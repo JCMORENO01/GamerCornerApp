@@ -76,19 +76,21 @@ class SelfProfileViewModel @Inject constructor(
                                     reviewsCount = state.reviews.size
                                 )
                             ),
-                            isLoading = false,
                             errorMessage = null
                         )
                     }
                 }
         }
 
-        // Escuchar reseñas del usuario en tiempo real
+        // Escuchar reseñas del usuario en tiempo real y ocultar el loading al tener todo listo
         reviewsJob = viewModelScope.launch {
             reviewRepository.listenReviewsByUser(currentUserId)
                 .catch { error ->
                     _uiState.update {
-                        it.copy(errorMessage = error.localizedMessage)
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = error.localizedMessage
+                        )
                     }
                 }
                 .collect { reviews ->
@@ -101,7 +103,8 @@ class SelfProfileViewModel @Inject constructor(
                                 )
                             ),
                             reviews = reviews,
-                            isLoading = false
+                            isLoading = false,
+                            errorMessage = null
                         )
                     }
                 }

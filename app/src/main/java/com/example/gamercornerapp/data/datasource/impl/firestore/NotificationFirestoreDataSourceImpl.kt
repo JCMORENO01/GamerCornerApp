@@ -1,4 +1,3 @@
-
 package com.example.gamercornerapp.data.datasource.impl.firestore
 
 import com.example.gamercornerapp.R
@@ -10,6 +9,8 @@ import com.google.firebase.firestore.Query
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import java.text.SimpleDateFormat
+import java.util.Locale
 import javax.inject.Inject
 
 class NotificationFirestoreDataSourceImpl @Inject constructor(
@@ -31,21 +32,39 @@ class NotificationFirestoreDataSourceImpl @Inject constructor(
                     return@addSnapshotListener
                 }
 
+                val formatter = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.forLanguageTag("es"))
+
                 val items = snapshot?.documents?.map { doc ->
+                    val avatarUrl = doc.getString("userAvatarUrl")
+                        ?: doc.getString("userPictureUrl")
+                        ?: doc.getString("profilePictureUrl")
+
+                    val typeStr = doc.getString("type") ?: "LIKE"
+                    val notificationType = try {
+                        NotificationType.valueOf(typeStr.uppercase())
+                    } catch (_: Exception) {
+                        NotificationType.LIKE
+                    }
+
+                    val timestamp = doc.getTimestamp("createdAt")?.toDate() ?: doc.getDate("createdAt")
+                    val formattedTime = if (timestamp != null) {
+                        formatter.format(timestamp)
+                    } else {
+                        "Reciente"
+                    }
+
                     NotificationItem(
                         id = doc.id,
                         username = doc.getString("username")
                             ?: "Usuario",
-                        userAvatarImage = R.drawable.messi1,
-                        userAvatarUrl = doc.getString("userAvatarUrl")
-                            ?: doc.getString("userPictureUrl")
-                            ?: doc.getString("profilePictureUrl"),
-                        type = NotificationType.LIKE,
+                        userAvatarImage = if (avatarUrl.isNullOrBlank()) R.drawable.background_maquinitas else 0,
+                        userAvatarUrl = avatarUrl,
+                        type = notificationType,
                         actionText = doc.getString("actionText")
                             ?: "interactuó con tu contenido",
                         targetTitle = doc.getString("targetTitle")
                             ?: "",
-                        relativeTime = "Reciente"
+                        relativeTime = formattedTime
                     )
                 }.orEmpty()
 

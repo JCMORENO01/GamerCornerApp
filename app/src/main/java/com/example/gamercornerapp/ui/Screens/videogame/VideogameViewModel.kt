@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.gamercornerapp.data.Game
 import com.example.gamercornerapp.data.GameRatingBar
 import com.example.gamercornerapp.data.ReviewItem
+import com.example.gamercornerapp.data.repository.AuthRepository
 import com.example.gamercornerapp.data.repository.GameRepository
 import com.example.gamercornerapp.data.repository.ReviewRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class VideogameViewModel @Inject constructor(
     private val gameRepository: GameRepository,
-    private val reviewRepository: ReviewRepository
+    private val reviewRepository: ReviewRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(VideogameState())
@@ -50,29 +52,21 @@ class VideogameViewModel @Inject constructor(
             if (gameResult.isSuccess) {
                 val game = gameResult.getOrThrow()
 
-                _uiState.update {
-                    it.copy(
-                        game = game,
-                        isLoading = false,
-                        error = null
-                    )
-                }
-
-                // Suscribirse a las reseñas en tiempo real
+                // Suscribirse a las reseñas en tiempo real manteniendo isLoading = true hasta tener las reseñas listas
                 reviewsJob = viewModelScope.launch {
                     reviewRepository.listenReviewsByGame(gameId)
                         .catch { error ->
                             _uiState.update {
                                 it.copy(
+                                    isLoading = false,
                                     error = error.localizedMessage
                                         ?: "Error al escuchar reseñas"
                                 )
                             }
                         }
                         .collect { reviews ->
+                            val updatedGame = calculateUpdatedGame(game, reviews)
                             _uiState.update { state ->
-                                val baseGame = state.game ?: game
-                                val updatedGame = calculateUpdatedGame(baseGame, reviews)
                                 state.copy(
                                     game = updatedGame,
                                     reviews = reviews,
@@ -92,6 +86,43 @@ class VideogameViewModel @Inject constructor(
                             ?: "No se pudo cargar el videojuego"
                     )
                 }
+            }
+        }
+    }
+
+    fun toggleReviewLike(reviewId: String) {
+        if (reviewId.isBlank()) return
+        val userId = authRepository.currentUser?.uid ?: return
+
+        // Actualización optimista
+        val updatedReviews = _uiState.value.reviews.map { review ->
+            if (review.id == reviewId) {
+                val newIsLiked = !review.isLiked
+                val newCount = if (newIsLiked) review.likesCount + 1 else (review.likesCount - 1).coerceAtLeast(0)
+                review.copy(isLiked = newIsLiked, likesCount = newCount)
+            } else {
+                review
+            }
+        }
+
+        val baseGame = _uiState.value.game
+        val updatedGame = if (baseGame != null) calculateUpdatedGame(baseGame, updatedReviews) else null
+
+        _uiState.update {
+            it.copy(
+                reviews = updatedReviews,
+                game = updatedGame ?: it.game
+            )
+        }
+
+        viewModelScope.launch {
+            try {
+                val result = reviewRepository.toggleReviewLike(reviewId, userId)
+                if (result.isFailure) {
+                    currentGameId?.let { loadGame(it) }
+                }
+            } catch (_: Exception) {
+                currentGameId?.let { loadGame(it) }
             }
         }
     }
@@ -119,9 +150,9 @@ class VideogameViewModel @Inject constructor(
         if (reviews.isEmpty()) return game
 
         val totalCount = reviews.size
-        val averageRating = reviews.map { it.rating }.average()
+        val averageRating = reviews.map { review -> review.rating.toDouble() }.average()
 
-        val countsByStar = reviews.groupingBy { it.rating }.eachCount()
+        val countsByStar = reviews.groupingBy { review -> review.rating }.eachCount()
         val distribution = (5 downTo 1).map { star ->
             val countForStar = countsByStar[star] ?: 0
             GameRatingBar(
