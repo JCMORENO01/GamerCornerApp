@@ -52,9 +52,10 @@ exports.sendReviewLikeNotification = onDocumentCreated(
             .doc(userId)
             .get();
 
-        const username = userDoc.exists
-            ? userDoc.data().username || "Un usuario"
-            : "Un usuario";
+        const userData = userDoc.exists ? userDoc.data() : {};
+
+        const username = userData.username || "Un usuario";
+        const userAvatarUrl = userData.profilePictureUrl || null;
 
         const gameTitle =
             reviewData.game?.title || "un videojuego";
@@ -69,6 +70,7 @@ exports.sendReviewLikeNotification = onDocumentCreated(
             .set({
                 type: "LIKE",
                 username: username,
+                userAvatarUrl: userAvatarUrl,
                 actionText: "le dio like a tu reseña de",
                 targetTitle: gameTitle,
                 reviewId: reviewId,

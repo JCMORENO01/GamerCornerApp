@@ -37,6 +37,9 @@ class NotificationFirestoreDataSourceImpl @Inject constructor(
                         username = doc.getString("username")
                             ?: "Usuario",
                         userAvatarImage = R.drawable.messi1,
+                        userAvatarUrl = doc.getString("userAvatarUrl")
+                            ?: doc.getString("userPictureUrl")
+                            ?: doc.getString("profilePictureUrl"),
                         type = NotificationType.LIKE,
                         actionText = doc.getString("actionText")
                             ?: "interactuó con tu contenido",

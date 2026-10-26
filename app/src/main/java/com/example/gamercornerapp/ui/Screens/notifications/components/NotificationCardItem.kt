@@ -58,6 +58,7 @@ fun NotificationCardItem(
             // Avatar con badge
             UserAvatarWithBadge(
                 avatarRes = notification.userAvatarImage,
+                avatarUrl = notification.userAvatarUrl,
                 type = notification.type
             )
 

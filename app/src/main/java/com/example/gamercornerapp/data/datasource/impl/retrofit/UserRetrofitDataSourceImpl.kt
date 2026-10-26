@@ -98,8 +98,6 @@ class UserRetrofitDataSourceImpl @Inject constructor(
                 it.str("id")
             }
         }
-
-    // Consulta inicial HTTP, no listener en tiempo real.
     override fun listenUserById(
         userId: String
     ): Flow<UserProfileDTO> =

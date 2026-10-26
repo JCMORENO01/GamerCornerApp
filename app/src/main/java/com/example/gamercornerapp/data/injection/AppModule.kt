@@ -40,15 +40,6 @@ import javax.inject.Singleton
 object AppModule {
 
     // ==========================================
-    // CONFIGURACIÓN DE FUENTE DE DATOS
-    // ==========================================
-
-    private const val USE_RETROFIT = false
-
-    // false = Firebase
-    // true  = Retrofit + Express + PostgreSQL
-
-    // ==========================================
     // FIREBASE
     // ==========================================
 
@@ -99,61 +90,76 @@ object AppModule {
     }
 
     // ==========================================
-    // GAMES
+    // GAMES - FIREBASE ACTIVO
     // ==========================================
 
     @Provides
     @Singleton
     fun provideGameRemoteDataSource(
-        firestore: GameFirestoreDataSourceImpl,
-        retrofit: GameRetrofitDataSourceImpl
+        impl: GameFirestoreDataSourceImpl
     ): GameRemoteDataSource {
-
-        return if (USE_RETROFIT) {
-            retrofit
-        } else {
-            firestore
-        }
+        return impl
     }
 
+    /*
+    // GAMES - RETROFIT
+    @Provides
+    @Singleton
+    fun provideGameRemoteDataSource(
+        impl: GameRetrofitDataSourceImpl
+    ): GameRemoteDataSource {
+        return impl
+    }
+    */
+
     // ==========================================
-    // REVIEWS
+    // REVIEWS - FIREBASE ACTIVO
     // ==========================================
 
     @Provides
     @Singleton
     fun provideReviewRemoteDataSource(
-        firestore: ReviewFirestoreDataSourceImpl,
-        retrofit: ReviewRetrofitDataSourceImpl
+        impl: ReviewFirestoreDataSourceImpl
     ): ReviewRemoteDataSource {
-
-        return if (USE_RETROFIT) {
-            retrofit
-        } else {
-            firestore
-        }
+        return impl
     }
 
+    /*
+    // REVIEWS - RETROFIT
+    @Provides
+    @Singleton
+    fun provideReviewRemoteDataSource(
+        impl: ReviewRetrofitDataSourceImpl
+    ): ReviewRemoteDataSource {
+        return impl
+    }
+    */
+
     // ==========================================
-    // USERS
+    // USERS - FIREBASE ACTIVO
     // ==========================================
 
     @Provides
     @Singleton
     fun provideUserRemoteDataSource(
-        firestore: UserFirestoreDataSourceImpl,
-        retrofit: UserRetrofitDataSourceImpl
+        impl: UserFirestoreDataSourceImpl
     ): UserRemoteDataSource {
-
-        return if (USE_RETROFIT) {
-            retrofit
-        } else {
-            firestore
-        }
+        return impl
     }
 
+    /*
+    // USERS - RETROFIT
+    @Provides
+    @Singleton
+    fun provideUserRemoteDataSource(
+        impl: UserRetrofitDataSourceImpl
+    ): UserRemoteDataSource {
+        return impl
+    }
+    */
+
     // ==========================================
-    // NOTIFICATIONS
+    // NOTIFICATIONS - SIEMPRE FIREBASE
     // ==========================================
 
     @Provides

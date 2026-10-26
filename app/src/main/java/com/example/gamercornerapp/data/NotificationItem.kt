@@ -5,10 +5,11 @@ import com.example.gamercornerapp.ui.Screens.notifications.enums.NotificationTyp
 data class NotificationItem(
     val id: String,
     val username: String,
-    val userAvatarImage: Int,
+    val userAvatarImage: Int = com.example.gamercornerapp.R.drawable.messi1,
+    val userAvatarUrl: String? = null,
     val type: NotificationType,
-    val actionText: String,      //si comentó, si comenzó a seguir a la persona
-    val targetTitle: String? = null, //los nombres de los videojuegos si es de una reseña
-    val commentQuote: String? = null, //solo si es de una reseña
-    val relativeTime: String     //TODO- Revisar mas adelante
+    val actionText: String,
+    val targetTitle: String? = null,
+    val commentQuote: String? = null,
+    val relativeTime: String
 )

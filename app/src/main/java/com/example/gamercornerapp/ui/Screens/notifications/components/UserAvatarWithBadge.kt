@@ -1,6 +1,5 @@
 package com.example.gamercornerapp.ui.Screens.notifications.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -15,13 +14,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.gamercornerapp.R
 import com.example.gamercornerapp.ui.Screens.notifications.enums.NotificationType
+import com.example.gamercornerapp.ui.componentes.ProfileAsyncImage
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
@@ -29,7 +26,8 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 fun UserAvatarWithBadge(
     avatarRes: Int,
     type: NotificationType,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    avatarUrl: String? = null
 ) {
 
     Box(
@@ -37,15 +35,9 @@ fun UserAvatarWithBadge(
         contentAlignment = Alignment.BottomEnd
     ) {
 
-        Image(
-            painter = painterResource(
-                id = avatarRes
-            ),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(46.dp)
-                .clip(CircleShape)
+        ProfileAsyncImage(
+            profileImage = avatarUrl?.takeIf { it.startsWith("http") } ?: avatarRes,
+            size = 46.dp
         )
 
 
