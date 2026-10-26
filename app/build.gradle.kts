@@ -40,6 +40,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -87,6 +88,7 @@ dependencies {
 
     // Coil
     implementation("io.coil-kt:coil-compose:2.6.0")
+    implementation("com.github.javafaker:javafaker:1.0.2")
 
     // Iconos
     implementation("androidx.compose.material:material-icons-extended")
@@ -94,6 +96,9 @@ dependencies {
 
     // Tests
     testImplementation(libs.junit)
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+    testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation("com.github.javafaker:javafaker:1.0.2")
 
     androidTestImplementation(
         platform(libs.androidx.compose.bom)
