@@ -138,4 +138,41 @@ class LoginViewModel @Inject constructor(
             it.copy(navigateToFeed = false)
         }
     }
+
+    fun signInWithGoogle(idToken: String) {
+        viewModelScope.launch {
+            val result = authRepository.signInWithGoogle(idToken)
+
+            if (result.isSuccess) {
+                authRepository.currentUser?.uid?.let { uid ->
+                    userRepository.getUserById(uid).onFailure {
+                        val email = authRepository.currentUser?.email ?: "Usuario"
+                        val name = authRepository.currentUser?.displayName ?: email.substringBefore("@")
+                        userRepository.createUserProfile(
+                            id = uid,
+                            username = name,
+                            nickName = name,
+                            bio = null,
+                            birthDate = null
+                        )
+                    }
+                    userRepository.updateFCMToken(uid)
+                }
+
+                _uiState.update {
+                    it.copy(
+                        showError = false,
+                        navigateToFeed = true
+                    )
+                }
+            } else {
+                _uiState.update {
+                    it.copy(
+                        showError = true,
+                        errorRes = R.string.error_invalid_credentials
+                    )
+                }
+            }
+        }
+    }
 }

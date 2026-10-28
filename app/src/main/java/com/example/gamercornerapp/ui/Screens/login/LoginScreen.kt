@@ -14,9 +14,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -25,7 +22,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.credentials.CredentialManager
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.CustomCredential
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.example.gamercornerapp.ui.Screens.login.components.AnimatedSplashScreen
 import com.example.gamercornerapp.ui.Screens.login.components.CreateAccountSection
 import com.example.gamercornerapp.ui.Screens.login.components.GoogleLoginButton
@@ -33,6 +37,7 @@ import com.example.gamercornerapp.ui.Screens.login.components.LoginDivider
 import com.example.gamercornerapp.ui.Screens.login.components.LoginForm
 import com.example.gamercornerapp.ui.Screens.login.components.LoginHeader
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -42,9 +47,11 @@ fun LoginScreen(
     onForgotPasswordClick: () -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: LoginViewModel = viewModel()
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(uiState.navigateToFeed) {
         if (uiState.navigateToFeed) {
@@ -67,6 +74,29 @@ fun LoginScreen(
         onAnimationFinished = viewModel::onAnimationFinished,
 
         onLoginClick = viewModel::onLoginClick,
+        onGoogleLoginClick = {
+            scope.launch {
+                try {
+                    val credentialManager = CredentialManager.create(context)
+                    val googleIdOption = GetGoogleIdOption.Builder()
+                        .setServerClientId("182268771811-7manlecfd0qjs9kaedgc7sblte8po3tc.apps.googleusercontent.com")
+                        .setFilterByAuthorizedAccounts(false)
+                        .build()
+                    val request = GetCredentialRequest.Builder()
+                        .addCredentialOption(googleIdOption)
+                        .build()
+                    val result = credentialManager.getCredential(context, request)
+                    val credential = result.credential
+                    if (credential is CustomCredential && credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                        val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+                        val idToken = googleIdTokenCredential.idToken
+                        viewModel.signInWithGoogle(idToken)
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.e("GoogleLogin", "Error signing in with Google", e)
+                }
+            }
+        },
         onCreateAccountClick = onCreateAccountClick,
         onForgotPasswordClick = onForgotPasswordClick,
         onBackClick = onBackClick,
@@ -89,6 +119,7 @@ fun LoginScreenContent(
     onShowPasswordChange: () -> Unit,
     onAnimationFinished: () -> Unit,
     onLoginClick: () -> Unit,
+    onGoogleLoginClick: () -> Unit,
     onCreateAccountClick: () -> Unit,
     onForgotPasswordClick: () -> Unit,
     onBackClick: () -> Unit,
@@ -185,7 +216,9 @@ fun LoginScreenContent(
                 )
 
 
-                GoogleLoginButton()
+                GoogleLoginButton(
+                    onClick = onGoogleLoginClick
+                )
 
 
                 Spacer(

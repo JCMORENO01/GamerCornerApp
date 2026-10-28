@@ -31,11 +31,12 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 @Composable
 fun GoogleLoginButton(
+    onClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
 
     OutlinedButton(
-        onClick = { },
+        onClick = onClick,
 
         modifier = modifier
             .fillMaxWidth()

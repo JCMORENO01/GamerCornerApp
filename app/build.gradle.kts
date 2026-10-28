@@ -78,6 +78,11 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
 
+    // Credential Manager for Google Sign-In
+    implementation("androidx.credentials:credentials:1.6.0")
+    implementation("androidx.credentials:credentials-play-services-auth:1.6.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+
     // Firebase Cloud Messaging
     implementation("com.google.firebase:firebase-messaging")
 
@@ -104,8 +109,9 @@ dependencies {
     // Tests
     testImplementation(libs.junit)
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
-    testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation("io.mockk:mockk:1.13.14")
     testImplementation("com.github.javafaker:javafaker:1.0.2")
+    testImplementation("com.google.truth:truth:1.4.5")
 
     androidTestImplementation(
         platform(libs.androidx.compose.bom)

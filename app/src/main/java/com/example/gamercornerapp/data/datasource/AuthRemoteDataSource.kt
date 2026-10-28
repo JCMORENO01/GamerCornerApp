@@ -16,6 +16,11 @@ class AuthRemoteDataSource @Inject constructor(
         auth.signInWithEmailAndPassword(email, pass).await()
     }
 
+    suspend fun signInWithGoogle(idToken: String) {
+        val credential = com.google.firebase.auth.GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credential).await()
+    }
+
     suspend fun signUp(email: String, pass: String) {
         auth.createUserWithEmailAndPassword(email, pass).await()
     }

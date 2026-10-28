@@ -27,6 +27,15 @@ class AuthRepository @Inject constructor(
         }
     }
 
+    suspend fun signInWithGoogle(idToken: String): Result<Unit> {
+        return try {
+            remoteDataSource.signInWithGoogle(idToken)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     suspend fun signUp(email: String, pass: String): Result<Unit> {
         return try {
             remoteDataSource.signUp(email, pass)
