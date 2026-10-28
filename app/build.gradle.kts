@@ -42,6 +42,13 @@ android {
         compose = true
         buildConfig = true
     }
+
+    packaging {
+        resources {
+            excludes += "META-INF/LICENSE.md"
+            excludes += "META-INF/LICENSE-notice.md"
+        }
+    }
 }
 
 dependencies {
@@ -115,6 +122,12 @@ dependencies {
     androidTestImplementation(
         libs.androidx.junit
     )
+    androidTestImplementation("com.google.truth:truth:1.4.5")
+    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.60.1")
+    kspAndroidTest(libs.hilt.compiler)
+    androidTestImplementation("io.mockk:mockk-android:1.13.14")
+    androidTestImplementation("androidx.test:core:1.7.0")
 
     debugImplementation(
         libs.androidx.compose.ui.test.manifest
