@@ -257,4 +257,38 @@ class ReviewRepository @Inject constructor(
             Result.failure(e)
         }
     }
+    
+    suspend fun toggleSaveReview(
+        reviewId: String,
+        userId: String
+    ): Result<Unit> {
+        return try {
+            require(reviewId.isNotBlank())
+            require(userId.isNotBlank())
+
+            require(authRepository.currentUser?.uid == userId) {
+                "Usuario no autenticado"
+            }
+
+            remoteDataSource.toggleSaveReview(
+                reviewId,
+                userId
+            )
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
+    suspend fun getSavedReviewsByUser(
+        userId: String
+    ): Result<List<ReviewItem>> {
+        return try {
+            val reviews = remoteDataSource.getSavedReviewsByUser(userId)
+            Result.success(reviews.map { it.toReviewItem() })
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

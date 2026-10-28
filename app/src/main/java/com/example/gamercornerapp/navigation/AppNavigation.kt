@@ -259,6 +259,11 @@ fun AppNavigation(
                     navController.navigate(
                         Screen.Videogame.createRoute(review.gameId)
                     )
+                },
+                onGameClick = { game ->
+                    navController.navigate(
+                        Screen.Videogame.createRoute(game.id)
+                    )
                 }
             )
         }

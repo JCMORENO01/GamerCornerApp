@@ -14,6 +14,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -41,6 +43,7 @@ fun VideogameCommentsSection(
     reviews: List<ReviewItem>,
     onUserClick: (String) -> Unit,
     onLikeClick: (String) -> Unit,
+    onBookmarkClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -68,7 +71,8 @@ fun VideogameCommentsSection(
                     GameCommentCardItem(
                         review = review,
                         onUserClick = onUserClick,
-                        onLikeClick = onLikeClick
+                        onLikeClick = onLikeClick,
+                        onBookmarkClick = onBookmarkClick
                     )
                 }
             }
@@ -81,6 +85,7 @@ private fun GameCommentCardItem(
     review: ReviewItem,
     onUserClick: (String) -> Unit,
     onLikeClick: (String) -> Unit,
+    onBookmarkClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -175,6 +180,7 @@ private fun GameCommentCardItem(
             Spacer(modifier = Modifier.height(10.dp))
 
             Row(
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
@@ -193,6 +199,17 @@ private fun GameCommentCardItem(
                     color = MaterialTheme.colorScheme.primary,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium
+                )
+                
+                Spacer(modifier = Modifier.weight(1f))
+                
+                Icon(
+                    imageVector = if (review.isBookmarked) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                    contentDescription = "Bookmark",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier
+                        .size(18.dp)
+                        .clickable { onBookmarkClick(review.id) }
                 )
             }
         }
@@ -215,7 +232,8 @@ fun VideogameCommentsSectionPreview() {
                 )
             ),
             onUserClick = {},
-            onLikeClick = {}
+            onLikeClick = {},
+            onBookmarkClick = {}
         )
     }
 }

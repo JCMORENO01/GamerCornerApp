@@ -40,13 +40,16 @@ fun SelfProfileScreen(
     onLogoutClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     onEditReviewClick: (ReviewItem) -> Unit = {},
-    onReviewClick: (ReviewItem) -> Unit = {}
+    onReviewClick: (ReviewItem) -> Unit = {},
+    onGameClick: (com.example.gamercornerapp.data.Game) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     SelfProfileScreenContent(
         userProfile = uiState.userProfile,
         reviews = uiState.reviews,
+        savedReviews = uiState.savedReviews,
+        savedGames = uiState.savedGames,
         selectedTabIndex = uiState.selectedTabIndex,
         isLoading = uiState.isLoading,
         isLoadingImage = uiState.isLoadingImage,
@@ -63,6 +66,7 @@ fun SelfProfileScreen(
         onEditReviewClick = onEditReviewClick,
         onDeleteReviewClick = { review -> viewModel.deleteReview(review.id) },
         onReviewClick = onReviewClick,
+        onGameClick = onGameClick,
         modifier = modifier
     )
 }
@@ -71,6 +75,8 @@ fun SelfProfileScreen(
 fun SelfProfileScreenContent(
     userProfile: UserProfile?,
     reviews: List<ReviewItem>,
+    savedReviews: List<ReviewItem> = emptyList(),
+    savedGames: List<com.example.gamercornerapp.data.Game> = emptyList(),
     selectedTabIndex: Int,
     isLoading: Boolean,
     isLoadingImage: Boolean,
@@ -84,6 +90,7 @@ fun SelfProfileScreenContent(
     onEditReviewClick: (ReviewItem) -> Unit,
     onDeleteReviewClick: (ReviewItem) -> Unit,
     onReviewClick: (ReviewItem) -> Unit,
+    onGameClick: (com.example.gamercornerapp.data.Game) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -133,9 +140,11 @@ fun SelfProfileScreenContent(
                     Spacer(modifier = Modifier.height(20.dp))
 
                     ProfileReviewsSection(
-                        reviews = reviews,
+                        reviews = if (selectedTabIndex == 2) savedReviews else reviews,
+                        savedGames = savedGames,
                         selectedTabIndex = selectedTabIndex,
                         onTabSelected = onTabSelected,
+                        onGameClick = onGameClick,
                         onReviewClick = onReviewClick,
                         onEditClick = onEditReviewClick,
                         onDeleteClick = onDeleteReviewClick

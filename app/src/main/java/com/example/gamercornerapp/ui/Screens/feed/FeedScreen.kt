@@ -51,6 +51,7 @@ fun FeedScreen(
         onGameClick = onGameClick,
         onUserClick = onUserClick,
         onLikeClick = viewModel::toggleReviewLike,
+        onBookmarkClick = viewModel::toggleSaveReview,
         modifier = modifier
     )
 }
@@ -65,6 +66,7 @@ fun FeedScreenContent(
     onGameClick: (String) -> Unit,
     onUserClick: (String) -> Unit = {},
     onLikeClick: (String) -> Unit = {},
+    onBookmarkClick: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -137,6 +139,9 @@ fun FeedScreenContent(
                             },
                             onLikeClick = {
                                 onLikeClick(post.id)
+                            },
+                            onBookmarkClick = {
+                                onBookmarkClick(post.id)
                             }
                         )
                     }

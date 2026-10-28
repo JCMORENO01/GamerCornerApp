@@ -5,6 +5,7 @@ import com.example.gamercornerapp.data.ReviewItem
 
 data class VideogameState(
     val game: Game? = null,
+    val isSaved: Boolean = false,
     val reviews: List<ReviewItem> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null

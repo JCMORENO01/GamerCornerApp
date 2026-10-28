@@ -45,10 +45,27 @@ class ReviewFirestoreDataSourceImpl @Inject constructor(
             false
         }
 
+        val bookmarked = if (!currentUserId.isNullOrBlank()) {
+            try {
+                db.collection("users")
+                    .document(currentUserId)
+                    .collection("saved_reviews")
+                    .document(doc.id)
+                    .get()
+                    .await()
+                    .exists()
+            } catch (e: Exception) {
+                false
+            }
+        } else {
+            false
+        }
+
         return review.copy(
             id = doc.id,
             likesCount = likesCountFromDoc,
-            isLiked = liked
+            isLiked = liked,
+            isBookmarked = bookmarked
         )
     }
 
@@ -197,6 +214,65 @@ class ReviewFirestoreDataSourceImpl @Inject constructor(
 
             null
         }.await()
+    }
+
+    override suspend fun toggleSaveReview(
+        reviewId: String,
+        userId: String
+    ) {
+        require(reviewId.isNotBlank())
+        require(userId.isNotBlank())
+
+        val currentUserId = auth.currentUser?.uid
+            ?: throw Exception("Usuario no autenticado")
+
+        require(currentUserId == userId) {
+            "No puedes guardar reseñas por otro usuario"
+        }
+
+        val bookmarkRef = db.collection("users")
+            .document(userId)
+            .collection("saved_reviews")
+            .document(reviewId)
+
+        val bookmarkDoc = bookmarkRef.get().await()
+
+        if (bookmarkDoc.exists()) {
+            bookmarkRef.delete().await()
+        } else {
+            bookmarkRef.set(
+                mapOf("timestamp" to FieldValue.serverTimestamp())
+            ).await()
+        }
+    }
+
+    override suspend fun getSavedReviewsByUser(
+        userId: String
+    ): List<ReviewDTO> {
+        val snapshot = db.collection("users")
+            .document(userId)
+            .collection("saved_reviews")
+            .get()
+            .await()
+            
+        if (snapshot.isEmpty) return emptyList()
+        
+        val reviewIds = snapshot.documents.map { it.id }
+        
+        // Firestore 'in' query has a limit of 10. For this example, we chunk it.
+        val reviews = mutableListOf<ReviewDTO>()
+        val chunks = reviewIds.chunked(10)
+        
+        for (chunk in chunks) {
+            val reviewDocs = db.collection("reviews")
+                .whereIn(com.google.firebase.firestore.FieldPath.documentId(), chunk)
+                .get()
+                .await()
+                
+            reviews.addAll(mapReviews(reviewDocs.documents))
+        }
+        
+        return reviews
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)

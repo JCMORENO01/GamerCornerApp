@@ -48,6 +48,13 @@ class VideogameViewModel @Inject constructor(
             }
 
             val gameResult = gameRepository.getGameById(gameId)
+            
+            val userId = authRepository.currentUser?.uid
+            val isSaved = if (userId != null && gameResult.isSuccess) {
+                gameRepository.isGameSaved(gameId, userId).getOrDefault(false)
+            } else {
+                false
+            }
 
             if (gameResult.isSuccess) {
                 val game = gameResult.getOrThrow()
@@ -69,6 +76,7 @@ class VideogameViewModel @Inject constructor(
                             _uiState.update { state ->
                                 state.copy(
                                     game = updatedGame,
+                                    isSaved = isSaved,
                                     reviews = reviews,
                                     isLoading = false,
                                     error = null
@@ -139,6 +147,56 @@ class VideogameViewModel @Inject constructor(
                             ?: "No se pudo eliminar la reseña"
                     )
                 }
+            }
+        }
+    }
+    
+    fun toggleSaveReview(reviewId: String) {
+        if (reviewId.isBlank()) return
+        val userId = authRepository.currentUser?.uid ?: return
+
+        // Actualización optimista
+        val updatedReviews = _uiState.value.reviews.map { review ->
+            if (review.id == reviewId) {
+                review.copy(isBookmarked = !review.isBookmarked)
+            } else {
+                review
+            }
+        }
+
+        _uiState.update {
+            it.copy(reviews = updatedReviews)
+        }
+
+        viewModelScope.launch {
+            try {
+                val result = reviewRepository.toggleSaveReview(reviewId, userId)
+                if (result.isFailure) {
+                    currentGameId?.let { loadGame(it) }
+                }
+            } catch (_: Exception) {
+                currentGameId?.let { loadGame(it) }
+            }
+        }
+    }
+    
+    fun toggleSaveGame() {
+        val gameId = currentGameId ?: return
+        val userId = authRepository.currentUser?.uid ?: return
+        
+        // Optimistic UI update
+        _uiState.update { 
+            it.copy(isSaved = !it.isSaved)
+        }
+        
+        viewModelScope.launch {
+            try {
+                val result = gameRepository.toggleSaveGame(gameId, userId)
+                if (result.isFailure) {
+                    _uiState.update { it.copy(isSaved = !it.isSaved) }
+                }
+            } catch (_: Exception) {
+                _uiState.update { it.copy(isSaved = !it.isSaved) }
             }
         }
     }

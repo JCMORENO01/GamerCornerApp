@@ -6,6 +6,8 @@ import com.example.gamercornerapp.data.UserProfile
 data class SelfProfileState(
     val userProfile: UserProfile? = null,
     val reviews: List<ReviewItem> = emptyList(),
+    val savedReviews: List<ReviewItem> = emptyList(),
+    val savedGames: List<com.example.gamercornerapp.data.Game> = emptyList(),
     val selectedTabIndex: Int = 0,
     val isLoading: Boolean = true,
     val isLoadingImage: Boolean = false,

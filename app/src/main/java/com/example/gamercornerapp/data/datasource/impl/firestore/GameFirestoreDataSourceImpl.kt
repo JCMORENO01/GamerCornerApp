@@ -31,4 +31,61 @@ class GameFirestoreDataSourceImpl @Inject constructor(
             ?.copy(id = doc.id)
             ?: throw Exception("No se encontró el videojuego")
     }
+
+    override suspend fun toggleSaveGame(gameId: String, userId: String) {
+        val savedGamesRef = db.collection("users")
+            .document(userId)
+            .collection("saved_games")
+            .document(gameId)
+            
+        val doc = savedGamesRef.get().await()
+        if (doc.exists()) {
+            savedGamesRef.delete().await()
+        } else {
+            savedGamesRef.set(mapOf("timestamp" to com.google.firebase.firestore.FieldValue.serverTimestamp())).await()
+        }
+    }
+
+    override suspend fun isGameSaved(gameId: String, userId: String): Boolean {
+        return try {
+            db.collection("users")
+                .document(userId)
+                .collection("saved_games")
+                .document(gameId)
+                .get()
+                .await()
+                .exists()
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    override suspend fun getSavedGamesByUser(userId: String): List<GameDTO> {
+        val snapshot = db.collection("users")
+            .document(userId)
+            .collection("saved_games")
+            .get()
+            .await()
+            
+        if (snapshot.isEmpty) return emptyList()
+        
+        val gameIds = snapshot.documents.map { it.id }
+        val games = mutableListOf<GameDTO>()
+        val chunks = gameIds.chunked(10)
+        
+        for (chunk in chunks) {
+            val gameDocs = db.collection("games")
+                .whereIn(com.google.firebase.firestore.FieldPath.documentId(), chunk)
+                .get()
+                .await()
+                
+            games.addAll(
+                gameDocs.documents.mapNotNull { doc ->
+                    doc.toObject(GameDTO::class.java)?.copy(id = doc.id)
+                }
+            )
+        }
+        
+        return games
+    }
 }

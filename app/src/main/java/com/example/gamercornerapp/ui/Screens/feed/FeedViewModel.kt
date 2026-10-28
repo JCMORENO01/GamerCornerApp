@@ -253,4 +253,68 @@ class FeedViewModel @Inject constructor(
             it.copy(errorMessage = null)
         }
     }
+
+    // Función para guardar o quitar de guardados
+    fun toggleSaveReview(reviewId: String) {
+        if (reviewId.isBlank()) return
+
+        val userId = authRepository.currentUser?.uid
+
+        if (userId == null) {
+            _uiState.update {
+                it.copy(
+                    errorMessage = "Debes iniciar sesión para guardar reseñas"
+                )
+            }
+            return
+        }
+
+        // Actualización optimista de la UI
+        allPosts = allPosts.map { post ->
+            if (post.id == reviewId) {
+                post.copy(isBookmarked = !post.isBookmarked)
+            } else {
+                post
+            }
+        }
+        updateVisiblePosts()
+
+        viewModelScope.launch {
+            try {
+                val result = reviewRepository.toggleSaveReview(
+                    reviewId = reviewId,
+                    userId = userId
+                )
+
+                if (result.isFailure) {
+                    // Revertir cambio optimista en caso de error
+                    allPosts = allPosts.map { post ->
+                        if (post.id == reviewId) {
+                            post.copy(isBookmarked = !post.isBookmarked)
+                        } else {
+                            post
+                        }
+                    }
+                    updateVisiblePosts()
+
+                    _uiState.update {
+                        it.copy(
+                            errorMessage = result.exceptionOrNull()
+                                ?.localizedMessage
+                                ?: "No se pudo guardar la reseña"
+                        )
+                    }
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        errorMessage = e.localizedMessage
+                            ?: "No se pudo guardar la reseña"
+                    )
+                }
+            }
+        }
+    }
 }

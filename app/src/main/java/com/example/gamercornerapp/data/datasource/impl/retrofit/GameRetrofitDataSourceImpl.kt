@@ -14,4 +14,15 @@ class GameRetrofitDataSourceImpl @Inject constructor(
 
     override suspend fun getGameById(gameId: String): GameDTO =
         service.getGameByIdRaw(gameId).toGameDTO()
+        
+    override suspend fun toggleSaveGame(gameId: String, userId: String) {
+    }
+
+    override suspend fun isGameSaved(gameId: String, userId: String): Boolean {
+        return false
+    }
+
+    override suspend fun getSavedGamesByUser(userId: String): List<GameDTO> {
+        return emptyList()
+    }
 }

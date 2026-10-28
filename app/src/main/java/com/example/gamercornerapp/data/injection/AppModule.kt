@@ -22,7 +22,6 @@ import com.example.gamercornerapp.data.datasource.services.GamerCornerService
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.example.gamercornerapp.BuildConfig
 
 import dagger.Module
 import dagger.Provides
@@ -53,6 +52,7 @@ object AppModule {
             FirebaseApp.initializeApp(context)
         }
         val auth = FirebaseAuth.getInstance()
+        /*
         try {
             if (BuildConfig.DEBUG) {
                 auth.useEmulator("10.0.2.2", 9099)
@@ -60,6 +60,7 @@ object AppModule {
         } catch (_: Exception) {
             // Already connected or emulator not running
         }
+        */
         return auth
     }
 
@@ -67,6 +68,7 @@ object AppModule {
     @Singleton
     fun provideFirebaseFirestore(): FirebaseFirestore {
         val firestore = FirebaseFirestore.getInstance()
+        /*
         try {
             if (BuildConfig.DEBUG) {
                 firestore.useEmulator("10.0.2.2", 8080)
@@ -74,6 +76,7 @@ object AppModule {
         } catch (_: Exception) {
             // Already connected or emulator not running
         }
+        */
         return firestore
     }
 

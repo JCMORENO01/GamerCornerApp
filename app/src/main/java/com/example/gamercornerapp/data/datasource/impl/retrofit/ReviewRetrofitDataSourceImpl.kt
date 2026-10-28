@@ -70,4 +70,16 @@ class ReviewRetrofitDataSourceImpl @Inject constructor(
         flow {
             emit(getReviewsByUser(userId))
         }
+
+    override suspend fun toggleSaveReview(
+        reviewId: String,
+        userId: String
+    ) {
+    }
+
+    override suspend fun getSavedReviewsByUser(
+        userId: String
+    ): List<ReviewDTO> {
+        return emptyList()
+    }
 }

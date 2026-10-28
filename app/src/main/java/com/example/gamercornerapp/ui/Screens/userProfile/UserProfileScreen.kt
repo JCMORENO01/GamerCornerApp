@@ -167,6 +167,7 @@ fun UserProfileScreenContent(
 
                     ProfileReviewsSection(
                         reviews = reviews,
+                        savedGames = emptyList(), // Not applicable for others' profile
                         selectedTabIndex = 0,
                         onTabSelected = {},
                         onReviewClick = onReviewClick

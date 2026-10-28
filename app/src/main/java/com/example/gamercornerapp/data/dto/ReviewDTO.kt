@@ -16,5 +16,8 @@ data class ReviewDTO(
     val likesCount: Long = 0L,
 
     // Indica si el usuario autenticado dio like
-    val isLiked: Boolean = false
+    val isLiked: Boolean = false,
+    
+    // Indica si la reseña está guardada por el usuario autenticado
+    val isBookmarked: Boolean = false
 )

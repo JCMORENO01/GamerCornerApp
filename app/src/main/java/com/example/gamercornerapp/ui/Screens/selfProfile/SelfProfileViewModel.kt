@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gamercornerapp.data.repository.AuthRepository
+import com.example.gamercornerapp.data.repository.GameRepository
 import com.example.gamercornerapp.data.repository.ReviewRepository
 import com.example.gamercornerapp.data.repository.StorageRepository
 import com.example.gamercornerapp.data.repository.UserRepository
@@ -22,7 +23,8 @@ class SelfProfileViewModel @Inject constructor(
     private val storageRepository: StorageRepository,
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
-    private val reviewRepository: ReviewRepository
+    private val reviewRepository: ReviewRepository,
+    private val gameRepository: GameRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SelfProfileState())
     val uiState: StateFlow<SelfProfileState> = _uiState.asStateFlow()
@@ -111,6 +113,26 @@ class SelfProfileViewModel @Inject constructor(
         }
     }
 
+    fun loadSavedReviews() {
+        val currentUserId = authRepository.currentUser?.uid ?: return
+        viewModelScope.launch {
+            val result = reviewRepository.getSavedReviewsByUser(currentUserId)
+            if (result.isSuccess) {
+                _uiState.update { it.copy(savedReviews = result.getOrDefault(emptyList())) }
+            }
+        }
+    }
+    
+    fun loadSavedGames() {
+        val currentUserId = authRepository.currentUser?.uid ?: return
+        viewModelScope.launch {
+            val result = gameRepository.getSavedGamesByUser(currentUserId)
+            if (result.isSuccess) {
+                _uiState.update { it.copy(savedGames = result.getOrDefault(emptyList())) }
+            }
+        }
+    }
+
     fun deleteReview(reviewId: String) {
         viewModelScope.launch {
             val result = reviewRepository.deleteReview(reviewId)
@@ -122,6 +144,11 @@ class SelfProfileViewModel @Inject constructor(
 
     fun onTabSelected(index: Int) {
         _uiState.update { it.copy(selectedTabIndex = index) }
+        if (index == 1) {
+            loadSavedGames()
+        } else if (index == 2) {
+            loadSavedReviews()
+        }
     }
 
     fun onLogoutClick() {

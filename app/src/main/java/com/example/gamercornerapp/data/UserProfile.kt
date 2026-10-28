@@ -40,5 +40,8 @@ data class ReviewItem(
 
     // Likes
     val likesCount: Int = 0,
-    val isLiked: Boolean = false
+    val isLiked: Boolean = false,
+    
+    // Guardado
+    val isBookmarked: Boolean = false
 )

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -48,16 +49,19 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 @Composable
 fun ProfileReviewsSection(
     reviews: List<ReviewItem>,
+    savedGames: List<com.example.gamercornerapp.data.Game>,
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
     onSeeAllClick: () -> Unit = {},
     onReviewClick: (ReviewItem) -> Unit = {},
+    onGameClick: (com.example.gamercornerapp.data.Game) -> Unit = {},
     onEditClick: ((ReviewItem) -> Unit)? = null,
     onDeleteClick: ((ReviewItem) -> Unit)? = null
 ) {
     val tabs = listOf(
         stringResource(id = R.string.tab_reviews),
+        "Juegos",
         stringResource(id = R.string.tab_saved)
     )
 
@@ -120,10 +124,10 @@ fun ProfileReviewsSection(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = if (selectedTabIndex == 0) {
-                    stringResource(id = R.string.title_recent_reviews)
-                } else {
-                    stringResource(id = R.string.title_recent_saved)
+                text = when (selectedTabIndex) {
+                    0 -> stringResource(id = R.string.title_recent_reviews)
+                    1 -> "Juegos guardados"
+                    else -> stringResource(id = R.string.title_recent_saved)
                 },
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
@@ -143,19 +147,37 @@ fun ProfileReviewsSection(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            reviews.forEach { review ->
-                ReviewCardItem(
-                    review = review,
-                    onClick = { onReviewClick(review) },
-                    onEditClick = if (onEditClick != null) { { onEditClick(review) } } else null,
-                    onDeleteClick = if (onDeleteClick != null) { { onDeleteClick(review) } } else null
-                )
+        if (selectedTabIndex == 1) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                savedGames.forEach { game ->
+                    com.example.gamercornerapp.ui.Screens.explore.components.ResultGameCard(
+                        game = game,
+                        isFavorite = true,
+                        onClick = { onGameClick(game) }
+                    )
+                }
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                reviews.forEach { review ->
+                    ReviewCardItem(
+                        review = review,
+                        isEditable = selectedTabIndex == 0,
+                        onClick = { onReviewClick(review) },
+                        onEditClick = if (onEditClick != null && selectedTabIndex == 0) { { onEditClick(review) } } else null,
+                        onDeleteClick = if (onDeleteClick != null && selectedTabIndex == 0) { { onDeleteClick(review) } } else null
+                    )
+                }
             }
         }
     }
@@ -164,6 +186,7 @@ fun ProfileReviewsSection(
 @Composable
 private fun ReviewCardItem(
     review: ReviewItem,
+    isEditable: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     onEditClick: (() -> Unit)? = null,
@@ -261,6 +284,38 @@ private fun ReviewCardItem(
                     fontSize = 12.sp
                 )
 
+                if (!isEditable && review.authorName.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (review.authorImageUrl != null) {
+                            coil.compose.AsyncImage(
+                                model = review.authorImageUrl,
+                                contentDescription = "Autor",
+                                modifier = Modifier
+                                    .size(16.dp)
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                        }
+                        Text(
+                            text = "Por ",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 12.sp
+                        )
+                        Text(
+                            text = review.authorName,
+                            style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = 12.sp
+                        )
+                    }
+                }
+
                 if (review.description.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
@@ -274,7 +329,7 @@ private fun ReviewCardItem(
                 }
             }
 
-            if (onEditClick != null) {
+            if (onEditClick != null && isEditable) {
                 IconButton(onClick = onEditClick) {
                     Icon(
                         imageVector = Icons.Default.Edit,
@@ -285,7 +340,7 @@ private fun ReviewCardItem(
                 }
             }
 
-            if (onDeleteClick != null) {
+            if (onDeleteClick != null && isEditable) {
                 IconButton(onClick = onDeleteClick) {
                     Icon(
                         imageVector = Icons.Default.Delete,
@@ -321,6 +376,7 @@ fun ProfileReviewsSectionPreview() {
 
             ProfileReviewsSection(
                 reviews = mockReviews,
+                savedGames = emptyList(),
                 selectedTabIndex = 0,
                 onTabSelected = { }
             )

@@ -71,7 +71,8 @@ fun ReviewDTO.toReviewItem(): ReviewItem {
             .coerceIn(0L, Int.MAX_VALUE.toLong())
             .toInt(),
 
-        isLiked = isLiked
+        isLiked = isLiked,
+        isBookmarked = isBookmarked
     )
 }
 
@@ -128,6 +129,7 @@ fun ReviewDTO.toFeedPost(): FeedPost {
             .toInt(),
 
         isLiked = isLiked,
+        isBookmarked = isBookmarked,
 
         commentsCount = 0
     )

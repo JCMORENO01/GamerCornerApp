@@ -65,13 +65,15 @@ fun VideogameScreen(
     } else if (uiState.game != null) {
         VideogameScreenContent(
             game = uiState.game!!,
+            isSaved = uiState.isSaved,
             reviews = uiState.reviews,
             onBackClick = onBackClick,
             onShareClick = onShareClick,
-            onSaveClick = onSaveClick,
+            onSaveClick = viewModel::toggleSaveGame,
             onWriteReviewClick = onWriteReviewClick,
             onUserClick = onUserClick,
             onLikeClick = viewModel::toggleReviewLike,
+            onBookmarkClick = viewModel::toggleSaveReview,
             modifier = modifier
         )
     } else {
@@ -90,6 +92,7 @@ fun VideogameScreen(
 @Composable
 fun VideogameScreenContent(
     game: Game,
+    isSaved: Boolean,
     reviews: List<ReviewItem>,
     onBackClick: () -> Unit,
     onShareClick: () -> Unit,
@@ -97,6 +100,7 @@ fun VideogameScreenContent(
     onWriteReviewClick: () -> Unit,
     onUserClick: (String) -> Unit,
     onLikeClick: (String) -> Unit,
+    onBookmarkClick: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -151,6 +155,7 @@ fun VideogameScreenContent(
             Spacer(modifier = Modifier.height(30.dp))
 
             VideogameActionBar(
+                isSaved = isSaved,
                 onSaveClick = onSaveClick,
                 onWriteReviewClick = onWriteReviewClick
             )
@@ -167,7 +172,8 @@ fun VideogameScreenContent(
             VideogameCommentsSection(
                 reviews = reviews,
                 onUserClick = onUserClick,
-                onLikeClick = onLikeClick
+                onLikeClick = onLikeClick,
+                onBookmarkClick = onBookmarkClick
             )
         }
     }
@@ -207,6 +213,7 @@ fun VideogameScreenPreview() {
                     description = "¡Excelente juego, totalmente recomendado!"
                 )
             ),
+            isSaved = false,
             onBackClick = {},
             onShareClick = {},
             onSaveClick = {},

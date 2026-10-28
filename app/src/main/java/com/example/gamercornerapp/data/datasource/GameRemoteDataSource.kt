@@ -10,4 +10,18 @@ interface GameRemoteDataSource {
     suspend fun getGameById(
         gameId: String
     ): GameDTO
+
+    suspend fun toggleSaveGame(
+        gameId: String,
+        userId: String
+    )
+
+    suspend fun isGameSaved(
+        gameId: String,
+        userId: String
+    ): Boolean
+
+    suspend fun getSavedGamesByUser(
+        userId: String
+    ): List<GameDTO>
 }

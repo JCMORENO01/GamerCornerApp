@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -31,6 +32,7 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 @Composable
 fun VideogameActionBar(
+    isSaved: Boolean,
     onSaveClick: () -> Unit = {},
     onWriteReviewClick: () -> Unit = {},
     modifier: Modifier = Modifier
@@ -51,27 +53,25 @@ fun VideogameActionBar(
             shape = RoundedCornerShape(16.dp),
 
             colors = ButtonDefaults.outlinedButtonColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface
+                containerColor = if (isSaved) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,
+                contentColor = if (isSaved) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
             ),
 
             border = BorderStroke(
                 width = 1.dp,
-                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+                color = if (isSaved) Color.Transparent else MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
             )
         ) {
 
             Icon(
-                imageVector = Icons.Filled.BookmarkBorder,
+                imageVector = if (isSaved) Icons.Filled.Bookmark else Icons.Filled.BookmarkBorder,
                 contentDescription = null,
                 modifier = Modifier.size(20.dp)
             )
 
 
             Text(
-                text = stringResource(
-                    id = R.string.btn_save
-                ),
+                text = if (isSaved) "Guardado" else stringResource(id = R.string.btn_save),
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(
@@ -106,6 +106,7 @@ fun VideogameActionBarPreview() {
     ) {
 
         VideogameActionBar(
+            isSaved = false,
             modifier = Modifier
                 .background(
                     MaterialTheme.colorScheme.background

@@ -44,4 +44,13 @@ interface ReviewRemoteDataSource {
     fun listenReviewsByUser(
         userId: String
     ): Flow<List<ReviewDTO>>
+
+    suspend fun toggleSaveReview(
+        reviewId: String,
+        userId: String
+    )
+
+    suspend fun getSavedReviewsByUser(
+        userId: String
+    ): List<ReviewDTO>
 }
