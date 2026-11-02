@@ -33,6 +33,7 @@ import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 fun FeedScreen(
     onGameClick: (String) -> Unit,
     onUserClick: (String) -> Unit = {},
+    onReviewClick: (FeedPost) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FeedViewModel = hiltViewModel()
 ) {
@@ -52,6 +53,7 @@ fun FeedScreen(
         onUserClick = onUserClick,
         onLikeClick = viewModel::toggleReviewLike,
         onBookmarkClick = viewModel::toggleSaveReview,
+        onReviewClick = onReviewClick,
         modifier = modifier
     )
 }
@@ -67,6 +69,7 @@ fun FeedScreenContent(
     onUserClick: (String) -> Unit = {},
     onLikeClick: (String) -> Unit = {},
     onBookmarkClick: (String) -> Unit = {},
+    onReviewClick: (FeedPost) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -136,6 +139,9 @@ fun FeedScreenContent(
                             },
                             onCardClick = {
                                 onGameClick(post.game.id)
+                            },
+                            onCommentClick = {
+                                onReviewClick(post)
                             },
                             onLikeClick = {
                                 onLikeClick(post.id)

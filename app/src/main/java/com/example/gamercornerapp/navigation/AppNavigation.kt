@@ -158,9 +158,45 @@ fun AppNavigation(
                 },
                 onUserClick = { userId ->
                     navigateToUser(navController, userId)
+                },
+                onReviewClick = { review ->
+                    navController.navigate(
+                        Screen.ReviewDetail.createRoute(review.id)
+                    )
                 }
             )
         }
+
+
+
+
+
+        // REVIEW DETAIL
+        composable(
+            route = Screen.ReviewDetail.route,
+            arguments = listOf(
+                navArgument("reviewId") {
+                    type = NavType.StringType
+                }
+            )
+        ) { _ ->
+            com.example.gamercornerapp.ui.Screens.reviewDetail.ReviewDetailScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onNavigateToGame = { gameId ->
+                    navController.navigate(
+                        Screen.Videogame.createRoute(gameId)
+                    )
+                }
+            )
+        }
+
+
+
+
+
+
 
         // EXPLORE
         composable(route = Screen.Explore.route) {

@@ -254,24 +254,24 @@ class ReviewFirestoreDataSourceImpl @Inject constructor(
             .collection("saved_reviews")
             .get()
             .await()
-            
+
         if (snapshot.isEmpty) return emptyList()
-        
+
         val reviewIds = snapshot.documents.map { it.id }
-        
+
         // Firestore 'in' query has a limit of 10. For this example, we chunk it.
         val reviews = mutableListOf<ReviewDTO>()
         val chunks = reviewIds.chunked(10)
-        
+
         for (chunk in chunks) {
             val reviewDocs = db.collection("reviews")
                 .whereIn(com.google.firebase.firestore.FieldPath.documentId(), chunk)
                 .get()
                 .await()
-                
+
             reviews.addAll(mapReviews(reviewDocs.documents))
         }
-        
+
         return reviews
     }
 
@@ -341,5 +341,72 @@ class ReviewFirestoreDataSourceImpl @Inject constructor(
             }
         }.mapLatest { documents ->
             mapReviews(documents)
+        }
+
+
+
+
+
+
+    override suspend fun addCommentToReview(
+        reviewId: String,
+        text: String,
+        userId: String,
+        userName: String
+    ) {
+        val reviewRef = db.collection("reviews").document(reviewId)
+        val commentRef = reviewRef.collection("comments").document()
+
+        val comment = com.example.gamercornerapp.data.Comment(
+            commentId = commentRef.id,
+            userId = userId,
+            userName = userName,
+            text = text,
+            timestamp = com.google.firebase.Timestamp.now()
+        )
+
+        db.runTransaction { transaction ->
+            val reviewDoc = transaction.get(reviewRef)
+            if (!reviewDoc.exists()) {
+                throw Exception("No se encontró la reseña")
+            }
+
+            val currentCommentsCount = reviewDoc.getLong("commentsCount") ?: 0L
+
+            // 1. Guardar el nuevo comentario
+            transaction.set(commentRef, comment)
+
+            // 2. Incrementar el contador en el documento principal
+            transaction.update(reviewRef, "commentsCount", currentCommentsCount + 1L)
+
+            null
+        }.await()
+    }
+
+
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun listenCommentsForReview(reviewId: String): Flow<List<com.example.gamercornerapp.data.Comment>> =
+        callbackFlow {
+            val listener = db.collection("reviews")
+                .document(reviewId)
+                .collection("comments")
+                .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.ASCENDING)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        close(error)
+                        return@addSnapshotListener
+                    }
+
+                    val comments = snapshot?.documents?.mapNotNull { doc ->
+                        doc.toObject(com.example.gamercornerapp.data.Comment::class.java)
+                    } ?: emptyList()
+
+                    trySend(comments)
+                }
+
+            awaitClose {
+                listener.remove()
+            }
         }
 }
