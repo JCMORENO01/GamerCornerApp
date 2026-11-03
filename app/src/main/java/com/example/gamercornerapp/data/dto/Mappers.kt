@@ -131,6 +131,6 @@ fun ReviewDTO.toFeedPost(): FeedPost {
         isLiked = isLiked,
         isBookmarked = isBookmarked,
 
-        commentsCount = 0
+        commentsCount = this.commentsCount.toInt()
     )
 }

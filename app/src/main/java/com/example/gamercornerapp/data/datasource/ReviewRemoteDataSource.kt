@@ -1,6 +1,7 @@
 
 package com.example.gamercornerapp.data.datasource
 
+import com.example.gamercornerapp.data.Comment
 import com.example.gamercornerapp.data.dto.CreateReviewDTO
 import com.example.gamercornerapp.data.dto.ReviewDTO
 import kotlinx.coroutines.flow.Flow
@@ -53,4 +54,17 @@ interface ReviewRemoteDataSource {
     suspend fun getSavedReviewsByUser(
         userId: String
     ): List<ReviewDTO>
+
+
+    suspend fun addCommentToReview(
+        reviewId: String,
+        text: String,
+        userId: String,
+        userName: String
+    )
+
+
+    fun listenCommentsForReview(
+        reviewId: String
+    ): Flow<List<Comment>>
 }

@@ -257,7 +257,7 @@ class ReviewRepository @Inject constructor(
             Result.failure(e)
         }
     }
-    
+
     suspend fun toggleSaveReview(
         reviewId: String,
         userId: String
@@ -280,7 +280,7 @@ class ReviewRepository @Inject constructor(
             Result.failure(e)
         }
     }
-    
+
     suspend fun getSavedReviewsByUser(
         userId: String
     ): Result<List<ReviewItem>> {
@@ -290,5 +290,37 @@ class ReviewRepository @Inject constructor(
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+
+
+
+    suspend fun addCommentToReview(
+        reviewId: String,
+        text: String,
+        userId: String
+    ): Result<Unit> {
+        return try {
+            require(reviewId.isNotBlank())
+            require(text.isNotBlank()) { "El comentario no puede estar vacío" }
+            require(userId.isNotBlank())
+
+            require(authRepository.currentUser?.uid == userId) {
+                "Usuario no autenticado"
+            }
+
+            val user = userRepository.getUserById(userId).getOrThrow()
+            val userName = user.username.takeIf { it.isNotBlank() } ?: user.nickName
+
+            remoteDataSource.addCommentToReview(reviewId, text, userId, userName)
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    fun listenCommentsForReview(reviewId: String): Flow<List<com.example.gamercornerapp.data.Comment>> {
+        return remoteDataSource.listenCommentsForReview(reviewId)
     }
 }
