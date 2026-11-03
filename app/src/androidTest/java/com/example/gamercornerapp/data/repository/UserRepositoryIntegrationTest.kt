@@ -49,14 +49,76 @@ class UserRepositoryIntegrationTest {
     }
 
     @After
-    fun tearDown() {
-        // Nada que limpiar manualmente en este caso
+    fun tearDown() = runBlocking {
+        val users = listOf(
+            "user_repo_1",
+            "user_repo_3",
+            "user_repo_4",
+            "repo_follower",
+            "repo_target",
+            "repo_target_2",
+            "repo_follower_2",
+            testUserId
+        )
+
+        try {
+            for (id in users) {
+                val userRef = db.collection("users").document(id)
+
+                // Eliminar relaciones de seguimiento
+                for (collection in listOf("following", "followers")) {
+                    while (true) {
+                        val documents = userRef.collection(collection)
+                            .limit(100)
+                            .get()
+                            .await()
+                            .documents
+
+                        if (documents.isEmpty()) break
+
+                        for (doc in documents) {
+                            doc.reference.delete().await()
+                        }
+                    }
+                }
+
+                // Eliminar documento del usuario
+                userRef.delete().await()
+            }
+        } finally {
+            try {
+                // Eliminar cuenta anónima de prueba
+                if (auth.currentUser?.isAnonymous == true) {
+                    auth.currentUser?.delete()?.await()
+                }
+            } finally {
+                auth.signOut()
+            }
+        }
+    }
+
+    private fun createTestUser(id: String, username: String, nickName: String = "@$username"): UserProfileDTO {
+        return UserProfileDTO(
+            id = id,
+            username = username,
+            nickName = nickName.lowercase(),
+            bio = "Biografía de prueba",
+            birthDate = "2000-01-01",
+            profileBackgroundId = 0,
+            profileBgDescription = "Fondo",
+            profileImageId = 0,
+            profilePictureUrl = "https://example.com/avatar/$id.png",
+            followersCount = 10L,
+            followingCount = 5L,
+            FCM_token = "token_fcm_$id",
+            isFollowed = false
+        )
     }
 
     // 1. Obtener usuario valido (Exito)
     @Test
     fun getUserById_validId_returnsSuccess() = runTest {
-        val user = UserProfileDTO(id = "user_repo_1", username = "Repo User")
+        val user = createTestUser(id = "user_repo_1", username = "Repo User")
         db.collection("users").document(user.id).set(user).await()
 
         val result = userRepository.getUserById("user_repo_1")
@@ -83,7 +145,7 @@ class UserRepositoryIntegrationTest {
         )
 
         assertThat(result.isSuccess).isTrue()
-        
+
         val doc = db.collection("users").document("user_repo_3").get().await()
         assertThat(doc.exists()).isTrue()
     }
@@ -91,11 +153,11 @@ class UserRepositoryIntegrationTest {
     // 4. Buscar usuarios retorna resultados
     @Test
     fun searchUsers_returnsSuccessWithResults() = runTest {
-        val user = UserProfileDTO(id = "user_repo_4", username = "UniqueName", nickName = "uniquename")
+        val user = createTestUser(id = "user_repo_4", username = "UniqueName", nickName = "uniquename")
         db.collection("users").document(user.id).set(user).await()
 
         val result = userRepository.searchUsers("unique")
-        
+
         assertThat(result.isSuccess).isTrue()
         assertThat(result.getOrNull()?.isNotEmpty()).isTrue()
     }
@@ -105,9 +167,11 @@ class UserRepositoryIntegrationTest {
     fun toggleFollowUser_returnsSuccess() = runTest {
         val currentUserId = testUserId
         val targetUserId = "repo_target"
-        
-        db.collection("users").document(currentUserId).set(mapOf("id" to currentUserId)).await()
-        db.collection("users").document(targetUserId).set(mapOf("id" to targetUserId)).await()
+
+        val currentUser = createTestUser(id = currentUserId, username = "Current User")
+        val targetUser = createTestUser(id = targetUserId, username = "Target User")
+        db.collection("users").document(currentUserId).set(currentUser).await()
+        db.collection("users").document(targetUserId).set(targetUser).await()
 
         val result = userRepository.toggleFollowUser(currentUserId, targetUserId)
         assertThat(result.isSuccess).isTrue()
@@ -117,10 +181,11 @@ class UserRepositoryIntegrationTest {
     @Test
     fun getFollowers_returnsSuccessWithList() = runTest {
         val targetId = "repo_target_2"
-        db.collection("users").document(targetId).set(mapOf("id" to targetId)).await()
-        
+        val targetUser = createTestUser(id = targetId, username = "Target 2")
+        db.collection("users").document(targetId).set(targetUser).await()
+
         val result = userRepository.getFollowers(targetId)
-        
+
         assertThat(result.isSuccess).isTrue()
         assertThat(result.getOrNull()).isNotNull()
     }
@@ -129,10 +194,11 @@ class UserRepositoryIntegrationTest {
     @Test
     fun getFollowing_returnsSuccessWithList() = runTest {
         val followerId = "repo_follower_2"
-        db.collection("users").document(followerId).set(mapOf("id" to followerId)).await()
-        
+        val followerUser = createTestUser(id = followerId, username = "Follower 2")
+        db.collection("users").document(followerId).set(followerUser).await()
+
         val result = userRepository.getFollowing(followerId)
-        
+
         assertThat(result.isSuccess).isTrue()
         assertThat(result.getOrNull()).isNotNull()
     }
@@ -140,7 +206,7 @@ class UserRepositoryIntegrationTest {
     // 8. Actualizar perfil de usuario
     @Test
     fun updateUserProfile_returnsSuccess() = runTest {
-        val user = UserProfileDTO(id = testUserId, username = "Old Repo")
+        val user = createTestUser(id = testUserId, username = "Old Repo")
         db.collection("users").document(user.id).set(user).await()
 
         val result = userRepository.updateUserProfile(
@@ -152,7 +218,7 @@ class UserRepositoryIntegrationTest {
         )
 
         assertThat(result.isSuccess).isTrue()
-        
+
         val updatedDoc = db.collection("users").document(user.id).get().await()
         assertThat(updatedDoc.getString("username")).isEqualTo("New Repo")
     }

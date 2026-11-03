@@ -48,19 +48,68 @@ class FirebaseUserDataSourceTest {
     }
 
     @After
-    fun tearDown() {
-        // Nada que limpiar manualmente en este caso
+    fun tearDown() = runBlocking {
+        val users = listOf(
+            "user_test_1",
+            "user_test_3",
+            "search_1",
+            "search_2",
+            "search_3",
+            "target_1",
+            "target_2",
+            "target_3",
+            testUserId
+        )
+
+        for (id in users) {
+            val userRef = db.collection("users").document(id)
+
+            // Eliminar documentos de todas las subcolecciones conocidas
+            for (name in listOf("following", "followers")) {
+                val docs = userRef.collection(name).get().await()
+
+                for (doc in docs.documents) {
+                    doc.reference.delete().await()
+                }
+            }
+
+            // Eliminar el documento principal
+            userRef.delete().await()
+        }
+
+        // Cerrar sesión
+        auth.signOut()
+    }
+
+    private fun createTestUser(id: String, username: String, nickName: String = "@$username"): UserProfileDTO {
+        return UserProfileDTO(
+            id = id,
+            username = username,
+            nickName = nickName.lowercase(),
+            bio = "Biografía de prueba para $username",
+            birthDate = "2000-01-01",
+            profileBackgroundId = 0,
+            profileBgDescription = "Fondo de $username",
+            profileImageId = 0,
+            profilePictureUrl = "https://example.com/avatar/$id.png",
+            followersCount = 10L,
+            followingCount = 5L,
+            FCM_token = "token_fcm_$id",
+            isFollowed = false
+        )
     }
 
     // 1. Obtener usuario existente
     @Test
     fun getUserById_validId_correctUser() = runTest {
-        val user = UserProfileDTO(id = "user_test_1", username = "Juan")
+        val user = createTestUser(id = "user_test_1", username = "Juan")
         db.collection("users").document(user.id).set(user).await()
 
         val result = dataSource.getUserById(user.id)
         assertThat(result).isNotNull()
         assertThat(result.username).isEqualTo("Juan")
+        assertThat(result.bio).isEqualTo("Biografía de prueba para Juan")
+        assertThat(result.FCM_token).isEqualTo("token_fcm_user_test_1")
     }
 
     // 2. Obtener usuario no existente lanza excepcion
@@ -72,43 +121,45 @@ class FirebaseUserDataSourceTest {
     // 3. Registrar nuevo usuario
     @Test
     fun registerUser_createsNewDocument() = runTest {
-        val user = UserProfileDTO(id = "user_test_3", username = "Carlos")
+        val user = createTestUser(id = "user_test_3", username = "Carlos")
         dataSource.registerUser(user, user.id)
 
         val doc = db.collection("users").document(user.id).get().await()
         assertThat(doc.exists()).isTrue()
         assertThat(doc.getString("username")).isEqualTo("Carlos")
+        assertThat(doc.getString("profilePictureUrl")).isEqualTo("https://example.com/avatar/user_test_3.png")
     }
 
     // 4. Actualizar usuario existente
     @Test
     fun updateUserProfile_updatesFieldsCorrectly() = runTest {
-        val user = UserProfileDTO(id = testUserId, username = "Old Name")
+        val user = createTestUser(id = testUserId, username = "Old Name")
         db.collection("users").document(testUserId).set(user).await()
 
-        val updatedUser = user.copy(username = "New Name", bio = "New Bio")
-        
+        val updatedUser = user.copy(username = "New Name", bio = "New Bio Updated")
+
         // Ahora usamos directamente dataSource porque testUserId == auth.currentUser.uid
         dataSource.updateUserProfile(testUserId, updatedUser)
 
         val doc = db.collection("users").document(testUserId).get().await()
         assertThat(doc.getString("username")).isEqualTo("New Name")
-        assertThat(doc.getString("bio")).isEqualTo("New Bio")
+        assertThat(doc.getString("bio")).isEqualTo("New Bio Updated")
     }
 
     // 5. Buscar usuarios (Query)
     @Test
     fun searchUsers_returnsMatchingUsers() = runTest {
-        val user1 = UserProfileDTO(id = "search_1", username = "GamerOne", nickName = "gamerone")
-        val user2 = UserProfileDTO(id = "search_2", username = "GamerTwo", nickName = "gamertwo")
-        val user3 = UserProfileDTO(id = "search_3", username = "Player", nickName = "player")
-        
+        val user1 = createTestUser(id = "search_1", username = "GamerOne", nickName = "@gamerone")
+        val user2 = createTestUser(id = "search_2", username = "GamerTwo", nickName = "@gamertwo")
+        val user3 = createTestUser(id = "search_3", username = "Player", nickName = "@player")
+
         db.collection("users").document(user1.id).set(user1).await()
         db.collection("users").document(user2.id).set(user2).await()
         db.collection("users").document(user3.id).set(user3).await()
 
-        val results = dataSource.searchUsers("gamer")
+        val results = dataSource.searchUsers("@gamer")
         assertThat(results.size).isAtLeast(2)
+        assertThat(results.first().bio).isNotEmpty()
     }
 
     // 6. Seguir a un usuario
@@ -116,12 +167,13 @@ class FirebaseUserDataSourceTest {
     fun toggleFollowUser_addsToFollowing() = runTest {
         val currentUserId = testUserId
         val targetUserId = "target_1"
-        
-        // Setup initial documents so transaction doesn't fail
-        db.collection("users").document(currentUserId).set(mapOf("id" to currentUserId)).await()
-        db.collection("users").document(targetUserId).set(mapOf("id" to targetUserId)).await()
 
-        // Llamamos al DataSource real! Ya no tirará "Usuario no autenticado" porque usamos la sesión de testUserId
+        // Creamos documentos de usuario completos
+        val currentUser = createTestUser(id = currentUserId, username = "Current User")
+        val targetUser = createTestUser(id = targetUserId, username = "Target User 1")
+        db.collection("users").document(currentUserId).set(currentUser).await()
+        db.collection("users").document(targetUserId).set(targetUser).await()
+
         dataSource.toggleFollowUser(currentUserId, targetUserId)
 
         val isFollowing = dataSource.isFollowing(currentUserId, targetUserId)
@@ -133,9 +185,11 @@ class FirebaseUserDataSourceTest {
     fun toggleFollowUser_twice_removesFromFollowing() = runTest {
         val currentUserId = testUserId
         val targetUserId = "target_2"
-        
-        db.collection("users").document(currentUserId).set(mapOf("id" to currentUserId)).await()
-        db.collection("users").document(targetUserId).set(mapOf("id" to targetUserId)).await()
+
+        val currentUser = createTestUser(id = currentUserId, username = "Current User")
+        val targetUser = createTestUser(id = targetUserId, username = "Target User 2")
+        db.collection("users").document(currentUserId).set(currentUser).await()
+        db.collection("users").document(targetUserId).set(targetUser).await()
 
         dataSource.toggleFollowUser(currentUserId, targetUserId) // Follow
         dataSource.toggleFollowUser(currentUserId, targetUserId) // Unfollow
@@ -149,9 +203,11 @@ class FirebaseUserDataSourceTest {
     fun getFollowers_returnsCorrectIds() = runTest {
         val currentUserId = "target_3"
         val followerId = testUserId
-        
-        db.collection("users").document(currentUserId).set(mapOf("id" to currentUserId)).await()
-        db.collection("users").document(followerId).set(mapOf("id" to followerId)).await()
+
+        val currentUser = createTestUser(id = currentUserId, username = "Target User 3")
+        val followerUser = createTestUser(id = followerId, username = "Follower User")
+        db.collection("users").document(currentUserId).set(currentUser).await()
+        db.collection("users").document(followerId).set(followerUser).await()
 
         // Follower sigue a target
         dataSource.toggleFollowUser(followerId, currentUserId)
