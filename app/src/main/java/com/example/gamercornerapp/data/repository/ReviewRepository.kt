@@ -301,21 +301,26 @@ class ReviewRepository @Inject constructor(
         userId: String
     ): Result<Unit> {
         return try {
-            require(reviewId.isNotBlank())
+            require(reviewId.isNotBlank()) { "ID de reseña inválido" }
             require(text.isNotBlank()) { "El comentario no puede estar vacío" }
-            require(userId.isNotBlank())
+            require(userId.isNotBlank()) { "ID de usuario inválido" }
 
             require(authRepository.currentUser?.uid == userId) {
                 "Usuario no autenticado"
             }
 
-            val user = userRepository.getUserById(userId).getOrThrow()
-            val userName = user.username.takeIf { it.isNotBlank() } ?: user.nickName
+            val user = userRepository.getUserById(userId).getOrNull()
+            val userName = user?.username?.takeIf { it.isNotBlank() }
+                ?: user?.nickName?.takeIf { it.isNotBlank() }
+                ?: authRepository.currentUser?.displayName?.takeIf { it.isNotBlank() }
+                ?: authRepository.currentUser?.email?.substringBefore("@")
+                ?: "Usuario Gamer"
 
             remoteDataSource.addCommentToReview(reviewId, text, userId, userName)
 
             Result.success(Unit)
         } catch (e: Exception) {
+            android.util.Log.e("ReviewRepository", "Error adding comment: ${e.message}", e)
             Result.failure(e)
         }
     }

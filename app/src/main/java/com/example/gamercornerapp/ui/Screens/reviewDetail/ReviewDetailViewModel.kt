@@ -84,8 +84,9 @@ class ReviewDetailViewModel @Inject constructor(
     }
 
     fun postReviewComment() {
+        val targetReviewId = _uiState.value.post?.id?.takeIf { it.isNotBlank() } ?: reviewId
         val currentText = _uiState.value.commentInput.trim()
-        if (currentText.isEmpty()) return
+        if (currentText.isEmpty() || targetReviewId.isBlank()) return
 
         val currentUserUid = authRepository.currentUser?.uid
         if (currentUserUid.isNullOrBlank()) {
@@ -97,7 +98,7 @@ class ReviewDetailViewModel @Inject constructor(
             _uiState.update { it.copy(isLoadingComment = true, errorMessage = null) }
 
             val result = reviewRepository.addCommentToReview(
-                reviewId = reviewId,
+                reviewId = targetReviewId,
                 text = currentText,
                 userId = currentUserUid
             )
@@ -114,11 +115,12 @@ class ReviewDetailViewModel @Inject constructor(
                     )
                 }
             } else {
+                val errorMsg = result.exceptionOrNull()?.localizedMessage ?: "No se pudo enviar el comentario"
+                android.util.Log.e("ReviewDetailVM", "Error al enviar comentario: $errorMsg")
                 _uiState.update {
                     it.copy(
                         isLoadingComment = false,
-                        errorMessage = result.exceptionOrNull()?.localizedMessage
-                            ?: "No se pudo enviar el comentario"
+                        errorMessage = errorMsg
                     )
                 }
             }

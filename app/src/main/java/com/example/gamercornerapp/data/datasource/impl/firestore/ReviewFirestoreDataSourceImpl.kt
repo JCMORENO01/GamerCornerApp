@@ -361,17 +361,21 @@ class ReviewFirestoreDataSourceImpl @Inject constructor(
 
         db.runTransaction { transaction ->
             val reviewDoc = transaction.get(reviewRef)
-            if (!reviewDoc.exists()) {
-                throw Exception("No se encontró la reseña")
-            }
-
-            val currentCommentsCount = reviewDoc.getLong("commentsCount") ?: 0L
 
             // 1. Guardar el nuevo comentario
             transaction.set(commentRef, comment)
 
-            // 2. Incrementar el contador en el documento principal
-            transaction.update(reviewRef, "commentsCount", currentCommentsCount + 1L)
+            // 2. Incrementar el contador en el documento principal (o crearlo si es mock/local)
+            if (reviewDoc.exists()) {
+                val currentCommentsCount = reviewDoc.getLong("commentsCount") ?: 0L
+                transaction.update(reviewRef, "commentsCount", currentCommentsCount + 1L)
+            } else {
+                transaction.set(
+                    reviewRef,
+                    mapOf("commentsCount" to 1L),
+                    com.google.firebase.firestore.SetOptions.merge()
+                )
+            }
 
             null
         }.await()
