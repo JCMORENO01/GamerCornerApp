@@ -9,7 +9,10 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.mapLatest
@@ -71,22 +74,13 @@ class ReviewFirestoreDataSourceImpl @Inject constructor(
 
     private suspend fun mapReviews(
         documents: List<DocumentSnapshot>
-    ): List<ReviewDTO> {
+    ): List<ReviewDTO> = coroutineScope {
         val currentUserId = auth.currentUser?.uid
-        val reviews = mutableListOf<ReviewDTO>()
-
-        for (doc in documents) {
-            val review = documentToReview(
-                doc,
-                currentUserId
-            )
-
-            if (review != null) {
-                reviews.add(review)
+        documents.map { doc ->
+            async {
+                documentToReview(doc, currentUserId)
             }
-        }
-
-        return reviews
+        }.awaitAll().filterNotNull()
     }
 
     override suspend fun getAllReviews(): List<ReviewDTO> {

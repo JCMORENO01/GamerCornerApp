@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -37,6 +38,7 @@ fun AppTextField(
     onValueChange: (String) -> Unit,
     label: String,
     placeholder: String = "",
+    testTag: String = "",
     modifier: Modifier = Modifier
 ) {
 
@@ -79,7 +81,8 @@ fun AppTextField(
 
             modifier = Modifier
                 .fillMaxWidth()
-                .height(58.dp),
+                .height(58.dp)
+                .testTag(testTag.ifEmpty { label }),
 
             shape = RoundedCornerShape(16.dp),
 
@@ -134,7 +137,8 @@ fun AppButton(
 
         modifier = modifier
             .fillMaxWidth()
-            .height(50.dp),
+            .height(50.dp)
+            .testTag(text),
 
         shape = RoundedCornerShape(25.dp),
 
@@ -385,6 +389,7 @@ fun AppPasswordField(
     placeholder: String,
     showPassword: Boolean,
     onShowPasswordChange: () -> Unit,
+    testTag: String = "",
     modifier: Modifier = Modifier
 ) {
 
@@ -446,7 +451,8 @@ fun AppPasswordField(
 
             modifier = Modifier
                 .fillMaxWidth()
-                .height(58.dp),
+                .height(58.dp)
+                .testTag(testTag.ifEmpty { label }),
 
             shape = RoundedCornerShape(16.dp),
 

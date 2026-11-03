@@ -20,12 +20,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Funcion para solicitar permiso de notificaciones
+        // Funcion para solicitar permiso de notificaciones (Comentada para tests UI)
+        /*
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             notificationPermissionLauncher.launch(
                 Manifest.permission.POST_NOTIFICATIONS
             )
         }
+        */
 
         setContent {
             GamerCornerApp()

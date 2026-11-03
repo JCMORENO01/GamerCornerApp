@@ -28,6 +28,8 @@ import com.example.gamercornerapp.ui.Screens.register.RegisterScreen
 import com.example.gamercornerapp.ui.Screens.register.RegisterViewModel
 import com.example.gamercornerapp.ui.Screens.review.ReviewScreen
 import com.example.gamercornerapp.ui.Screens.review.ReviewViewModel
+import com.example.gamercornerapp.ui.Screens.reviewDetail.ReviewDetailScreen
+import com.example.gamercornerapp.ui.Screens.reviewDetail.ReviewDetailViewModel
 import com.example.gamercornerapp.ui.Screens.selfProfile.SelfProfileScreen
 import com.example.gamercornerapp.ui.Screens.selfProfile.SelfProfileViewModel
 import com.example.gamercornerapp.ui.Screens.splash.SplashScreen
@@ -156,8 +158,37 @@ fun AppNavigation(
                         Screen.Videogame.createRoute(gameId)
                     )
                 },
+                onReviewClick = { reviewId ->
+                    navController.navigate(
+                        Screen.ReviewDetail.createRoute(reviewId)
+                    )
+                },
                 onUserClick = { userId ->
                     navigateToUser(navController, userId)
+                }
+            )
+        }
+
+        // REVIEW DETAIL
+        composable(
+            route = Screen.ReviewDetail.route,
+            arguments = listOf(
+                navArgument("reviewId") {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            val viewModel: ReviewDetailViewModel = hiltViewModel()
+
+            ReviewDetailScreen(
+                viewModel = viewModel,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onNavigateToGame = { gameId ->
+                    navController.navigate(
+                        Screen.Videogame.createRoute(gameId)
+                    )
                 }
             )
         }

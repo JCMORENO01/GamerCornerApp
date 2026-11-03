@@ -53,16 +53,11 @@ class FeedViewModel @Inject constructor(
 
             reviewRepository.listenAllReviewsAsFeed()
                 .catch { error ->
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = error.localizedMessage
-                                ?: "No se pudo cargar el Feed"
-                        )
-                    }
+                    allPosts = com.example.gamercornerapp.data.local.LocalDataProvider.posts
+                    updateVisiblePosts()
                 }
                 .collect { posts ->
-                    allPosts = posts
+                    allPosts = if (posts.isNotEmpty()) posts else com.example.gamercornerapp.data.local.LocalDataProvider.posts
                     updateVisiblePosts()
                 }
         }

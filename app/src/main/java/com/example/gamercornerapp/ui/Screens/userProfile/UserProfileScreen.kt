@@ -26,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -128,7 +129,8 @@ fun UserProfileScreenContent(
                         isLoadingImage = false,
                         isOwnProfile = isOwnProfile,
                         onLogoutClick = {},
-                        onImageSelected = {}
+                        onImageSelected = {},
+                        modifier = Modifier.testTag("UserProfileAvatar")
                     )
 
                     if (!isOwnProfile) {
@@ -147,7 +149,8 @@ fun UserProfileScreenContent(
                                 }
                             } else {
                                 Button(
-                                    onClick = onFollowClick
+                                    onClick = onFollowClick,
+                                    modifier = Modifier.testTag("Seguir")
                                 ) {
                                     Text("Seguir")
                                 }

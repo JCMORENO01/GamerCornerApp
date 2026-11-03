@@ -12,11 +12,13 @@ class BaseApplication : Application() {
         super.onCreate()
         FirebaseApp.initializeApp(this)
 
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             try {
                 FirebaseFirestore.getInstance().useEmulator("10.0.2.2", 8080)
                 FirebaseAuth.getInstance().useEmulator("10.0.2.2", 9099)
             } catch (_: Exception) {}
         }
+        */
+
     }
 }

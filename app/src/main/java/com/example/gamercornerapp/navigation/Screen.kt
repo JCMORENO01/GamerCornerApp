@@ -78,5 +78,11 @@ sealed class Screen(
         }
     }
 
+    data object ReviewDetail : Screen("review_detail/{reviewId}") {
+        fun createRoute(reviewId: String): String {
+            return "review_detail/${Uri.encode(reviewId)}"
+        }
+    }
+
     data object RecoverPassword : Screen("recover_password")
 }

@@ -22,7 +22,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner =
-            "androidx.test.runner.AndroidJUnitRunner"
+            "com.example.gamercornerapp.CustomTestRunner"
     }
 
     buildTypes {

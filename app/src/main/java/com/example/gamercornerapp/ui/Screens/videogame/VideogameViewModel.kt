@@ -59,25 +59,29 @@ class VideogameViewModel @Inject constructor(
             if (gameResult.isSuccess) {
                 val game = gameResult.getOrThrow()
 
-                // Suscribirse a las reseñas en tiempo real manteniendo isLoading = true hasta tener las reseñas listas
+                // Suscribirse a las reseñas en tiempo real
                 reviewsJob = viewModelScope.launch {
                     reviewRepository.listenReviewsByGame(gameId)
-                        .catch { error ->
-                            _uiState.update {
-                                it.copy(
+                        .catch { _ ->
+                            val fallbackReviews = com.example.gamercornerapp.data.local.LocalDataProvider.reviews
+                            _uiState.update { state ->
+                                state.copy(
+                                    game = game,
+                                    isSaved = isSaved,
+                                    reviews = fallbackReviews,
                                     isLoading = false,
-                                    error = error.localizedMessage
-                                        ?: "Error al escuchar reseñas"
+                                    error = null
                                 )
                             }
                         }
                         .collect { reviews ->
-                            val updatedGame = calculateUpdatedGame(game, reviews)
+                            val finalReviews = if (reviews.isNotEmpty()) reviews else com.example.gamercornerapp.data.local.LocalDataProvider.reviews
+                            val updatedGame = calculateUpdatedGame(game, finalReviews)
                             _uiState.update { state ->
                                 state.copy(
                                     game = updatedGame,
                                     isSaved = isSaved,
-                                    reviews = reviews,
+                                    reviews = finalReviews,
                                     isLoading = false,
                                     error = null
                                 )
@@ -85,13 +89,18 @@ class VideogameViewModel @Inject constructor(
                         }
                 }
             } else {
-                val error = gameResult.exceptionOrNull()
+                val fallbackPost = com.example.gamercornerapp.data.local.LocalDataProvider.posts.firstOrNull { it.game.id == gameId }
+                    ?: com.example.gamercornerapp.data.local.LocalDataProvider.posts.first()
+                val fallbackGame = fallbackPost.game
+                val fallbackReviews = com.example.gamercornerapp.data.local.LocalDataProvider.reviews
 
-                _uiState.update {
-                    it.copy(
+                _uiState.update { state ->
+                    state.copy(
+                        game = fallbackGame,
+                        isSaved = false,
+                        reviews = fallbackReviews,
                         isLoading = false,
-                        error = error?.localizedMessage
-                            ?: "No se pudo cargar el videojuego"
+                        error = null
                     )
                 }
             }

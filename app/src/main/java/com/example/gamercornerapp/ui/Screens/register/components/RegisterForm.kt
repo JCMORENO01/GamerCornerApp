@@ -173,21 +173,18 @@ fun RegisterForm(
 
         // Fecha de nacimiento
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    datePickerDialog.show()
-                }
+            modifier = Modifier.fillMaxWidth()
         ) {
             AppTextField(
                 value = birthDate,
-                onValueChange = { },
+                onValueChange = onBirthDateChange,
                 label = stringResource(
                     id = R.string.label_birthdate
                 ),
                 placeholder = stringResource(
                     id = R.string.hint_birthdate
-                )
+                ),
+                testTag = "Fecha de nacimiento"
             )
 
             Box(
