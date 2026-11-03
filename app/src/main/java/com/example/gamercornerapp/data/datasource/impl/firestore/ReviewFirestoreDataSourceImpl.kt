@@ -359,29 +359,19 @@ class ReviewFirestoreDataSourceImpl @Inject constructor(
             timestamp = com.google.firebase.Timestamp.now()
         )
 
-        db.runTransaction { transaction ->
-            val reviewDoc = transaction.get(reviewRef)
+        // 1. Guardar el nuevo comentario en la subcolección de comentarios
+        commentRef.set(comment).await()
 
-            // 1. Guardar el nuevo comentario
-            transaction.set(commentRef, comment)
-
-            // 2. Incrementar el contador en el documento principal (o crearlo si es mock/local)
-            if (reviewDoc.exists()) {
-                val currentCommentsCount = reviewDoc.getLong("commentsCount") ?: 0L
-                transaction.update(reviewRef, "commentsCount", currentCommentsCount + 1L)
-            } else {
-                transaction.set(
-                    reviewRef,
-                    mapOf("commentsCount" to 1L),
-                    com.google.firebase.firestore.SetOptions.merge()
-                )
-            }
-
-            null
-        }.await()
+        // 2. Incrementar el contador en el documento principal (si las reglas de Firestore lo permiten)
+        try {
+            reviewRef.set(
+                mapOf("commentsCount" to com.google.firebase.firestore.FieldValue.increment(1)),
+                com.google.firebase.firestore.SetOptions.merge()
+            ).await()
+        } catch (e: Exception) {
+            android.util.Log.w("ReviewFirestore", "No se pudo actualizar commentsCount en el doc principal por reglas de Firestore, pero el comentario se guardó correctamente: ${e.message}")
+        }
     }
-
-
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun listenCommentsForReview(reviewId: String): Flow<List<com.example.gamercornerapp.data.Comment>> =

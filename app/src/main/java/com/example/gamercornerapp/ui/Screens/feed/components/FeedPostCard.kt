@@ -76,6 +76,10 @@ fun FeedPostCard(
         ) {
             // Encabezado: avatar, usuario, tiempo y menú
             Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onAuthorClick() }
+                    .testTag("FeedAuthorAvatar"),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 coil.compose.AsyncImage(
@@ -87,15 +91,12 @@ fun FeedPostCard(
                     modifier = Modifier
                         .size(44.dp)
                         .clip(CircleShape)
-                        .clickable { onAuthorClick() }
                 )
 
                 Spacer(modifier = Modifier.width(10.dp))
 
                 Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clickable { onAuthorClick() }
+                    modifier = Modifier.weight(1f)
                 ) {
                     Text(
                         text = if (post.author.nickName.startsWith("@")) post.author.nickName else "@${post.author.nickName}",

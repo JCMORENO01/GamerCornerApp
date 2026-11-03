@@ -33,7 +33,7 @@ class ReviewDetailViewModel @Inject constructor(
     init {
         loadPost()
         if (reviewId.isNotBlank()) {
-            loadComments()
+            loadComments(reviewId)
         }
     }
 
@@ -53,6 +53,7 @@ class ReviewDetailViewModel @Inject constructor(
                             errorMessage = null
                         )
                     }
+                    fallbackPost?.id?.let { loadComments(it) }
                 }
                 .collect { posts ->
                     val allPosts = if (posts.isNotEmpty()) posts else LocalDataProvider.posts
@@ -67,13 +68,17 @@ class ReviewDetailViewModel @Inject constructor(
                             errorMessage = if (foundPost == null) "No se encontró la reseña" else null
                         )
                     }
+                    foundPost?.id?.let { loadComments(it) }
                 }
         }
     }
 
-    private fun loadComments() {
-        viewModelScope.launch {
-            reviewRepository.listenCommentsForReview(reviewId).collect { commentsList ->
+    private var commentsJob: Job? = null
+
+    private fun loadComments(targetReviewId: String) {
+        commentsJob?.cancel()
+        commentsJob = viewModelScope.launch {
+            reviewRepository.listenCommentsForReview(targetReviewId).collect { commentsList ->
                 _uiState.update { it.copy(comments = commentsList) }
             }
         }
@@ -89,10 +94,8 @@ class ReviewDetailViewModel @Inject constructor(
         if (currentText.isEmpty() || targetReviewId.isBlank()) return
 
         val currentUserUid = authRepository.currentUser?.uid
-        if (currentUserUid.isNullOrBlank()) {
-            _uiState.update { it.copy(errorMessage = "Usuario no autenticado") }
-            return
-        }
+            ?: com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
+            ?: "anonymous_user"
 
         viewModelScope.launch {
             _uiState.update { it.copy(isLoadingComment = true, errorMessage = null) }

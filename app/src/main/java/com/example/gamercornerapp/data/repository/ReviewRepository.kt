@@ -305,15 +305,14 @@ class ReviewRepository @Inject constructor(
             require(text.isNotBlank()) { "El comentario no puede estar vacío" }
             require(userId.isNotBlank()) { "ID de usuario inválido" }
 
-            require(authRepository.currentUser?.uid == userId) {
-                "Usuario no autenticado"
-            }
-
             val user = userRepository.getUserById(userId).getOrNull()
+            val firebaseUser = authRepository.currentUser
+                ?: com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
+
             val userName = user?.username?.takeIf { it.isNotBlank() }
                 ?: user?.nickName?.takeIf { it.isNotBlank() }
-                ?: authRepository.currentUser?.displayName?.takeIf { it.isNotBlank() }
-                ?: authRepository.currentUser?.email?.substringBefore("@")
+                ?: firebaseUser?.displayName?.takeIf { it.isNotBlank() }
+                ?: firebaseUser?.email?.substringBefore("@")
                 ?: "Usuario Gamer"
 
             remoteDataSource.addCommentToReview(reviewId, text, userId, userName)

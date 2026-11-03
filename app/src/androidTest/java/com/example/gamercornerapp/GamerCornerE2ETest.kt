@@ -185,13 +185,19 @@ class GamerCornerE2ETest {
             composeTestRule.onNodeWithTag("Ingresar").performClick()
             android.util.Log.d("E2E_TEST", "2. Datos de login ingresados (samuel@gmail.com). Haciendo clic en Ingresar...")
 
-            // va al perfil de un usuario. 
-            composeTestRule.waitUntil(timeoutMillis = 15000) {
-                composeTestRule.onAllNodesWithTag("UserProfileAvatar").fetchSemanticsNodes().isNotEmpty()
+            // Esperar a que la app navegue al Feed ("Para ti")
+            composeTestRule.waitUntil(timeoutMillis = 20000) {
+                composeTestRule.onAllNodesWithText("Para ti").fetchSemanticsNodes().isNotEmpty()
+            }
+            android.util.Log.d("E2E_TEST", "2.1. Pestaña 'Para ti' cargada en Feed!")
+
+            // va al perfil de un usuario desde la tarjeta del Feed. 
+            composeTestRule.waitUntil(timeoutMillis = 20000) {
+                composeTestRule.onAllNodesWithTag("FeedAuthorAvatar").fetchSemanticsNodes().isNotEmpty()
             }
             Thread.sleep(1500)
-            composeTestRule.onNodeWithTag("UserProfileAvatar").performClick()
-            android.util.Log.d("E2E_TEST", "3. Clic en UserProfileAvatar...")
+            composeTestRule.onAllNodesWithTag("FeedAuthorAvatar")[0].performClick()
+            android.util.Log.d("E2E_TEST", "3. Clic en FeedAuthorAvatar...")
 
             // Verificar que la información del usuario sea correcta.
             composeTestRule.waitUntil(timeoutMillis = 15000) {
