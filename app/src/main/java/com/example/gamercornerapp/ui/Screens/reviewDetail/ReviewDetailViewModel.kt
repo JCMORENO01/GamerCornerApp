@@ -32,6 +32,9 @@ class ReviewDetailViewModel @Inject constructor(
 
     init {
         loadPost()
+        if (reviewId.isNotBlank()) {
+            loadComments()
+        }
     }
 
     fun loadPost() {
@@ -65,6 +68,60 @@ class ReviewDetailViewModel @Inject constructor(
                         )
                     }
                 }
+        }
+    }
+
+    private fun loadComments() {
+        viewModelScope.launch {
+            reviewRepository.listenCommentsForReview(reviewId).collect { commentsList ->
+                _uiState.update { it.copy(comments = commentsList) }
+            }
+        }
+    }
+
+    fun onCommentInputChanged(text: String) {
+        _uiState.update { it.copy(commentInput = text) }
+    }
+
+    fun postReviewComment() {
+        val currentText = _uiState.value.commentInput.trim()
+        if (currentText.isEmpty()) return
+
+        val currentUserUid = authRepository.currentUser?.uid
+        if (currentUserUid.isNullOrBlank()) {
+            _uiState.update { it.copy(errorMessage = "Usuario no autenticado") }
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoadingComment = true, errorMessage = null) }
+
+            val result = reviewRepository.addCommentToReview(
+                reviewId = reviewId,
+                text = currentText,
+                userId = currentUserUid
+            )
+
+            if (result.isSuccess) {
+                _uiState.update { state ->
+                    val updatedPost = state.post?.copy(
+                        commentsCount = state.post.commentsCount + 1
+                    )
+                    state.copy(
+                        post = updatedPost,
+                        commentInput = "",
+                        isLoadingComment = false
+                    )
+                }
+            } else {
+                _uiState.update {
+                    it.copy(
+                        isLoadingComment = false,
+                        errorMessage = result.exceptionOrNull()?.localizedMessage
+                            ?: "No se pudo enviar el comentario"
+                    )
+                }
+            }
         }
     }
 

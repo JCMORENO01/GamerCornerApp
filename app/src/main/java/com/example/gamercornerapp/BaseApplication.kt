@@ -19,6 +19,5 @@ class BaseApplication : Application() {
             } catch (_: Exception) {}
         }
         */
-
     }
 }

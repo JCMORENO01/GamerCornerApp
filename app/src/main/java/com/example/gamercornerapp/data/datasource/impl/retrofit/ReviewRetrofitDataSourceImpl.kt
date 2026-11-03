@@ -82,4 +82,22 @@ class ReviewRetrofitDataSourceImpl @Inject constructor(
     ): List<ReviewDTO> {
         return emptyList()
     }
+
+
+
+
+    override suspend fun addCommentToReview(
+        reviewId: String,
+        text: String,
+        userId: String,
+        userName: String
+    ) {
+
+    }
+
+    override fun listenCommentsForReview(
+        reviewId: String
+    ): Flow<List<com.example.gamercornerapp.data.Comment>> = flow {
+        emit(emptyList())
+    }
 }

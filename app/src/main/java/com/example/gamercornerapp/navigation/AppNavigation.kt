@@ -192,7 +192,6 @@ fun AppNavigation(
                 }
             )
         }
-
         // EXPLORE
         composable(route = Screen.Explore.route) {
             val viewModel: ExploreViewModel = hiltViewModel()

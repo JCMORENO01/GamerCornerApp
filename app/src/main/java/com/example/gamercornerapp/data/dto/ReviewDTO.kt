@@ -22,6 +22,9 @@ data class ReviewDTO(
     val isLiked: Boolean = false,
     
     // Indica si la reseña está guardada por el usuario autenticado
+    // Indica si la reseña está guardada por el usuario autenticado
     @get:PropertyName("isBookmarked")
-    val isBookmarked: Boolean = false
+    val isBookmarked: Boolean = false,
+
+    val commentsCount: Long = 0L
 )

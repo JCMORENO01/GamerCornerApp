@@ -140,6 +140,9 @@ fun FeedScreenContent(
                             onCardClick = {
                                 onReviewClick(post.id)
                             },
+                            onCommentClick = {
+                                onReviewClick(post.id)
+                            },
                             onLikeClick = {
                                 onLikeClick(post.id)
                             },
