@@ -257,7 +257,10 @@ fun GamerBottomBar(
                 .background(
                     gradientAdd,
                     CircleShape
-                ),
+                )
+                .clickable {
+                    navController.navigate(Screen.SelectGame.route)
+                },
 
             contentAlignment = Alignment.Center
         ) {

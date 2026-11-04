@@ -1,16 +1,14 @@
 package com.example.gamercornerapp.data.repository
 
 import com.example.gamercornerapp.data.datasource.ReviewRemoteDataSource
-import com.example.gamercornerapp.data.dto.CreateReviewDTO
 import com.example.gamercornerapp.data.dto.ReviewDTO
+import com.google.common.truth.Truth.assertThat
 import com.google.firebase.auth.FirebaseUser
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -38,45 +36,48 @@ class ReviewRepositoryMockTest {
     }
 
     @Test
-    fun `getAllReviewsAsFeed success returnsMappedPosts`() = runTest {
-        // Given
+    fun getAllReviewsAsFeed_success_returnsMappedPosts() = runTest {
+        //AAA
+        //arrange
         val dummyReviews = listOf(
             ReviewDTO(id = "1", description = "Test 1"),
             ReviewDTO(id = "2", description = "Test 2")
         )
         coEvery { remoteDataSource.getAllReviews() } returns dummyReviews
 
-        // When
+        //act
         val result = repository.getAllReviewsAsFeed()
 
-        // Then
-        assertTrue(result.isSuccess)
+        //assert
+        assertThat(result.isSuccess).isTrue()
         val posts = result.getOrNull()
-        assertEquals(2, posts?.size)
-        assertEquals("Test 1", posts?.get(0)?.description)
+        assertThat(posts?.size).isEqualTo(2)
+        assertThat(posts?.get(0)?.description).isEqualTo("Test 1")
     }
 
     @Test
-    fun `getAllReviewsAsFeed failure returnsError`() = runTest {
-        // Given
+    fun getAllReviewsAsFeed_failure_returnsError() = runTest {
+        //AAA
+        //arrange
         val exception = Exception("Network Error")
         coEvery { remoteDataSource.getAllReviews() } throws exception
 
-        // When
+        //act
         val result = repository.getAllReviewsAsFeed()
 
-        // Then
-        assertTrue(result.isFailure)
-        assertEquals("Network Error", result.exceptionOrNull()?.message)
+        //assert
+        assertThat(result.isFailure).isTrue()
+        assertThat(result.exceptionOrNull()?.message).isEqualTo("Network Error")
     }
 
     @Test
-    fun `createReview unauthenticated returnsError`() = runTest {
-        // Given
+    fun createReview_unauthenticated_returnsError() = runTest {
+        //AAA
+        //arrange
         val userId = "user1"
-        every { authRepository.currentUser } returns null // Not authenticated
+        every { authRepository.currentUser } returns null
 
-        // When
+        //act
         val result = repository.createReview(
             description = "Great",
             rating = 5f,
@@ -85,51 +86,54 @@ class ReviewRepositoryMockTest {
             gameId = "game1"
         )
 
-        // Then
-        assertTrue(result.isFailure)
-        assertEquals("Usuario no autenticado", result.exceptionOrNull()?.message)
+        //assert
+        assertThat(result.isFailure).isTrue()
+        assertThat(result.exceptionOrNull()?.message).isEqualTo("Usuario no autenticado")
         coVerify(exactly = 0) { remoteDataSource.createReview(any()) }
     }
 
     @Test
-    fun `toggleReviewLike unauthenticated returnsError`() = runTest {
-        // Given
+    fun toggleReviewLike_unauthenticated_returnsError() = runTest {
+        //AAA
+        //arrange
         every { authRepository.currentUser } returns null
 
-        // When
+        //act
         val result = repository.toggleReviewLike("review1", "user1")
 
-        // Then
-        assertTrue(result.isFailure)
-        assertEquals("Usuario no autenticado", result.exceptionOrNull()?.message)
+        //assert
+        assertThat(result.isFailure).isTrue()
+        assertThat(result.exceptionOrNull()?.message).isEqualTo("Usuario no autenticado")
     }
 
     @Test
-    fun `toggleReviewLike success`() = runTest {
-        // Given
+    fun toggleReviewLike_success() = runTest {
+        //AAA
+        //arrange
         val mockUser = mockk<FirebaseUser>()
         every { mockUser.uid } returns "user1"
         every { authRepository.currentUser } returns mockUser
         coEvery { remoteDataSource.toggleReviewLike("review1", "user1") } returns Unit
 
-        // When
+        //act
         val result = repository.toggleReviewLike("review1", "user1")
 
-        // Then
-        assertTrue(result.isSuccess)
+        //assert
+        assertThat(result.isSuccess).isTrue()
         coVerify { remoteDataSource.toggleReviewLike("review1", "user1") }
     }
 
     @Test
-    fun `deleteReview success`() = runTest {
-        // Given
+    fun deleteReview_success() = runTest {
+        //AAA
+        //arrange
         coEvery { remoteDataSource.deleteReview("review1") } returns Unit
 
-        // When
+        //act
         val result = repository.deleteReview("review1")
 
-        // Then
-        assertTrue(result.isSuccess)
+        //assert
+        assertThat(result.isSuccess).isTrue()
         coVerify { remoteDataSource.deleteReview("review1") }
     }
 }

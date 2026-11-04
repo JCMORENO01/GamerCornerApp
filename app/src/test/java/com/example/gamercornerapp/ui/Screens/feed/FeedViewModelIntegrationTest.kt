@@ -4,7 +4,7 @@ import com.example.gamercornerapp.data.FeedPost
 import com.example.gamercornerapp.data.repository.AuthRepository
 import com.example.gamercornerapp.data.repository.ReviewRepository
 import com.example.gamercornerapp.data.repository.UserRepository
-import io.mockk.coEvery
+import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -16,8 +16,6 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Test
 
@@ -46,18 +44,40 @@ class FeedViewModelIntegrationTest {
     }
 
     @Test
-    fun `loadFeed updatesStateWithPosts`() = runTest {
+    fun loadFeed_updatesStateWithPosts() = runTest {
+        //AAA
+        //arrange
         val dummyPost = mockk<FeedPost>(relaxed = true)
         every { dummyPost.id } returns "post1"
-        
         every { reviewRepository.listenAllReviewsAsFeed() } returns flowOf(listOf(dummyPost))
-        
+
+        //act
         viewModel.loadFeed()
         advanceUntilIdle()
 
+        //assert
         val state = viewModel.uiState.value
-        assertFalse(state.isLoading)
-        assertEquals(1, state.posts.size)
-        assertEquals("post1", state.posts[0].id)
+        assertThat(state.isLoading).isFalse()
+        assertThat(state.posts.size).isEqualTo(1)
+        assertThat(state.posts[0].id).isEqualTo("post1")
+    }
+
+    @Test
+    fun onTabSelected_updatesSelectedTabIndex() = runTest {
+        //AAA
+        //arrange
+        val dummyPost = mockk<FeedPost>(relaxed = true)
+        every { dummyPost.id } returns "post1"
+        every { reviewRepository.listenAllReviewsAsFeed() } returns flowOf(listOf(dummyPost))
+        every { authRepository.currentUser } returns null
+
+        //act
+        viewModel.loadFeed()
+        viewModel.onTabSelected(1)
+        advanceUntilIdle()
+
+        //assert
+        val state = viewModel.uiState.value
+        assertThat(state.selectedTabIndex).isEqualTo(1)
     }
 }

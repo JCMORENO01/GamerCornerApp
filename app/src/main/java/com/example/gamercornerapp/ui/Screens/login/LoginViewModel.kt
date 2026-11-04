@@ -58,10 +58,7 @@ class LoginViewModel @Inject constructor(
             return
         }
 
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(
-                currentState.email
-            ).matches()
-        ) {
+        if (!isValidEmail(currentState.email)) {
             _uiState.update {
                 it.copy(
                     showError = true,
@@ -173,6 +170,14 @@ class LoginViewModel @Inject constructor(
                     )
                 }
             }
+        }
+    }
+
+    private fun isValidEmail(email: String): Boolean {
+        return try {
+            android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+        } catch (_: Throwable) {
+            Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$").matches(email)
         }
     }
 }

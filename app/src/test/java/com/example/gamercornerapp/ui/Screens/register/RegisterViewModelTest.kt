@@ -3,7 +3,9 @@ package com.example.gamercornerapp.ui.Screens.register
 import com.example.gamercornerapp.R
 import com.example.gamercornerapp.data.repository.AuthRepository
 import com.example.gamercornerapp.data.repository.UserRepository
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -13,9 +15,6 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -42,16 +41,22 @@ class RegisterViewModelTest {
     }
 
     @Test
-    fun `register emptyFields showsError`() = runTest {
+    fun register_emptyFields_showsError() = runTest {
+        //AAA
+        //arrange
+        //act
         viewModel.onRegisterClick()
 
+        //assert
         val state = viewModel.uiState.value
-        assertTrue(state.showError)
-        assertEquals(R.string.error_all_fields_required, state.errorRes)
+        assertThat(state.showError).isTrue()
+        assertThat(state.errorRes).isEqualTo(R.string.error_all_fields_required)
     }
 
     @Test
-    fun `register shortPassword showsError`() = runTest {
+    fun register_shortPassword_showsError() = runTest {
+        //AAA
+        //arrange
         viewModel.onEmailChange("test@test.com")
         viewModel.onFullNameChange("Test User")
         viewModel.onUsernameChange("testuser")
@@ -59,15 +64,19 @@ class RegisterViewModelTest {
         viewModel.onConfirmPasswordChange("123")
         viewModel.onTermsChange(true)
 
+        //act
         viewModel.onRegisterClick()
 
+        //assert
         val state = viewModel.uiState.value
-        assertTrue(state.showError)
-        assertEquals(R.string.error_password_too_short, state.errorRes)
+        assertThat(state.showError).isTrue()
+        assertThat(state.errorRes).isEqualTo(R.string.error_password_too_short)
     }
 
     @Test
-    fun `register passwordsDoNotMatch showsError`() = runTest {
+    fun register_passwordsDoNotMatch_showsError() = runTest {
+        //AAA
+        //arrange
         viewModel.onEmailChange("test@test.com")
         viewModel.onFullNameChange("Test User")
         viewModel.onUsernameChange("testuser")
@@ -75,10 +84,43 @@ class RegisterViewModelTest {
         viewModel.onConfirmPasswordChange("7654321")
         viewModel.onTermsChange(true)
 
+        //act
         viewModel.onRegisterClick()
 
+        //assert
         val state = viewModel.uiState.value
-        assertTrue(state.showError)
-        assertEquals(R.string.error_generic_auth, state.errorRes)
+        assertThat(state.showError).isTrue()
+        assertThat(state.errorRes).isEqualTo(R.string.error_generic_auth)
+    }
+
+    @Test
+    fun register_success_navigatesToFeed() = runTest {
+        //AAA
+        //arrange
+        val email = "valid@test.com"
+        val password = "password123"
+        val mockUser = mockk<com.google.firebase.auth.FirebaseUser>()
+        every { mockUser.uid } returns "test_reg_uid"
+        every { authRepository.currentUser } returns mockUser
+
+        viewModel.onEmailChange(email)
+        viewModel.onFullNameChange("Valid User")
+        viewModel.onUsernameChange("validuser")
+        viewModel.onPasswordChange(password)
+        viewModel.onConfirmPasswordChange(password)
+        viewModel.onTermsChange(true)
+
+        coEvery { authRepository.signUp(email, password) } returns Result.success(Unit)
+        coEvery { userRepository.createUserProfile(any(), any(), any(), any(), any()) } returns Result.success(Unit)
+        coEvery { userRepository.updateFCMToken(any()) } returns Result.success(Unit)
+
+        //act
+        viewModel.onRegisterClick()
+        advanceUntilIdle()
+
+        //assert
+        val state = viewModel.uiState.value
+        assertThat(state.showError).isFalse()
+        assertThat(state.navigateToFeed).isTrue()
     }
 }

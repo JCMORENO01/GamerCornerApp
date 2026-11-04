@@ -30,6 +30,8 @@ import com.example.gamercornerapp.ui.Screens.review.ReviewScreen
 import com.example.gamercornerapp.ui.Screens.review.ReviewViewModel
 import com.example.gamercornerapp.ui.Screens.reviewDetail.ReviewDetailScreen
 import com.example.gamercornerapp.ui.Screens.reviewDetail.ReviewDetailViewModel
+import com.example.gamercornerapp.ui.Screens.selectGame.SelectGameScreen
+import com.example.gamercornerapp.ui.Screens.selectGame.SelectGameViewModel
 import com.example.gamercornerapp.ui.Screens.selfProfile.SelfProfileScreen
 import com.example.gamercornerapp.ui.Screens.selfProfile.SelfProfileViewModel
 import com.example.gamercornerapp.ui.Screens.splash.SplashScreen
@@ -456,6 +458,25 @@ fun AppNavigation(
                 viewModel = viewModel,
                 onPublishClick = {
                     navController.popBackStack()
+                }
+            )
+        }
+
+        // SELECT GAME FOR REVIEW
+        composable(route = Screen.SelectGame.route) {
+            val viewModel: SelectGameViewModel = hiltViewModel()
+
+            SelectGameScreen(
+                viewModel = viewModel,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onGameSelected = { selectedGameId ->
+                    navController.navigate(
+                        Screen.Review.createRoute(selectedGameId)
+                    ) {
+                        popUpTo(Screen.SelectGame.route) { inclusive = true }
+                    }
                 }
             )
         }

@@ -85,4 +85,6 @@ sealed class Screen(
     }
 
     data object RecoverPassword : Screen("recover_password")
+
+    data object SelectGame : Screen("select_game")
 }

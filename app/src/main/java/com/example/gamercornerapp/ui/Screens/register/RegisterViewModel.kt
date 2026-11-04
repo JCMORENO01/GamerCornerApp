@@ -87,10 +87,7 @@ class RegisterViewModel @Inject constructor(
             return
         }
 
-        if (!Patterns.EMAIL_ADDRESS.matcher(
-                currentState.email
-            ).matches()
-        ) {
+        if (!isValidEmail(currentState.email)) {
             showError(R.string.error_invalid_email)
             return
         }
@@ -197,6 +194,14 @@ class RegisterViewModel @Inject constructor(
     fun onNavigationHandled() {
         _uiState.update {
             it.copy(navigateToFeed = false)
+        }
+    }
+
+    private fun isValidEmail(email: String): Boolean {
+        return try {
+            android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+        } catch (_: Throwable) {
+            Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$").matches(email)
         }
     }
 }
