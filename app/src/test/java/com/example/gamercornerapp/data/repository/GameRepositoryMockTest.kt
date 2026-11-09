@@ -10,7 +10,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-class GameRepositoryIntegrationTest {
+class GameRepositoryMockTest {
 
     private lateinit var remoteDataSource: GameRemoteDataSource
     private lateinit var repository: GameRepository

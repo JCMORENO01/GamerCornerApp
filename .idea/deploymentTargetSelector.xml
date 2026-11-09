@@ -24,7 +24,7 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="registerAndLikeReviewFlow()">
+      <SelectionState runConfigName="loadFeed_realIntegration_updatesUiStateWithPosts()">
         <option name="selectionMode" value="DROPDOWN" />
         <DropdownSelection timestamp="2026-10-21T19:43:47.067888300Z">
           <Target type="DEFAULT_BOOT">
@@ -35,7 +35,7 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="GamerCornerE2ETest (1)">
+      <SelectionState runConfigName="onTabSelected_followingTabWithoutSession_updatesErrorAndEmptiesPosts()">
         <option name="selectionMode" value="DROPDOWN" />
         <DropdownSelection timestamp="2026-10-21T19:43:47.067888300Z">
           <Target type="DEFAULT_BOOT">
@@ -46,7 +46,18 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="registerAndLikeReviewFlow() (1)">
+      <SelectionState runConfigName="loadFeed_success_loadsReviewsAndUpdateUI()">
+        <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2026-10-21T19:43:47.067888300Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\juanc\.android\avd\Pixel_6a_2.avd" />
+            </handle>
+          </Target>
+        </DropdownSelection>
+        <DialogSelection />
+      </SelectionState>
+      <SelectionState runConfigName="FeedViewModelIntegrationTest">
         <option name="selectionMode" value="DROPDOWN" />
         <DropdownSelection timestamp="2026-10-21T19:43:47.067888300Z">
           <Target type="DEFAULT_BOOT">
