@@ -74,7 +74,9 @@ class ReviewRepository @Inject constructor(
             }
     }
 
-    fun listenReviewsByGame(gameId: String): Flow<List<ReviewItem>> {
+    fun listenReviewsByGame(
+        gameId: String
+    ): Flow<List<ReviewItem>> {
         return remoteDataSource.listenReviewsByGame(gameId)
             .map { reviews ->
                 reviews.map { review ->
@@ -83,7 +85,9 @@ class ReviewRepository @Inject constructor(
             }
     }
 
-    fun listenReviewsByUser(userId: String): Flow<List<ReviewItem>> {
+    fun listenReviewsByUser(
+        userId: String
+    ): Flow<List<ReviewItem>> {
         return remoteDataSource.listenReviewsByUser(userId)
             .map { reviews ->
                 reviews.map { review ->
@@ -118,14 +122,18 @@ class ReviewRepository @Inject constructor(
         rating: Float,
         tags: List<String>?,
         userId: String,
-        gameId: String
+        gameId: String,
+        latitude: Double? = null,
+        longitude: Double? = null
     ): Result<Unit> {
         return saveReview(
             description = description,
             rating = rating,
             tags = tags,
             userId = userId,
-            gameId = gameId
+            gameId = gameId,
+            latitude = latitude,
+            longitude = longitude
         )
     }
 
@@ -153,7 +161,9 @@ class ReviewRepository @Inject constructor(
         tags: List<String>?,
         userId: String,
         gameId: String,
-        reviewId: String? = null
+        reviewId: String? = null,
+        latitude: Double? = null,
+        longitude: Double? = null
     ): Result<Unit> {
         return try {
             require(userId.isNotBlank()) {
@@ -189,6 +199,12 @@ class ReviewRepository @Inject constructor(
                 image = game.imageUrl
             )
 
+            val createdAtMillis = if (reviewId == null) {
+                System.currentTimeMillis()
+            } else {
+                null
+            }
+
             val createdAt = if (reviewId == null) {
                 SimpleDateFormat(
                     "yyyy-MM-dd'T'HH:mm:ss",
@@ -206,7 +222,18 @@ class ReviewRepository @Inject constructor(
                 gameId = gameId,
                 createdAt = createdAt,
                 user = reviewUser,
-                game = reviewGame
+                game = reviewGame,
+                latitude = if (reviewId == null) {
+                    latitude
+                } else {
+                    null
+                },
+                longitude = if (reviewId == null) {
+                    longitude
+                } else {
+                    null
+                },
+                createdAtMillis = createdAtMillis
             )
 
             if (reviewId == null) {
@@ -286,14 +313,13 @@ class ReviewRepository @Inject constructor(
     ): Result<List<ReviewItem>> {
         return try {
             val reviews = remoteDataSource.getSavedReviewsByUser(userId)
-            Result.success(reviews.map { it.toReviewItem() })
+            Result.success(
+                reviews.map { it.toReviewItem() }
+            )
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
-
-
-
 
     suspend fun addCommentToReview(
         reviewId: String,
@@ -301,30 +327,58 @@ class ReviewRepository @Inject constructor(
         userId: String
     ): Result<Unit> {
         return try {
-            require(reviewId.isNotBlank()) { "ID de reseña inválido" }
-            require(text.isNotBlank()) { "El comentario no puede estar vacío" }
-            require(userId.isNotBlank()) { "ID de usuario inválido" }
+            require(reviewId.isNotBlank()) {
+                "ID de reseña inválido"
+            }
 
-            val user = userRepository.getUserById(userId).getOrNull()
+            require(text.isNotBlank()) {
+                "El comentario no puede estar vacío"
+            }
+
+            require(userId.isNotBlank()) {
+                "ID de usuario inválido"
+            }
+
+            val user = userRepository
+                .getUserById(userId)
+                .getOrNull()
+
             val firebaseUser = authRepository.currentUser
-                ?: com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
+                ?: com.google.firebase.auth.FirebaseAuth
+                    .getInstance()
+                    .currentUser
 
-            val userName = user?.username?.takeIf { it.isNotBlank() }
-                ?: user?.nickName?.takeIf { it.isNotBlank() }
-                ?: firebaseUser?.displayName?.takeIf { it.isNotBlank() }
-                ?: firebaseUser?.email?.substringBefore("@")
+            val userName = user?.username
+                ?.takeIf { it.isNotBlank() }
+                ?: user?.nickName
+                    ?.takeIf { it.isNotBlank() }
+                ?: firebaseUser?.displayName
+                    ?.takeIf { it.isNotBlank() }
+                ?: firebaseUser?.email
+                    ?.substringBefore("@")
                 ?: "Usuario Gamer"
 
-            remoteDataSource.addCommentToReview(reviewId, text, userId, userName)
+            remoteDataSource.addCommentToReview(
+                reviewId,
+                text,
+                userId,
+                userName
+            )
 
             Result.success(Unit)
         } catch (e: Exception) {
-            android.util.Log.e("ReviewRepository", "Error adding comment: ${e.message}", e)
+            android.util.Log.e(
+                "ReviewRepository",
+                "Error adding comment: ${e.message}",
+                e
+            )
             Result.failure(e)
         }
     }
 
-    fun listenCommentsForReview(reviewId: String): Flow<List<com.example.gamercornerapp.data.Comment>> {
+    fun listenCommentsForReview(
+        reviewId: String
+    ): Flow<List<com.example.gamercornerapp.data.Comment>> {
         return remoteDataSource.listenCommentsForReview(reviewId)
     }
 }

@@ -18,6 +18,8 @@ sealed class Screen(
 
     data object Explore : Screen("explore")
 
+    data object ReviewMap : Screen("review_map")
+
     data object Notifications : Screen("notifications")
 
     data object Followers : Screen("followers/{userId}?tabIndex={tabIndex}") {

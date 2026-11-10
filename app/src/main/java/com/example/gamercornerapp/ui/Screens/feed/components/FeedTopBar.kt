@@ -1,17 +1,19 @@
+
 package com.example.gamercornerapp.ui.Screens.feed.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -26,77 +28,82 @@ import com.example.gamercornerapp.R
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 import com.example.gamercornerapp.ui.theme.LocalIsDarkTheme
 
-
 @Composable
 fun FeedTopBar(
-    onMenuClick: () -> Unit = { },
-    onSettingsClick: () -> Unit = { },
+    onMenuClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {},
+    onRadarClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
 
-    androidx.compose.foundation.layout.Row(
+    Row(
         modifier = modifier
             .fillMaxWidth()
             .height(90.dp)
             .padding(horizontal = 16.dp),
-
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
 
         Icon(
             imageVector = Icons.Default.Menu,
-            contentDescription = stringResource(id = R.string.cd_menu),
+            contentDescription = stringResource(R.string.cd_menu),
             tint = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
                 .size(26.dp)
-                .clickable {
-                    onMenuClick()
-                }
+                .clickable { onMenuClick() }
         )
 
-
         val isDark = LocalIsDarkTheme.current
+
         val logoRes = if (isDark) {
-            R.drawable.logo_gamer1      // Logo blanco para modo oscuro
+            R.drawable.logo_gamer1
         } else {
-            R.drawable.logo_fondo_claro // Logo negro para modo claro
+            R.drawable.logo_fondo_claro
         }
 
         Image(
             painter = painterResource(id = logoRes),
             contentDescription = stringResource(
-                id = R.string.logo_content_description
+                R.string.logo_content_description
             ),
             modifier = Modifier.size(120.dp)
         )
 
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(18.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
 
-        Icon(
-            imageVector = Icons.Default.Settings,
-            contentDescription = stringResource(id = R.string.cd_settings),
-            tint = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier
-                .size(24.dp)
-                .clickable {
-                    onSettingsClick()
-                }
-        )
+            // ACCESO A GAMERCORNER RADAR
+            Icon(
+                imageVector = Icons.Default.Place,
+                contentDescription = "Abrir GamerCorner Radar",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .size(26.dp)
+                    .clickable { onRadarClick() }
+            )
+
+            // ENGRANAJE ORIGINAL
+            Icon(
+                imageVector = Icons.Default.Settings,
+                contentDescription = stringResource(
+                    R.string.cd_settings
+                ),
+                tint = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable { onSettingsClick() }
+            )
+        }
     }
 }
 
-
-@Preview(
-    showBackground = true,
-    name = "Feed Top Bar"
-)
+@Preview(showBackground = true)
 @Composable
 fun FeedTopBarPreview() {
-
-    GamerCornerAppTheme(
-        darkTheme = true
-    ) {
-
+    GamerCornerAppTheme(darkTheme = true) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -104,7 +111,6 @@ fun FeedTopBarPreview() {
                     MaterialTheme.colorScheme.background
                 )
         ) {
-
             FeedTopBar()
         }
     }

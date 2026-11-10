@@ -3,6 +3,7 @@ package com.example.gamercornerapp.ui.Screens.review
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.gamercornerapp.data.datasource.ReviewLocationDataSource
 import com.example.gamercornerapp.data.repository.AuthRepository
 import com.example.gamercornerapp.data.repository.GameRepository
 import com.example.gamercornerapp.data.repository.ReviewRepository
@@ -18,12 +19,16 @@ import javax.inject.Inject
 class ReviewViewModel @Inject constructor(
     private val gameRepository: GameRepository,
     private val reviewRepository: ReviewRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val locationDataSource: ReviewLocationDataSource
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ReviewState())
+    private val _uiState = MutableStateFlow(
+        ReviewState()
+    )
 
-    val uiState: StateFlow<ReviewState> = _uiState.asStateFlow()
+    val uiState: StateFlow<ReviewState> =
+        _uiState.asStateFlow()
 
     fun loadGame(
         gameId: String,
@@ -103,7 +108,9 @@ class ReviewViewModel @Inject constructor(
                     state.selectedTags + tag
                 }
 
-            state.copy(selectedTags = updatedTags)
+            state.copy(
+                selectedTags = updatedTags
+            )
         }
     }
 
@@ -113,8 +120,10 @@ class ReviewViewModel @Inject constructor(
         }
     }
 
-    fun publishReview(gameId: String) {
-
+    fun publishReview(
+        gameId: String,
+        includeLocation: Boolean = false
+    ) {
         viewModelScope.launch {
 
             _uiState.update {
@@ -154,12 +163,20 @@ class ReviewViewModel @Inject constructor(
 
                     } else {
 
+                        val location = if (includeLocation) {
+                            locationDataSource.getCurrentLocation()
+                        } else {
+                            null
+                        }
+
                         reviewRepository.createReview(
                             description = currentState.opinion,
                             rating = currentState.rating.toFloat(),
                             tags = currentState.selectedTags.toList(),
                             userId = userId,
-                            gameId = gameId
+                            gameId = gameId,
+                            latitude = location?.latitude,
+                            longitude = location?.longitude
                         )
                     }
 

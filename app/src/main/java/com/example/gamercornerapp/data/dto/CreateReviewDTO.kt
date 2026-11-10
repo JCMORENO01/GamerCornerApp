@@ -10,7 +10,10 @@ data class CreateReviewDTO(
     val createdAt: String? = null,
     val user: CreateReviewUserDTO? = null,
     val game: CreateReviewGameDTO? = null,
+    val likesCount: Long = 0L,
 
-    // Toda reseña comienza con cero likes
-    val likesCount: Long = 0L
+    // Ubicación opcional de la reseña
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val createdAtMillis: Long? = null
 )

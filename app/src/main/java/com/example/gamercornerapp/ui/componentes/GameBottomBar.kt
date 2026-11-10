@@ -1,9 +1,11 @@
+
 package com.example.gamercornerapp.ui.componentes
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,47 +40,34 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.gamercornerapp.R
 import com.example.gamercornerapp.navigation.Screen
 
-
 private data class BottomNavItem(
     val iconRes: Int,
     val label: String,
     val route: String
 )
 
-
 @Composable
 fun GamerBottomBar(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-
     val navBackStackEntry by
     navController.currentBackStackEntryAsState()
 
-
     val currentRoute =
-        navBackStackEntry
-            ?.destination
-            ?.route
-
+        navBackStackEntry?.destination?.route
 
     val homeItem = BottomNavItem(
         iconRes = R.drawable.home_button,
-        label = stringResource(
-            id = R.string.nav_home
-        ),
+        label = stringResource(R.string.nav_home),
         route = Screen.Feed.route
     )
 
-
     val exploreItem = BottomNavItem(
         iconRes = R.drawable.explore_button,
-        label = stringResource(
-            id = R.string.nav_explore
-        ),
+        label = stringResource(R.string.nav_explore),
         route = Screen.Explore.route
     )
-
 
     val notificationsItem = BottomNavItem(
         iconRes = R.drawable.campana_button,
@@ -86,17 +75,12 @@ fun GamerBottomBar(
         route = Screen.Notifications.route
     )
 
-
     val profileItem = BottomNavItem(
         iconRes = R.drawable.people_button,
-        label = stringResource(
-            id = R.string.nav_profile
-        ),
+        label = stringResource(R.string.nav_profile),
         route = Screen.SelfProfile.route
     )
 
-
-    // Gradiente del botón central
     val gradientAdd = Brush.linearGradient(
         colors = listOf(
             MaterialTheme.colorScheme.primary,
@@ -104,11 +88,8 @@ fun GamerBottomBar(
         )
     )
 
-
-    // Color de la línea superior
     val lineColor =
         MaterialTheme.colorScheme.onSurfaceVariant
-
 
     Box(
         modifier = modifier
@@ -123,7 +104,6 @@ fun GamerBottomBar(
             .background(
                 MaterialTheme.colorScheme.background
             ),
-
         contentAlignment = Alignment.Center
     ) {
 
@@ -131,117 +111,102 @@ fun GamerBottomBar(
             modifier = Modifier
                 .fillMaxSize()
                 .drawBehind {
-
-                    val strokeWidth =
-                        2.dp.toPx()
+                    val strokeWidth = 2.dp.toPx()
 
                     drawLine(
                         color = lineColor,
-
                         start = Offset(
                             0f,
                             strokeWidth / 2
                         ),
-
                         end = Offset(
                             size.width,
                             strokeWidth / 2
                         ),
-
                         strokeWidth = strokeWidth
                     )
                 },
-
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-
-            // HOME
+            // INICIO
             BottomNavButton(
                 item = homeItem,
-
-                isSelected =
-                    currentRoute == homeItem.route,
-
+                isSelected = currentRoute == homeItem.route,
                 modifier = Modifier.weight(1f),
-
                 onClick = {
-
-                    navController.navigate(
-                        homeItem.route
-                    )
+                    navController.navigate(homeItem.route) {
+                        launchSingleTop = true
+                        // No usamos restoreState = true para que el Feed siempre cargue limpio
+                        // y no nos devuelva al mapa si veníamos de ahí
+                        popUpTo(Screen.Feed.route) {
+                            saveState = true
+                        }
+                    }
                 }
             )
-
 
             // EXPLORAR
             BottomNavButton(
                 item = exploreItem,
-
-                isSelected =
-                    currentRoute == exploreItem.route,
-
+                isSelected = currentRoute == exploreItem.route,
                 modifier = Modifier.weight(1f),
-
                 onClick = {
-
-                    navController.navigate(
-                        exploreItem.route
-                    )
+                    navController.navigate(exploreItem.route) {
+                        launchSingleTop = true
+                        restoreState = true
+                        popUpTo(Screen.Feed.route) {
+                            saveState = true
+                        }
+                    }
                 }
             )
 
-
-            // ESPACIO PARA BOTÓN CENTRAL
+            // ESPACIO PARA PUBLICAR
             Spacer(
                 modifier = Modifier.weight(1.2f)
             )
 
-
             // COMUNIDAD
             BottomNavButton(
                 item = notificationsItem,
-
-                isSelected =
-                    currentRoute == notificationsItem.route,
-
+                isSelected = currentRoute == notificationsItem.route,
                 modifier = Modifier.weight(1f),
-
                 onClick = {
-
                     navController.navigate(
                         notificationsItem.route
-                    )
+                    ) {
+                        launchSingleTop = true
+                        restoreState = true
+                        popUpTo(Screen.Feed.route) {
+                            saveState = true
+                        }
+                    }
                 }
             )
-
 
             // PERFIL
             BottomNavButton(
                 item = profileItem,
-
-                isSelected =
-                    currentRoute == profileItem.route,
-
+                isSelected = currentRoute == profileItem.route,
                 modifier = Modifier.weight(1f),
-
                 onClick = {
-
-                    navController.navigate(
-                        profileItem.route
-                    )
+                    navController.navigate(profileItem.route) {
+                        launchSingleTop = true
+                        restoreState = true
+                        popUpTo(Screen.Feed.route) {
+                            saveState = true
+                        }
+                    }
                 }
             )
         }
 
-
-        // BOTÓN CENTRAL FLOTANTE
+        // BOTÓN CENTRAL PARA PUBLICAR
         Box(
             modifier = Modifier
                 .size(56.dp)
-                .offset(
-                    y = (-10).dp
-                )
+                .offset(y = (-10).dp)
                 .shadow(
                     elevation = 12.dp,
                     shape = CircleShape,
@@ -255,13 +220,14 @@ fun GamerBottomBar(
                     shape = CircleShape
                 )
                 .background(
-                    gradientAdd,
-                    CircleShape
+                    brush = gradientAdd,
+                    shape = CircleShape
                 )
                 .clickable {
-                    navController.navigate(Screen.SelectGame.route)
+                    navController.navigate(
+                        Screen.SelectGame.route
+                    )
                 },
-
             contentAlignment = Alignment.Center
         ) {
 
@@ -269,24 +235,15 @@ fun GamerBottomBar(
                 text = stringResource(
                     id = R.string.plus_sign
                 ),
-
-                color =
-                    MaterialTheme.colorScheme.onPrimary,
-
+                color = MaterialTheme.colorScheme.onPrimary,
                 fontSize = 32.sp,
-
                 fontWeight = FontWeight.Light,
-
                 textAlign = TextAlign.Center,
-
-                modifier = Modifier.offset(
-                    y = (-2).dp
-                )
+                modifier = Modifier.offset(y = (-2).dp)
             )
         }
     }
 }
-
 
 @Composable
 private fun BottomNavButton(
@@ -295,75 +252,41 @@ private fun BottomNavButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
-
-    val tintColor =
-        if (isSelected) {
-
-            MaterialTheme.colorScheme.primary
-
-        } else {
-
-            MaterialTheme.colorScheme.onSurfaceVariant
-        }
-
+    val tintColor = if (isSelected) {
+        MaterialTheme.colorScheme.primary
+    } else {
+        MaterialTheme.colorScheme.onSurfaceVariant
+    }
 
     Column(
-        modifier = modifier
-            .clickable {
-                onClick()
-            },
-
-        horizontalAlignment =
-            Alignment.CenterHorizontally,
-
-        verticalArrangement =
-            androidx.compose.foundation.layout.Arrangement.Center
+        modifier = modifier.clickable(
+            onClick = onClick
+        ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
 
         Image(
             painter = painterResource(
                 id = item.iconRes
             ),
-
-            contentDescription =
-                item.label,
-
-            modifier =
-                Modifier.size(50.dp),
-
-            colorFilter =
-                ColorFilter.tint(
-                    tintColor
-                )
+            contentDescription = item.label,
+            modifier = Modifier.size(50.dp),
+            colorFilter = ColorFilter.tint(tintColor)
         )
-
 
         Text(
             text = item.label,
-
             color = tintColor,
-
             fontSize = 11.sp,
-
-            fontWeight =
-                if (isSelected) {
-
-                    FontWeight.SemiBold
-
-                } else {
-
-                    FontWeight.Normal
-                },
-
-            textAlign =
-                TextAlign.Center,
-
+            fontWeight = if (isSelected) {
+                FontWeight.SemiBold
+            } else {
+                FontWeight.Normal
+            },
+            textAlign = TextAlign.Center,
             maxLines = 1,
-
-            modifier =
-                Modifier.offset(
-                    y = (-12).dp
-                )
+            modifier = Modifier.offset(y = (-12).dp)
         )
     }
 }

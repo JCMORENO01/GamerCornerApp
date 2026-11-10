@@ -14,17 +14,18 @@ data class ReviewDTO(
     val user: CreateReviewUserDTO? = null,
     val game: CreateReviewGameDTO? = null,
 
-    // Cantidad de likes almacenada en Firestore
     val likesCount: Long = 0L,
 
-    // Indica si el usuario autenticado dio like
     @get:PropertyName("isLiked")
     val isLiked: Boolean = false,
-    
-    // Indica si la reseña está guardada por el usuario autenticado
-    // Indica si la reseña está guardada por el usuario autenticado
+
     @get:PropertyName("isBookmarked")
     val isBookmarked: Boolean = false,
 
-    val commentsCount: Long = 0L
+    val commentsCount: Long = 0L,
+
+    // Nuevos campos para el mapa
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val createdAtMillis: Long? = null
 )

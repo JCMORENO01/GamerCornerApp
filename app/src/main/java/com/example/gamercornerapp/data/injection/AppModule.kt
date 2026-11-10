@@ -7,11 +7,15 @@ import com.example.gamercornerapp.data.datasource.GameRemoteDataSource
 import com.example.gamercornerapp.data.datasource.ReviewRemoteDataSource
 import com.example.gamercornerapp.data.datasource.UserRemoteDataSource
 import com.example.gamercornerapp.data.datasource.NotificationRemoteDataSource
+import com.example.gamercornerapp.data.datasource.MapReviewRemoteDataSource
+import com.example.gamercornerapp.data.datasource.NoteRemoteDataSource
 
 import com.example.gamercornerapp.data.datasource.impl.firestore.GameFirestoreDataSourceImpl
 import com.example.gamercornerapp.data.datasource.impl.firestore.ReviewFirestoreDataSourceImpl
 import com.example.gamercornerapp.data.datasource.impl.firestore.UserFirestoreDataSourceImpl
 import com.example.gamercornerapp.data.datasource.impl.firestore.NotificationFirestoreDataSourceImpl
+import com.example.gamercornerapp.data.datasource.impl.firestore.MapReviewFirestoreDataSource
+import com.example.gamercornerapp.data.datasource.impl.firestore.NoteFirestoreDataSourceImpl
 
 import com.example.gamercornerapp.data.datasource.impl.retrofit.GameRetrofitDataSourceImpl
 import com.example.gamercornerapp.data.datasource.impl.retrofit.ReviewRetrofitDataSourceImpl
@@ -48,10 +52,13 @@ object AppModule {
     fun provideFirebaseAuth(
         @ApplicationContext context: Context
     ): FirebaseAuth {
+
         if (FirebaseApp.getApps(context).isEmpty()) {
             FirebaseApp.initializeApp(context)
         }
+
         val auth = FirebaseAuth.getInstance()
+
         /*
         try {
             if (BuildConfig.DEBUG) {
@@ -61,13 +68,16 @@ object AppModule {
             // Already connected or emulator not running
         }
         */
+
         return auth
     }
 
     @Provides
     @Singleton
     fun provideFirebaseFirestore(): FirebaseFirestore {
+
         val firestore = FirebaseFirestore.getInstance()
+
         /*
         try {
             if (BuildConfig.DEBUG) {
@@ -77,6 +87,7 @@ object AppModule {
             // Already connected or emulator not running
         }
         */
+
         return firestore
     }
 
@@ -87,6 +98,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideRetrofit(): Retrofit {
+
         return Retrofit.Builder()
             .baseUrl("http://10.0.2.2:3000/")
             .addConverterFactory(
@@ -103,6 +115,7 @@ object AppModule {
     fun provideGamerCornerService(
         retrofit: Retrofit
     ): GamerCornerService {
+
         return retrofit.create(
             GamerCornerService::class.java
         )
@@ -153,6 +166,30 @@ object AppModule {
         return impl
     }
     */
+
+    // ==========================================
+    // MAP REVIEWS - FIREBASE ACTIVO
+    // ==========================================
+
+    @Provides
+    @Singleton
+    fun provideMapReviewRemoteDataSource(
+        impl: MapReviewFirestoreDataSource
+    ): MapReviewRemoteDataSource {
+        return impl
+    }
+
+    // ==========================================
+    // NOTES - FIREBASE ACTIVO
+    // ==========================================
+
+    @Provides
+    @Singleton
+    fun provideNoteRemoteDataSource(
+        impl: NoteFirestoreDataSourceImpl
+    ): NoteRemoteDataSource {
+        return impl
+    }
 
     // ==========================================
     // USERS - FIREBASE ACTIVO

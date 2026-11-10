@@ -30,6 +30,7 @@ import com.example.gamercornerapp.ui.Screens.review.ReviewScreen
 import com.example.gamercornerapp.ui.Screens.review.ReviewViewModel
 import com.example.gamercornerapp.ui.Screens.reviewDetail.ReviewDetailScreen
 import com.example.gamercornerapp.ui.Screens.reviewDetail.ReviewDetailViewModel
+import com.example.gamercornerapp.ui.Screens.reviewMap.ReviewMapScreen
 import com.example.gamercornerapp.ui.Screens.selectGame.SelectGameScreen
 import com.example.gamercornerapp.ui.Screens.selectGame.SelectGameViewModel
 import com.example.gamercornerapp.ui.Screens.selfProfile.SelfProfileScreen
@@ -45,7 +46,6 @@ fun AppNavigation(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-
     NavHost(
         navController = navController,
         startDestination = Screen.Splash.route,
@@ -167,6 +167,13 @@ fun AppNavigation(
                 },
                 onUserClick = { userId ->
                     navigateToUser(navController, userId)
+                },
+                onRadarClick = {
+                    navController.navigate(
+                        Screen.ReviewMap.route
+                    ) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -194,6 +201,7 @@ fun AppNavigation(
                 }
             )
         }
+
         // EXPLORE
         composable(route = Screen.Explore.route) {
             val viewModel: ExploreViewModel = hiltViewModel()
@@ -213,11 +221,24 @@ fun AppNavigation(
             )
         }
 
+        // GAMERCORNER RADAR
+        composable(route = Screen.ReviewMap.route) {
+            ReviewMapScreen(
+                onReviewClick = { reviewId ->
+                    navController.navigate(
+                        Screen.ReviewDetail.createRoute(reviewId)
+                    )
+                }
+            )
+        }
+
         // NOTIFICATIONS
         composable(route = Screen.Notifications.route) {
             val viewModel: NotificationsViewModel = hiltViewModel()
 
-            NotificationsScreen(viewModel = viewModel)
+            NotificationsScreen(
+                viewModel = viewModel
+            )
         }
 
         // FOLLOWERS
@@ -233,8 +254,13 @@ fun AppNavigation(
                 }
             )
         ) { backStackEntry ->
-            val userId = backStackEntry.arguments?.getString("userId") ?: ""
-            val tabIndex = backStackEntry.arguments?.getInt("tabIndex") ?: 0
+
+            val userId = backStackEntry.arguments
+                ?.getString("userId") ?: ""
+
+            val tabIndex = backStackEntry.arguments
+                ?.getInt("tabIndex") ?: 0
+
             val viewModel: FollowersViewModel = hiltViewModel()
 
             FollowersScreen(
@@ -245,7 +271,10 @@ fun AppNavigation(
                     navController.popBackStack()
                 },
                 onUserClick = { selectedUserId ->
-                    navigateToUser(navController, selectedUserId)
+                    navigateToUser(
+                        navController,
+                        selectedUserId
+                    )
                 }
             )
         }
@@ -258,24 +287,44 @@ fun AppNavigation(
             SelfProfileScreen(
                 viewModel = viewModel,
                 onFollowersClick = {
-                    val currentUserId = uiState.userProfile?.id ?: ""
+                    val currentUserId =
+                        uiState.userProfile?.id ?: ""
+
                     if (currentUserId.isNotBlank()) {
-                        navController.navigate(Screen.Followers.createRoute(currentUserId, tabIndex = 0))
+                        navController.navigate(
+                            Screen.Followers.createRoute(
+                                currentUserId,
+                                tabIndex = 0
+                            )
+                        )
                     }
                 },
                 onFollowingClick = {
-                    val currentUserId = uiState.userProfile?.id ?: ""
+                    val currentUserId =
+                        uiState.userProfile?.id ?: ""
+
                     if (currentUserId.isNotBlank()) {
-                        navController.navigate(Screen.Followers.createRoute(currentUserId, tabIndex = 1))
+                        navController.navigate(
+                            Screen.Followers.createRoute(
+                                currentUserId,
+                                tabIndex = 1
+                            )
+                        )
                     }
                 },
                 onLogoutClick = {
-                    navController.navigate(Screen.Start.route) {
-                        popUpTo(0) { inclusive = true }
+                    navController.navigate(
+                        Screen.Start.route
+                    ) {
+                        popUpTo(0) {
+                            inclusive = true
+                        }
                     }
                 },
                 onSettingsClick = {
-                    navController.navigate(Screen.EditProfile.route)
+                    navController.navigate(
+                        Screen.EditProfile.route
+                    )
                 },
                 onEditReviewClick = { review ->
                     navController.navigate(
@@ -289,7 +338,9 @@ fun AppNavigation(
                 },
                 onReviewClick = { review ->
                     navController.navigate(
-                        Screen.Videogame.createRoute(review.gameId)
+                        Screen.Videogame.createRoute(
+                            review.gameId
+                        )
                     )
                 },
                 onGameClick = { game ->
@@ -326,7 +377,10 @@ fun AppNavigation(
                     navController.popBackStack()
                 },
                 onUserClick = { userId ->
-                    navigateToUser(navController, userId)
+                    navigateToUser(
+                        navController,
+                        userId
+                    )
                 }
             )
         }
@@ -346,7 +400,6 @@ fun AppNavigation(
                 ?.takeIf { it.isNotBlank() }
 
             if (userId != null) {
-
                 UserProfileScreen(
                     userId = userId,
                     onBackClick = {
@@ -354,23 +407,29 @@ fun AppNavigation(
                     },
                     onReviewClick = { review ->
                         navController.navigate(
-                            Screen.Videogame.createRoute(review.gameId)
+                            Screen.Videogame.createRoute(
+                                review.gameId
+                            )
                         )
                     },
                     onFollowersClick = {
                         navController.navigate(
-                            Screen.Followers.createRoute(userId, tabIndex = 0)
+                            Screen.Followers.createRoute(
+                                userId,
+                                tabIndex = 0
+                            )
                         )
                     },
                     onFollowingClick = {
                         navController.navigate(
-                            Screen.Followers.createRoute(userId, tabIndex = 1)
+                            Screen.Followers.createRoute(
+                                userId,
+                                tabIndex = 1
+                            )
                         )
                     }
                 )
-
             } else {
-
                 LaunchedEffect(Unit) {
                     navController.popBackStack()
                 }
@@ -388,8 +447,7 @@ fun AppNavigation(
         ) { backStackEntry ->
 
             val gameId = backStackEntry.arguments
-                ?.getString("gameId")
-                ?: ""
+                ?.getString("gameId") ?: ""
 
             val viewModel: VideogameViewModel = hiltViewModel()
 
@@ -405,12 +463,15 @@ fun AppNavigation(
                     )
                 },
                 onUserClick = { userId ->
-                    navigateToUser(navController, userId)
+                    navigateToUser(
+                        navController,
+                        userId
+                    )
                 }
             )
         }
 
-        // REVIEW (CREATE OR UPDATE)
+        // REVIEW CREATE OR UPDATE
         composable(
             route = Screen.Review.route,
             arguments = listOf(
@@ -435,8 +496,7 @@ fun AppNavigation(
         ) { backStackEntry ->
 
             val gameId = backStackEntry.arguments
-                ?.getString("gameId")
-                ?: ""
+                ?.getString("gameId") ?: ""
 
             val reviewId = backStackEntry.arguments
                 ?.getString("reviewId")
@@ -445,8 +505,7 @@ fun AppNavigation(
                 ?.getString("opinion")
 
             val rating = backStackEntry.arguments
-                ?.getInt("rating")
-                ?: 5
+                ?.getInt("rating") ?: 5
 
             val viewModel: ReviewViewModel = hiltViewModel()
 
@@ -473,9 +532,13 @@ fun AppNavigation(
                 },
                 onGameSelected = { selectedGameId ->
                     navController.navigate(
-                        Screen.Review.createRoute(selectedGameId)
+                        Screen.Review.createRoute(
+                            selectedGameId
+                        )
                     ) {
-                        popUpTo(Screen.SelectGame.route) { inclusive = true }
+                        popUpTo(Screen.SelectGame.route) {
+                            inclusive = true
+                        }
                     }
                 }
             )
@@ -483,11 +546,26 @@ fun AppNavigation(
     }
 }
 
-private fun navigateToUser(navController: NavHostController, userId: String) {
-    val currentUserId = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
-    if (userId.isNotBlank() && userId == currentUserId) {
-        navController.navigate(Screen.SelfProfile.route)
+private fun navigateToUser(
+    navController: NavHostController,
+    userId: String
+) {
+    val currentUserId =
+        com.google.firebase.auth.FirebaseAuth
+            .getInstance()
+            .currentUser
+            ?.uid
+
+    if (
+        userId.isNotBlank() &&
+        userId == currentUserId
+    ) {
+        navController.navigate(
+            Screen.SelfProfile.route
+        )
     } else {
-        navController.navigate(Screen.UserProfile.createRoute(userId))
+        navController.navigate(
+            Screen.UserProfile.createRoute(userId)
+        )
     }
 }

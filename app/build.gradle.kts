@@ -53,7 +53,10 @@ android {
 
 dependencies {
 
-    // Compose
+    // ==========================================
+    // COMPOSE
+    // ==========================================
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
@@ -68,10 +71,16 @@ dependencies {
         "androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7"
     )
 
-    // Navegacion
+    // ==========================================
+    // NAVEGACION
+    // ==========================================
+
     implementation(libs.androidx.navigation.compose)
 
-    // Firebase & Coroutines
+    // ==========================================
+    // FIREBASE & COROUTINES
+    // ==========================================
+
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
 
@@ -88,25 +97,52 @@ dependencies {
 
     implementation(libs.kotlinx.coroutines.play.services)
 
-    // Hilt
+    // ==========================================
+    // HILT
+    // ==========================================
+
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
-    // Retrofit
+    // ==========================================
+    // RETROFIT
+    // ==========================================
+
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
 
-    // Coil
+    // ==========================================
+    // COIL
+    // ==========================================
+
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("com.github.javafaker:javafaker:1.0.2")
 
-    // Iconos
+    // ==========================================
+    // ICONOS
+    // ==========================================
+
     implementation("androidx.compose.material:material-icons-extended")
     implementation(libs.androidx.compose.material.icons.core)
 
-    // Tests
+    // ==========================================
+    // MAPBOX - GAMERCORNER RADAR
+    // ==========================================
+
+    implementation(
+        "com.mapbox.maps:android-ndk27:11.34.2"
+    )
+
+    implementation(
+        "com.mapbox.extension:maps-compose-ndk27:11.34.2"
+    )
+
+    // ==========================================
+    // TESTS
+    // ==========================================
+
     testImplementation(libs.junit)
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
     testImplementation("io.mockk:mockk:1.13.14")
@@ -128,10 +164,13 @@ dependencies {
     androidTestImplementation(
         libs.androidx.junit
     )
+
     androidTestImplementation("com.google.truth:truth:1.4.5")
     androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
     androidTestImplementation("com.google.dagger:hilt-android-testing:2.60.1")
+
     kspAndroidTest(libs.hilt.compiler)
+
     androidTestImplementation("io.mockk:mockk-android:1.13.14")
     androidTestImplementation("androidx.test:core:1.7.0")
 

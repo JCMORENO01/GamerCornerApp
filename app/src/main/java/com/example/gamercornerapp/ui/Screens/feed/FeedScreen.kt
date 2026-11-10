@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -27,6 +26,9 @@ import com.example.gamercornerapp.data.FeedPost
 import com.example.gamercornerapp.ui.Screens.feed.components.FeedPostCard
 import com.example.gamercornerapp.ui.Screens.feed.components.FeedTabs
 import com.example.gamercornerapp.ui.Screens.feed.components.FeedTopBar
+import com.example.gamercornerapp.ui.Screens.notes.NotesUiState
+import com.example.gamercornerapp.ui.Screens.notes.NotesViewModel
+import com.example.gamercornerapp.ui.Screens.notes.components.NotesSection
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 @Composable
@@ -34,10 +36,15 @@ fun FeedScreen(
     onGameClick: (String) -> Unit,
     onReviewClick: (String) -> Unit = {},
     onUserClick: (String) -> Unit = {},
+    onRadarClick: () -> Unit = {},
     modifier: Modifier = Modifier,
-    viewModel: FeedViewModel = hiltViewModel()
+    viewModel: FeedViewModel = hiltViewModel(),
+    notesViewModel: NotesViewModel = hiltViewModel()
 ) {
+
     val uiState by viewModel.uiState.collectAsState()
+
+    val notesUiState by notesViewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.loadFeed()
@@ -48,12 +55,27 @@ fun FeedScreen(
         isLoading = uiState.isLoading,
         errorMessage = uiState.errorMessage,
         selectedTabIndex = uiState.selectedTabIndex,
+
         onTabSelected = viewModel::onTabSelected,
+
         onGameClick = onGameClick,
         onReviewClick = onReviewClick,
         onUserClick = onUserClick,
+        onRadarClick = onRadarClick,
+
         onLikeClick = viewModel::toggleReviewLike,
         onBookmarkClick = viewModel::toggleSaveReview,
+
+        notesUiState = notesUiState,
+
+        onCreateNote = notesViewModel::openEditor,
+        onSelectNote = notesViewModel::selectNote,
+        onDismissNote = notesViewModel::clearSelection,
+        onCloseNoteEditor = notesViewModel::closeEditor,
+        onSaveNote = notesViewModel::saveNote,
+        onDeleteNote = notesViewModel::deleteNote,
+        onDismissNoteError = notesViewModel::dismissError,
+
         modifier = modifier
     )
 }
@@ -68,33 +90,89 @@ fun FeedScreenContent(
     onGameClick: (String) -> Unit,
     onReviewClick: (String) -> Unit = {},
     onUserClick: (String) -> Unit = {},
+    onRadarClick: () -> Unit = {},
     onLikeClick: (String) -> Unit = {},
     onBookmarkClick: (String) -> Unit = {},
+
+    notesUiState: NotesUiState = NotesUiState(),
+    onCreateNote: () -> Unit = {},
+    onSelectNote: (String) -> Unit = {},
+    onDismissNote: () -> Unit = {},
+    onCloseNoteEditor: () -> Unit = {},
+    onSaveNote: (String) -> Unit = {},
+    onDeleteNote: () -> Unit = {},
+    onDismissNoteError: () -> Unit = {},
+
     modifier: Modifier = Modifier
 ) {
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        FeedTopBar()
+
+        // =====================================
+        // ENCABEZADO ORIGINAL + RADAR
+        // =====================================
+
+        FeedTopBar(
+            onRadarClick = onRadarClick
+        )
+
+        // =====================================
+        // NOTAS GAMERCORNER
+        // =====================================
+
+        NotesSection(
+            uiState = notesUiState,
+
+            onCreateClick = onCreateNote,
+            onNoteClick = onSelectNote,
+            onDismissNote = onDismissNote,
+            onCloseEditor = onCloseNoteEditor,
+            onSaveNote = onSaveNote,
+            onDeleteNote = onDeleteNote,
+            onDismissError = onDismissNoteError,
+
+            modifier = Modifier.padding(
+                vertical = 12.dp
+            )
+        )
+
+        // =====================================
+        // PESTAÑAS DEL FEED
+        // =====================================
 
         FeedTabs(
             selectedTabIndex = selectedTabIndex,
             onTabSelected = onTabSelected
         )
 
+        // =====================================
+        // ESTADO DE CARGA
+        // =====================================
+
         if (isLoading) {
+
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
+
                 CircularProgressIndicator(
                     color = MaterialTheme.colorScheme.primary
                 )
             }
+
         } else {
+
+            // =================================
+            // ERROR DEL FEED
+            // =================================
+
             if (errorMessage != null) {
+
                 Text(
                     text = errorMessage,
                     color = MaterialTheme.colorScheme.error,
@@ -105,11 +183,17 @@ fun FeedScreenContent(
                 )
             }
 
+            // =================================
+            // FEED VACÍO
+            // =================================
+
             if (posts.isEmpty()) {
+
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
+
                     Text(
                         text = if (selectedTabIndex == 1) {
                             "Todavía no hay publicaciones de usuarios que sigues"
@@ -119,7 +203,13 @@ fun FeedScreenContent(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
+
             } else {
+
+                // =============================
+                // PUBLICACIONES EXISTENTES
+                // =============================
+
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(
@@ -128,24 +218,31 @@ fun FeedScreenContent(
                     ),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
+
                     items(
                         items = posts,
                         key = { it.id }
                     ) { post ->
+
                         FeedPostCard(
                             post = post,
+
                             onAuthorClick = {
                                 onUserClick(post.author.id)
                             },
+
                             onCardClick = {
                                 onReviewClick(post.id)
                             },
+
                             onCommentClick = {
                                 onReviewClick(post.id)
                             },
+
                             onLikeClick = {
                                 onLikeClick(post.id)
                             },
+
                             onBookmarkClick = {
                                 onBookmarkClick(post.id)
                             }
@@ -160,14 +257,18 @@ fun FeedScreenContent(
 @Preview(showBackground = true)
 @Composable
 fun FeedScreenPreview() {
+
     GamerCornerAppTheme(darkTheme = true) {
+
         FeedScreenContent(
             posts = emptyList(),
             isLoading = false,
             errorMessage = null,
             selectedTabIndex = 0,
             onTabSelected = {},
-            onGameClick = {}
+            onGameClick = {},
+            onRadarClick = {},
+            notesUiState = NotesUiState()
         )
     }
 }
