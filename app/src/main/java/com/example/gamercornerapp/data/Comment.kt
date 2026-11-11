@@ -7,5 +7,6 @@ data class Comment(
     val userId: String = "",
     val userName: String = "",
     val text: String = "",
-    val timestamp: Timestamp = Timestamp.now()
+    val timestamp: Timestamp = Timestamp.now(),
+    val profilePictureUrl: String? = null
 )

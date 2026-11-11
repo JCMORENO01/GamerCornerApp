@@ -2,6 +2,7 @@
 package com.example.gamercornerapp.ui.Screens.reviewMap
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,11 +11,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -128,20 +132,58 @@ fun ReviewMapScreenContent(
             )
         }
 
-        uiState.selectedReview?.let { review ->
+        val selectedReviews = uiState.selectedReviewsAtSameLocation
+        if (selectedReviews.isNotEmpty()) {
 
-            ReviewPreviewCard(
-                review = review,
-                onDismiss = onDismissReview,
-                onViewDetail = {
-                    onReviewClick(review.id)
-                },
+            val pagerState = rememberPagerState(
+                pageCount = { selectedReviews.size }
+            )
+
+            // Resetea el pager a la primera página cuando cambian las reseñas seleccionadas (por si toca otro marcador con un grupo diferente)
+            LaunchedEffect(selectedReviews) {
+                pagerState.scrollToPage(0)
+            }
+
+            Column(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .navigationBarsPadding()
-                    .padding(16.dp)
+                    .padding(bottom = 16.dp)
                     .fillMaxWidth()
-            )
+            ) {
+                if (selectedReviews.size > 1) {
+                    Text(
+                        text = "${pagerState.currentPage + 1} de ${selectedReviews.size} reseñas aquí",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(bottom = 8.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
+                                shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp)
+                            )
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
+
+                HorizontalPager(
+                    state = pagerState,
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    pageSpacing = 8.dp
+                ) { page ->
+                    val review = selectedReviews[page]
+
+                    ReviewPreviewCard(
+                        review = review,
+                        onDismiss = onDismissReview,
+                        onViewDetail = {
+                            onReviewClick(review.id)
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
         }
     }
 }

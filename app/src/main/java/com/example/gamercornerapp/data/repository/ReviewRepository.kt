@@ -358,11 +358,16 @@ class ReviewRepository @Inject constructor(
                     ?.substringBefore("@")
                 ?: "Usuario Gamer"
 
+            val profilePicUrl = user?.profilePictureUrl
+                ?.takeIf { it.isNotBlank() }
+                ?: firebaseUser?.photoUrl?.toString()
+
             remoteDataSource.addCommentToReview(
                 reviewId,
                 text,
                 userId,
-                userName
+                userName,
+                profilePicUrl
             )
 
             Result.success(Unit)

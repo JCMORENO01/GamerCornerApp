@@ -346,7 +346,8 @@ class ReviewFirestoreDataSourceImpl @Inject constructor(
         reviewId: String,
         text: String,
         userId: String,
-        userName: String
+        userName: String,
+        profilePictureUrl: String?
     ) {
         val reviewRef = db.collection("reviews").document(reviewId)
         val commentRef = reviewRef.collection("comments").document()
@@ -356,7 +357,8 @@ class ReviewFirestoreDataSourceImpl @Inject constructor(
             userId = userId,
             userName = userName,
             text = text,
-            timestamp = com.google.firebase.Timestamp.now()
+            timestamp = com.google.firebase.Timestamp.now(),
+            profilePictureUrl = profilePictureUrl
         )
 
         // 1. Guardar el nuevo comentario en la subcolección de comentarios

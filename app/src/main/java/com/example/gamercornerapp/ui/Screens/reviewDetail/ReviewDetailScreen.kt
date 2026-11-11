@@ -5,8 +5,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -15,11 +17,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.example.gamercornerapp.R
 import com.example.gamercornerapp.data.Comment
 import com.example.gamercornerapp.data.FeedPost
@@ -29,6 +35,7 @@ import com.example.gamercornerapp.data.UserStats
 import com.example.gamercornerapp.ui.Screens.feed.components.FeedPostCard
 import com.example.gamercornerapp.ui.componentes.AppButton
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
+import java.util.concurrent.TimeUnit
 
 @Composable
 fun ReviewDetailScreen(
@@ -166,28 +173,86 @@ fun ReviewDetailScreen(
 
 @Composable
 fun CommentItemCard(comment: Comment) {
+    val elapsed = (System.currentTimeMillis() - comment.timestamp.toDate().time).coerceAtLeast(0L)
+    val minutes = TimeUnit.MILLISECONDS.toMinutes(elapsed)
+    val timeString = when {
+        minutes < 1L -> "Hace un momento"
+        minutes < 60L -> "Hace $minutes min"
+        else -> {
+            val hours = TimeUnit.MILLISECONDS.toHours(elapsed)
+            if (hours < 24L) "Hace $hours h"
+            else "Hace ${hours / 24} d"
+        }
+    }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
         ),
+        shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(12.dp)
+        Row(
+            modifier = Modifier.padding(12.dp),
+            verticalAlignment = Alignment.Top
         ) {
-            Text(
-                text = comment.userName.ifBlank { "Usuario" },
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = comment.text,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            if (comment.profilePictureUrl != null && comment.profilePictureUrl.isNotBlank()) {
+                AsyncImage(
+                    model = comment.profilePictureUrl,
+                    contentDescription = "Avatar de ${comment.userName}",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surface),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = comment.userName.ifBlank { "Usuario" },
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = timeString,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = comment.text,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
         }
     }
 }

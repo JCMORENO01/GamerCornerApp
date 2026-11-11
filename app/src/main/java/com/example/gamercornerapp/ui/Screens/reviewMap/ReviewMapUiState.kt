@@ -12,4 +12,13 @@ data class ReviewMapUiState(
         get() = reviews.find {
             it.id == selectedReviewId
         }
+
+    val selectedReviewsAtSameLocation: List<MapReview>
+        get() {
+            val selected = selectedReview ?: return emptyList()
+            return reviews.filter { 
+                it.latitude == selected.latitude && 
+                it.longitude == selected.longitude 
+            }
+        }
 }

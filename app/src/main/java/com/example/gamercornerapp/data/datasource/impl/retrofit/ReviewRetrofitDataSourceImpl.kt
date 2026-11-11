@@ -90,7 +90,8 @@ class ReviewRetrofitDataSourceImpl @Inject constructor(
         reviewId: String,
         text: String,
         userId: String,
-        userName: String
+        userName: String,
+        profilePictureUrl: String?
     ) {
 
     }
