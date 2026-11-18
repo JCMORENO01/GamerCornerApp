@@ -252,8 +252,17 @@ class AgentViewModel @Inject constructor(
                         override fun onEndOfSpeech() {}
 
                         override fun onError(error: Int) {
+                            val errorMsg = when(error) {
+                                SpeechRecognizer.ERROR_NO_MATCH -> "No se entendió el audio o no se detectó voz."
+                                SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "Se agotó el tiempo sin detectar voz."
+                                SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "El micrófono está ocupado."
+                                else -> "Error de voz ($error). Intenta de nuevo o escribe por texto."
+                            }
                             _uiState.update {
-                                it.copy(isRecording = false)
+                                it.copy(
+                                    isRecording = false,
+                                    errorMessage = errorMsg
+                                )
                             }
                         }
 
@@ -269,14 +278,13 @@ class AgentViewModel @Inject constructor(
 
                                 _uiState.update {
                                     it.copy(
-                                        inputText = if (it.inputText.isBlank()) {
-                                            spokenText
-                                        } else {
-                                            "${it.inputText} $spokenText"
-                                        },
+                                        inputText = spokenText,
                                         isRecording = false
                                     )
                                 }
+                                sendMessage()
+                            } else {
+                                _uiState.update { it.copy(isRecording = false) }
                             }
                         }
 

@@ -1,10 +1,10 @@
 package com.example.gamercornerapp.ui.Screens.agent
 
 import android.Manifest
+import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,11 +19,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.gamercornerapp.ui.theme.BrandPrimary
 
@@ -35,6 +36,7 @@ fun AgentScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
+    val context = LocalContext.current
 
     // Para scroll automático cuando hay un nuevo mensaje
     LaunchedEffect(uiState.messages.size) {
@@ -149,7 +151,7 @@ fun AgentScreen(
                         onValueChange = viewModel::onInputTextChanged,
                         placeholder = {
                             Text(
-                                "Escribe o mantén presionado el mic...",
+                                "Escribe o toca el micrófono para hablar...",
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                             )
                         },
@@ -186,20 +188,27 @@ fun AgentScreen(
                         }
                     } else {
                         val micColor = if (uiState.isRecording) MaterialTheme.colorScheme.error else BrandPrimary
-                        Box(
-                            modifier = Modifier
-                                .size(48.dp)
-                                .background(micColor, shape = RoundedCornerShape(50))
-                                .pointerInput(Unit) {
-                                    detectTapGestures(
-                                        onPress = {
-                                            permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
-                                            tryAwaitRelease()
-                                            viewModel.stopListening()
-                                        }
-                                    )
-                                },
-                            contentAlignment = Alignment.Center
+                        IconButton(
+                            onClick = {
+                                if (uiState.isRecording) {
+                                    viewModel.stopListening()
+                                } else {
+                                    val hasPermission = ContextCompat.checkSelfPermission(
+                                        context,
+                                        Manifest.permission.RECORD_AUDIO
+                                    ) == PackageManager.PERMISSION_GRANTED
+
+                                    if (hasPermission) {
+                                        viewModel.startListening()
+                                    } else {
+                                        permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+                                    }
+                                }
+                            },
+                            colors = IconButtonDefaults.iconButtonColors(
+                                containerColor = micColor
+                            ),
+                            modifier = Modifier.size(48.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Mic,

@@ -1,5 +1,6 @@
 package com.example.gamercornerapp.ui.Screens.chatDetail
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -75,14 +76,24 @@ class ChatDetailViewModel @Inject constructor(
         val text = _uiState.value.inputText
         if (text.isBlank()) return
         
-        // Limpiamos el input inmediatamente para mejor UX
         _uiState.update { it.copy(inputText = "") }
 
         viewModelScope.launch {
             val result = chatRepository.sendMessage(receiverId, text)
             result.onFailure { e ->
-                // Opcional: restaurar el texto si falla, o mostrar toast
                 _uiState.update { it.copy(errorMessage = "Error al enviar: ${e.message}") }
+            }
+        }
+    }
+
+    fun sendImageMessage(imageUri: Uri) {
+        val currentText = _uiState.value.inputText
+        _uiState.update { it.copy(inputText = "") }
+
+        viewModelScope.launch {
+            val result = chatRepository.sendImageMessage(receiverId, currentText, imageUri)
+            result.onFailure { e ->
+                _uiState.update { it.copy(errorMessage = "Error enviando imagen: ${e.message}") }
             }
         }
     }

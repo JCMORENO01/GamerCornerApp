@@ -6,6 +6,10 @@
     <uses-permission
         android:name="android.permission.INTERNET" />
 
+    <!-- Reconocimiento de Voz para Asistente IA -->
+    <uses-permission
+        android:name="android.permission.RECORD_AUDIO" />
+
     <!-- Notificaciones -->
     <uses-permission
         android:name="android.permission.POST_NOTIFICATIONS" />

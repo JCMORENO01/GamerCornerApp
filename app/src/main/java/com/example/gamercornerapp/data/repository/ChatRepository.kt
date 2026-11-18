@@ -1,5 +1,6 @@
 package com.example.gamercornerapp.data.repository
 
+import android.net.Uri
 import com.example.gamercornerapp.data.Chat
 import com.example.gamercornerapp.data.ChatMessage
 import com.example.gamercornerapp.data.datasource.ChatRemoteDataSource
@@ -74,6 +75,29 @@ class ChatRepository @Inject constructor(
                 text = text
             )
             
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun sendImageMessage(receiverId: String, text: String, imageUri: Uri): Result<Unit> {
+        return try {
+            val currentUserId = authRepository.currentUser?.uid
+                ?: throw Exception("Usuario no autenticado")
+
+            val chatId = getChatId(currentUserId, receiverId)
+
+            val imageUrl = chatDataSource.uploadChatImage(chatId, imageUri)
+
+            chatDataSource.sendMessage(
+                chatId = chatId,
+                senderId = currentUserId,
+                receiverId = receiverId,
+                text = text,
+                imageUrl = imageUrl
+            )
+
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)

@@ -1,18 +1,22 @@
 package com.example.gamercornerapp.data.datasource.impl.firestore
 
+import android.net.Uri
 import com.example.gamercornerapp.data.Chat
 import com.example.gamercornerapp.data.ChatMessage
 import com.example.gamercornerapp.data.datasource.ChatRemoteDataSource
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import java.util.UUID
 import javax.inject.Inject
 
 class ChatFirestoreDataSourceImpl @Inject constructor(
-    private val db: FirebaseFirestore
+    private val db: FirebaseFirestore,
+    private val storage: FirebaseStorage
 ) : ChatRemoteDataSource {
 
     override fun listenUserChats(userId: String): Flow<List<Chat>> = callbackFlow {
@@ -57,28 +61,33 @@ class ChatFirestoreDataSourceImpl @Inject constructor(
         awaitClose { listener.remove() }
     }
 
-    override suspend fun sendMessage(chatId: String, senderId: String, receiverId: String, text: String) {
+    override suspend fun sendMessage(
+        chatId: String,
+        senderId: String,
+        receiverId: String,
+        text: String,
+        imageUrl: String?
+    ) {
         val chatRef = db.collection("chats").document(chatId)
         val messagesRef = chatRef.collection("messages").document()
 
         val timestamp = com.google.firebase.Timestamp.now()
+        val messageText = text.ifBlank { if (imageUrl != null) "📷 Foto" else "" }
         val message = ChatMessage(
             id = messagesRef.id,
             senderId = senderId,
             text = text,
+            imageUrl = imageUrl,
             timestamp = timestamp
         )
 
         db.runTransaction { transaction ->
             val chatDoc = transaction.get(chatRef)
             
-            // Si el chat no existe (primer mensaje), lo creamos con metadata básica.
-            // Nota: Nombres/Fotos se resuelven a nivel Repository/UI para mantenerse actualizados,
-            // aquí solo guardamos los IDs en participants para las queries.
             if (!chatDoc.exists()) {
                 val newChat = hashMapOf(
                     "participants" to listOf(senderId, receiverId),
-                    "lastMessage" to text,
+                    "lastMessage" to messageText,
                     "lastMessageTime" to timestamp
                 )
                 transaction.set(chatRef, newChat)
@@ -86,7 +95,7 @@ class ChatFirestoreDataSourceImpl @Inject constructor(
                 transaction.update(
                     chatRef,
                     mapOf(
-                        "lastMessage" to text,
+                        "lastMessage" to messageText,
                         "lastMessageTime" to timestamp
                     )
                 )
@@ -95,5 +104,12 @@ class ChatFirestoreDataSourceImpl @Inject constructor(
             transaction.set(messagesRef, message)
             null
         }.await()
+    }
+
+    override suspend fun uploadChatImage(chatId: String, imageUri: Uri): String {
+        val fileName = "${System.currentTimeMillis()}_${UUID.randomUUID()}.jpg"
+        val storageRef = storage.reference.child("chat_images/$chatId/$fileName")
+        storageRef.putFile(imageUri).await()
+        return storageRef.downloadUrl.await().toString()
     }
 }

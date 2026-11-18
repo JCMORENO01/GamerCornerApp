@@ -1,5 +1,6 @@
 package com.example.gamercornerapp.data.datasource
 
+import android.net.Uri
 import com.example.gamercornerapp.data.Chat
 import com.example.gamercornerapp.data.ChatMessage
 import kotlinx.coroutines.flow.Flow
@@ -11,6 +12,8 @@ interface ChatRemoteDataSource {
         chatId: String,
         senderId: String,
         receiverId: String,
-        text: String
+        text: String,
+        imageUrl: String? = null
     )
+    suspend fun uploadChatImage(chatId: String, imageUri: Uri): String
 }

@@ -1,5 +1,8 @@
 package com.example.gamercornerapp.ui.Screens.chatDetail
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -35,6 +39,12 @@ fun ChatDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
+
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let { viewModel.sendImageMessage(it) }
+    }
 
     // Scroll al último mensaje cuando la lista cambia
     LaunchedEffect(uiState.messages.size) {
@@ -142,6 +152,22 @@ fun ChatDetailScreen(
                         .navigationBarsPadding(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    IconButton(
+                        onClick = { imagePickerLauncher.launch("image/*") },
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
+                        ),
+                        modifier = Modifier.size(44.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AddPhotoAlternate,
+                            contentDescription = "Enviar imagen",
+                            tint = BrandPrimary
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
                     TextField(
                         value = uiState.inputText,
                         onValueChange = viewModel::onInputTextChanged,
@@ -175,7 +201,7 @@ fun ChatDetailScreen(
                             containerColor = BrandPrimary,
                             disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
                         ),
-                        modifier = Modifier.size(48.dp)
+                        modifier = Modifier.size(44.dp)
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Send,
@@ -213,12 +239,30 @@ fun MessageBubble(message: ChatMessage, isFromMe: Boolean) {
                 shape = shape,
                 modifier = Modifier.widthIn(max = 280.dp)
             ) {
-                Text(
-                    text = message.text,
-                    color = textColor,
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
-                )
+                Column(modifier = Modifier.padding(8.dp)) {
+                    if (!message.imageUrl.isNullOrBlank()) {
+                        AsyncImage(
+                            model = message.imageUrl,
+                            contentDescription = "Imagen enviada",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(max = 240.dp)
+                                .clip(RoundedCornerShape(12.dp)),
+                            contentScale = ContentScale.Crop
+                        )
+                        if (message.text.isNotBlank()) {
+                            Spacer(modifier = Modifier.height(6.dp))
+                        }
+                    }
+                    if (message.text.isNotBlank()) {
+                        Text(
+                            text = message.text,
+                            color = textColor,
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
+                }
             }
             Spacer(modifier = Modifier.height(2.dp))
             Text(
