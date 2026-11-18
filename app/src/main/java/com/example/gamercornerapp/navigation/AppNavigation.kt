@@ -484,6 +484,11 @@ fun AppNavigation(
                         navController,
                         userId
                     )
+                },
+                onReviewClick = { reviewId ->
+                    navController.navigate(
+                        Screen.ReviewDetail.createRoute(reviewId)
+                    )
                 }
             )
         }

@@ -1,5 +1,7 @@
 package com.example.gamercornerapp.ui.Screens.videogame.components
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,13 +11,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -24,19 +27,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.gamercornerapp.R
 import com.example.gamercornerapp.data.ReviewItem
-import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 @Composable
 fun VideogameCommentsSection(
@@ -44,6 +42,7 @@ fun VideogameCommentsSection(
     onUserClick: (String) -> Unit,
     onLikeClick: (String) -> Unit,
     onBookmarkClick: (String) -> Unit,
+    onReviewClick: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -72,7 +71,8 @@ fun VideogameCommentsSection(
                         review = review,
                         onUserClick = onUserClick,
                         onLikeClick = onLikeClick,
-                        onBookmarkClick = onBookmarkClick
+                        onBookmarkClick = onBookmarkClick,
+                        onReviewClick = onReviewClick
                     )
                 }
             }
@@ -86,10 +86,13 @@ private fun GameCommentCardItem(
     onUserClick: (String) -> Unit,
     onLikeClick: (String) -> Unit,
     onBookmarkClick: (String) -> Unit,
+    onReviewClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onReviewClick(review.id) },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
@@ -213,27 +216,5 @@ private fun GameCommentCardItem(
                 )
             }
         }
-    }
-}
-
-@Preview(showBackground = true, name = "Videogame Comments Section Dark")
-@Composable
-fun VideogameCommentsSectionPreview() {
-    GamerCornerAppTheme(darkTheme = true) {
-        VideogameCommentsSection(
-            reviews = listOf(
-                ReviewItem(
-                    id = "1",
-                    gameTitle = "Elden Ring",
-                    rating = 5,
-                    relativeDate = "Hace 2 horas",
-                    gameImageId = 0,
-                    description = "¡Excelente juego, totalmente recomendado!"
-                )
-            ),
-            onUserClick = {},
-            onLikeClick = {},
-            onBookmarkClick = {}
-        )
     }
 }
