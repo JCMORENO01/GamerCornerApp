@@ -3,12 +3,22 @@ package com.example.gamercornerapp.ui.Screens.explore
 import com.example.gamercornerapp.data.Game
 import com.example.gamercornerapp.data.GameCategory
 
+enum class SortOption {
+    DEFAULT,
+    HIGHEST_RATING,
+    NEWEST,
+    ALPHABETICAL
+}
+
 data class ExploreState(
     val popularGames: List<Game> = emptyList(),
     val categories: List<GameCategory> = emptyList(),
     val resultGames: List<Game> = emptyList(),
+    val allGames: List<Game> = emptyList(),
     val searchQuery: String = "",
     val selectedCategory: String = "",
     val favoriteGameTitles: Set<String> = emptySet(),
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val showFilterDialog: Boolean = false,
+    val currentSortOption: SortOption = SortOption.DEFAULT
 )

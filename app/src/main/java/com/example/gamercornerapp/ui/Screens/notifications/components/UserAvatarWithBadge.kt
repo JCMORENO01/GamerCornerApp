@@ -27,7 +27,8 @@ fun UserAvatarWithBadge(
     avatarRes: Int,
     type: NotificationType,
     modifier: Modifier = Modifier,
-    avatarUrl: String? = null
+    avatarUrl: String? = null,
+    avatarResource: Int? = null
 ) {
 
     Box(
@@ -35,8 +36,12 @@ fun UserAvatarWithBadge(
         contentAlignment = Alignment.BottomEnd
     ) {
 
+        val model: Any = avatarUrl?.takeIf { it.isNotBlank() }
+            ?: avatarResource?.takeIf { it != 0 }
+            ?: avatarRes
+
         ProfileAsyncImage(
-            profileImage = avatarUrl?.takeIf { it.startsWith("http") } ?: avatarRes,
+            profileImage = model,
             size = 46.dp
         )
 

@@ -37,27 +37,26 @@ fun FeedTopBar(
     onInboxClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-
-    Row(
+    Box(
         modifier = modifier
             .fillMaxWidth()
             .height(90.dp)
             .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        contentAlignment = Alignment.Center
     ) {
-
+        // Left: Menu icon
         Icon(
             imageVector = Icons.Default.Menu,
             contentDescription = stringResource(R.string.cd_menu),
             tint = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
                 .size(26.dp)
+                .align(Alignment.CenterStart)
                 .clickable { onMenuClick() }
         )
 
+        // Center: Logo
         val isDark = LocalIsDarkTheme.current
-
         val logoRes = if (isDark) {
             R.drawable.logo_gamer1
         } else {
@@ -66,18 +65,18 @@ fun FeedTopBar(
 
         Image(
             painter = painterResource(id = logoRes),
-            contentDescription = stringResource(
-                R.string.logo_content_description
-            ),
-            modifier = Modifier.size(120.dp)
+            contentDescription = stringResource(R.string.logo_content_description),
+            modifier = Modifier
+                .size(60.dp)
+                .align(Alignment.Center)
         )
 
+        // Right: Action icons
         Row(
             horizontalArrangement = Arrangement.spacedBy(18.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.align(Alignment.CenterEnd)
         ) {
-
-            // ACCESO A BANDEJA DE ENTRADA (CHATS)
             Icon(
                 imageVector = Icons.Default.Email,
                 contentDescription = "Bandeja de Entrada",
@@ -87,7 +86,6 @@ fun FeedTopBar(
                     .clickable { onInboxClick() }
             )
 
-            // ACCESO A GAMERCORNER RADAR
             Icon(
                 imageVector = Icons.Default.Place,
                 contentDescription = "Abrir GamerCorner Radar",
@@ -97,12 +95,9 @@ fun FeedTopBar(
                     .clickable { onRadarClick() }
             )
 
-            // ENGRANAJE ORIGINAL
             Icon(
                 imageVector = Icons.Default.Settings,
-                contentDescription = stringResource(
-                    R.string.cd_settings
-                ),
+                contentDescription = stringResource(R.string.cd_settings),
                 tint = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
                     .size(24.dp)

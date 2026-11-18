@@ -7,9 +7,11 @@ data class NotificationItem(
     val username: String,
     val userAvatarImage: Int = com.example.gamercornerapp.R.drawable.messi1,
     val userAvatarUrl: String? = null,
+    val userAvatarResource: Int? = null,
     val type: NotificationType,
     val actionText: String,
     val targetTitle: String? = null,
     val commentQuote: String? = null,
-    val relativeTime: String
+    val relativeTime: String,
+    val timestampMs: Long = 0L
 )

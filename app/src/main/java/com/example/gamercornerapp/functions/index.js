@@ -1,4 +1,3 @@
-
 const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 const admin = require("firebase-admin");
 
@@ -112,6 +111,66 @@ exports.sendReviewLikeNotification = onDocumentCreated(
             console.log(
                 `El usuario ${authorId} no tiene token FCM`
             );
+        }
+    }
+);
+
+// Notificar cuando alguien comienza a seguir a un usuario
+exports.sendFollowNotification = onDocumentCreated(
+    "users/{userId}/followers/{followerId}",
+    async (event) => {
+        const userId = event.params.userId;
+        const followerId = event.params.followerId;
+
+        if (userId === followerId) {
+            return;
+        }
+
+        const targetUserDoc = await db.collection("users").doc(userId).get();
+        if (!targetUserDoc.exists) {
+            return;
+        }
+        const targetUserData = targetUserDoc.data();
+        const userToken = targetUserData.fcm_token;
+
+        const followerDoc = await db.collection("users").doc(followerId).get();
+        if (!followerDoc.exists) {
+            return;
+        }
+        const followerData = followerDoc.data();
+
+        const username = followerData.username || "Un usuario";
+        const userAvatarUrl = followerData.profilePictureUrl || null;
+
+        await db
+            .collection("users")
+            .doc(userId)
+            .collection("notifications")
+            .doc(`follow_${followerId}`)
+            .set({
+                type: "FOLLOW",
+                username: username,
+                userAvatarUrl: userAvatarUrl,
+                actionText: "comenzó a seguirte",
+                targetTitle: "",
+                fromUserId: followerId,
+                createdAt: admin.firestore.FieldValue.serverTimestamp()
+            });
+
+        console.log(`Notificación de follow guardada para ${userId}`);
+
+        if (userToken) {
+            try {
+                await admin.messaging().send({
+                    token: userToken,
+                    notification: {
+                        title: "¡Nuevo seguidor en GamerCorner!",
+                        body: `${username} comenzó a seguirte`
+                    }
+                });
+            } catch (error) {
+                console.error("Error al enviar notificación push de follow:", error);
+            }
         }
     }
 );

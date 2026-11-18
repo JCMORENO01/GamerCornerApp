@@ -23,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.gamercornerapp.data.Game
 import com.example.gamercornerapp.data.GameCategory
 import com.example.gamercornerapp.ui.Screens.explore.components.CategoryChipsSection
+import com.example.gamercornerapp.ui.Screens.explore.components.ExploreFilterDialog
 import com.example.gamercornerapp.ui.Screens.explore.components.ExploreSearchBar
 import com.example.gamercornerapp.ui.Screens.explore.components.ExploreTopBar
 import com.example.gamercornerapp.ui.Screens.explore.components.PopularGamesSection
@@ -54,7 +55,7 @@ fun ExploreScreen(
         favoriteGameTitles = uiState.favoriteGameTitles,
         onFavoriteClick = viewModel::onFavoriteClick,
         isLoading = uiState.isLoading,
-        onFiltersClick = onFiltersClick,
+        onFiltersClick = { viewModel.onShowFilterDialog(true) },
         onSearchClick = onSearchClick,
         onSeeAllCategoriesClick = onSeeAllCategoriesClick,
         onAddFiltersClick = onAddFiltersClick,
@@ -62,6 +63,15 @@ fun ExploreScreen(
         onResultGameClick = onResultGameClick,
         modifier = modifier
     )
+
+    if (uiState.showFilterDialog) {
+        ExploreFilterDialog(
+            currentSort = uiState.currentSortOption,
+            onSortSelected = viewModel::onSortOptionSelected,
+            onReset = viewModel::onResetFilters,
+            onDismiss = { viewModel.onShowFilterDialog(false) }
+        )
+    }
 }
 
 @Composable
