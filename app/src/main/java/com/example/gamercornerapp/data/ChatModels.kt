@@ -18,5 +18,6 @@ data class Chat(
     val otherParticipantName: String = "",
     val otherParticipantImage: String? = null,
     val lastMessage: String = "",
-    val lastMessageTime: Timestamp = Timestamp.now()
+    val lastMessageTime: Timestamp = Timestamp.now(),
+    val lastMessageSenderId: String = ""
 )

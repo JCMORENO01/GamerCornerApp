@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,13 +26,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gamercornerapp.R
+import com.example.gamercornerapp.ui.Screens.notifications.NotificationFilter
 import com.example.gamercornerapp.ui.theme.GamerCornerAppTheme
 
 
 @Composable
 fun NotificationsHeader(
-    selectedFilter: String = stringResource(id = R.string.filter_all),
-    onFilterClick: () -> Unit = { },
+    selectedFilter: NotificationFilter = NotificationFilter.ALL,
+    isDropdownExpanded: Boolean = false,
+    onToggleDropdown: (Boolean) -> Unit = { },
+    onFilterSelected: (NotificationFilter) -> Unit = { },
     modifier: Modifier = Modifier
 ) {
 
@@ -54,32 +59,46 @@ fun NotificationsHeader(
         )
 
 
-        Row(
-            modifier = Modifier.clickable {
-                onFilterClick()
-            },
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Box {
+            Row(
+                modifier = Modifier.clickable {
+                    onToggleDropdown(true)
+                },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
-            Text(
-                text = selectedFilter,
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium
-            )
-
-
-            Spacer(
-                modifier = Modifier.width(4.dp)
-            )
+                Text(
+                    text = selectedFilter.displayName,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
+                )
 
 
-            Icon(
-                imageVector = Icons.Default.KeyboardArrowDown,
-                contentDescription = stringResource(id = R.string.cd_filter),
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(18.dp)
-            )
+                Spacer(
+                    modifier = Modifier.width(4.dp)
+                )
+
+
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowDown,
+                    contentDescription = stringResource(id = R.string.cd_filter),
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+
+            DropdownMenu(
+                expanded = isDropdownExpanded,
+                onDismissRequest = { onToggleDropdown(false) }
+            ) {
+                NotificationFilter.entries.forEach { filter ->
+                    DropdownMenuItem(
+                        text = { Text(filter.displayName) },
+                        onClick = { onFilterSelected(filter) }
+                    )
+                }
+            }
         }
     }
 }

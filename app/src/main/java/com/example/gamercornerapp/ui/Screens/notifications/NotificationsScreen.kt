@@ -1,4 +1,3 @@
-
 package com.example.gamercornerapp.ui.Screens.notifications
 
 import androidx.compose.foundation.background
@@ -37,6 +36,10 @@ fun NotificationsScreen(
 
     NotificationScreenContent(
         notifications = uiState.notifications,
+        selectedFilter = uiState.selectedFilter,
+        isDropdownExpanded = uiState.isDropdownExpanded,
+        onToggleDropdown = viewModel::onToggleDropdown,
+        onFilterSelected = viewModel::onFilterSelected,
         isLoading = uiState.isLoading,
         errorMessage = uiState.errorMessage,
         modifier = modifier
@@ -46,6 +49,10 @@ fun NotificationsScreen(
 @Composable
 fun NotificationScreenContent(
     notifications: List<NotificationItem>,
+    selectedFilter: NotificationFilter = NotificationFilter.ALL,
+    isDropdownExpanded: Boolean = false,
+    onToggleDropdown: (Boolean) -> Unit = {},
+    onFilterSelected: (NotificationFilter) -> Unit = {},
     modifier: Modifier = Modifier,
     onNotificationClick: (NotificationItem) -> Unit = {},
     isLoading: Boolean = false,
@@ -56,7 +63,12 @@ fun NotificationScreenContent(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        NotificationsHeader()
+        NotificationsHeader(
+            selectedFilter = selectedFilter,
+            isDropdownExpanded = isDropdownExpanded,
+            onToggleDropdown = onToggleDropdown,
+            onFilterSelected = onFilterSelected
+        )
 
         when {
             isLoading -> {
@@ -89,7 +101,7 @@ fun NotificationScreenContent(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Todavía no tienes notificaciones",
+                        text = "Todavía no tienes notificaciones con este filtro",
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }

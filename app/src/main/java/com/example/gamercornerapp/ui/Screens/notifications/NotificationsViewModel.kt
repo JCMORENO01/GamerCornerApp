@@ -1,10 +1,10 @@
-
 package com.example.gamercornerapp.ui.Screens.notifications
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gamercornerapp.data.repository.AuthRepository
 import com.example.gamercornerapp.data.repository.NotificationRepository
+import com.example.gamercornerapp.ui.Screens.notifications.enums.NotificationType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,6 +29,26 @@ class NotificationsViewModel @Inject constructor(
 
     init {
         loadNotifications()
+    }
+
+    fun onFilterSelected(filter: NotificationFilter) {
+        _uiState.update { state ->
+            val filtered = when (filter) {
+                NotificationFilter.ALL -> state.allNotifications
+                NotificationFilter.LIKES -> state.allNotifications.filter { it.type == NotificationType.LIKE }
+                NotificationFilter.FOLLOWERS -> state.allNotifications.filter { it.type == NotificationType.FOLLOW }
+                NotificationFilter.COMMENTS -> state.allNotifications.filter { it.type == NotificationType.COMMENT }
+            }
+            state.copy(
+                selectedFilter = filter,
+                notifications = filtered,
+                isDropdownExpanded = false
+            )
+        }
+    }
+
+    fun onToggleDropdown(expanded: Boolean) {
+        _uiState.update { it.copy(isDropdownExpanded = expanded) }
     }
 
     private fun loadNotifications() {
@@ -59,9 +79,17 @@ class NotificationsViewModel @Inject constructor(
                 notificationRepository
                     .listenNotifications(userId)
                     .collect { notifications ->
-                        _uiState.update {
-                            it.copy(
-                                notifications = notifications,
+                        _uiState.update { state ->
+                            val currentFilter = state.selectedFilter
+                            val filtered = when (currentFilter) {
+                                NotificationFilter.ALL -> notifications
+                                NotificationFilter.LIKES -> notifications.filter { it.type == NotificationType.LIKE }
+                                NotificationFilter.FOLLOWERS -> notifications.filter { it.type == NotificationType.FOLLOW }
+                                NotificationFilter.COMMENTS -> notifications.filter { it.type == NotificationType.COMMENT }
+                            }
+                            state.copy(
+                                allNotifications = notifications,
+                                notifications = filtered,
                                 isLoading = false,
                                 errorMessage = null
                             )
