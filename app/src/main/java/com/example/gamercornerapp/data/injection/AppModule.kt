@@ -9,6 +9,7 @@ import com.example.gamercornerapp.data.datasource.UserRemoteDataSource
 import com.example.gamercornerapp.data.datasource.NotificationRemoteDataSource
 import com.example.gamercornerapp.data.datasource.MapReviewRemoteDataSource
 import com.example.gamercornerapp.data.datasource.NoteRemoteDataSource
+import com.example.gamercornerapp.data.datasource.ChatRemoteDataSource
 
 import com.example.gamercornerapp.data.datasource.impl.firestore.GameFirestoreDataSourceImpl
 import com.example.gamercornerapp.data.datasource.impl.firestore.ReviewFirestoreDataSourceImpl
@@ -16,6 +17,7 @@ import com.example.gamercornerapp.data.datasource.impl.firestore.UserFirestoreDa
 import com.example.gamercornerapp.data.datasource.impl.firestore.NotificationFirestoreDataSourceImpl
 import com.example.gamercornerapp.data.datasource.impl.firestore.MapReviewFirestoreDataSource
 import com.example.gamercornerapp.data.datasource.impl.firestore.NoteFirestoreDataSourceImpl
+import com.example.gamercornerapp.data.datasource.impl.firestore.ChatFirestoreDataSourceImpl
 
 import com.example.gamercornerapp.data.datasource.impl.retrofit.GameRetrofitDataSourceImpl
 import com.example.gamercornerapp.data.datasource.impl.retrofit.ReviewRetrofitDataSourceImpl
@@ -223,6 +225,18 @@ object AppModule {
     fun provideNotificationRemoteDataSource(
         impl: NotificationFirestoreDataSourceImpl
     ): NotificationRemoteDataSource {
+        return impl
+    }
+
+    // ==========================================
+    // CHATS - SIEMPRE FIREBASE
+    // ==========================================
+
+    @Provides
+    @Singleton
+    fun provideChatRemoteDataSource(
+        impl: ChatFirestoreDataSourceImpl
+    ): ChatRemoteDataSource {
         return impl
     }
 }

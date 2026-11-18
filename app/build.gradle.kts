@@ -1,4 +1,6 @@
 
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -6,6 +8,13 @@ plugins {
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.google.services)
 }
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.inputStream())
+}
+val geminiApiKey = localProperties.getProperty("GEMINI_API_KEY") ?: ""
 
 android {
     namespace = "com.example.gamercornerapp"
@@ -23,6 +32,8 @@ android {
 
         testInstrumentationRunner =
             "com.example.gamercornerapp.CustomTestRunner"
+            
+        buildConfigField("String", "GEMINI_API_KEY", "\"$geminiApiKey\"")
     }
 
     buildTypes {
@@ -138,6 +149,11 @@ dependencies {
     implementation(
         "com.mapbox.extension:maps-compose-ndk27:11.34.2"
     )
+
+    // ==========================================
+    // GEMINI SDK
+    // ==========================================
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
 
     // ==========================================
     // TESTS

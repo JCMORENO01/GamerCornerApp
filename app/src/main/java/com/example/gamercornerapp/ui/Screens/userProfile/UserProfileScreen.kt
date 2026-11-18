@@ -13,13 +13,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -46,6 +50,7 @@ fun UserProfileScreen(
     onReviewClick: (ReviewItem) -> Unit = {},
     onFollowersClick: () -> Unit = {},
     onFollowingClick: () -> Unit = {},
+    onMessageClick: (String) -> Unit = {},
     viewModel: UserProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -67,6 +72,7 @@ fun UserProfileScreen(
         onFollowClick = viewModel::toggleFollowUser,
         onFollowersClick = onFollowersClick,
         onFollowingClick = onFollowingClick,
+        onMessageClick = onMessageClick,
         modifier = modifier
     )
 }
@@ -83,6 +89,7 @@ fun UserProfileScreenContent(
     onFollowClick: () -> Unit = {},
     onFollowersClick: () -> Unit = {},
     onFollowingClick: () -> Unit = {},
+    onMessageClick: (String) -> Unit = {},
     errorMessage: String? = null
 ) {
     Box(
@@ -136,24 +143,38 @@ fun UserProfileScreenContent(
                     if (!isOwnProfile) {
                         Spacer(modifier = Modifier.height(20.dp))
 
-                        // Función para seguir o dejar de seguir
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center
+                        // Función para seguir o dejar de seguir y enviar mensaje
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             if (profile.isFollowed) {
                                 OutlinedButton(
-                                    onClick = onFollowClick
+                                    onClick = onFollowClick,
+                                    modifier = Modifier.weight(1f)
                                 ) {
                                     Text("Siguiendo")
                                 }
                             } else {
                                 Button(
                                     onClick = onFollowClick,
-                                    modifier = Modifier.testTag("Seguir")
+                                    modifier = Modifier.weight(1f).testTag("Seguir")
                                 ) {
                                     Text("Seguir")
                                 }
+                            }
+                            
+                            Button(
+                                onClick = { onMessageClick(profile.id) },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = com.example.gamercornerapp.ui.theme.BrandPrimary,
+                                    contentColor = androidx.compose.ui.graphics.Color.White
+                                )
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Email,
+                                    contentDescription = "Enviar Mensaje"
+                                )
                             }
                         }
                     }

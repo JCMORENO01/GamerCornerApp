@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Settings
@@ -33,6 +34,7 @@ fun FeedTopBar(
     onMenuClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     onRadarClick: () -> Unit = {},
+    onInboxClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
 
@@ -74,6 +76,16 @@ fun FeedTopBar(
             horizontalArrangement = Arrangement.spacedBy(18.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+
+            // ACCESO A BANDEJA DE ENTRADA (CHATS)
+            Icon(
+                imageVector = Icons.Default.Email,
+                contentDescription = "Bandeja de Entrada",
+                tint = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable { onInboxClick() }
+            )
 
             // ACCESO A GAMERCORNER RADAR
             Icon(

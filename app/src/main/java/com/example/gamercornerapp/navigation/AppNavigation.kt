@@ -40,6 +40,12 @@ import com.example.gamercornerapp.ui.Screens.startpage.StartApp
 import com.example.gamercornerapp.ui.Screens.userProfile.UserProfileScreen
 import com.example.gamercornerapp.ui.Screens.videogame.VideogameScreen
 import com.example.gamercornerapp.ui.Screens.videogame.VideogameViewModel
+import com.example.gamercornerapp.ui.Screens.agent.AgentScreen
+import com.example.gamercornerapp.ui.Screens.agent.AgentViewModel
+import com.example.gamercornerapp.ui.Screens.chatList.ChatListScreen
+import com.example.gamercornerapp.ui.Screens.chatList.ChatListViewModel
+import com.example.gamercornerapp.ui.Screens.chatDetail.ChatDetailScreen
+import com.example.gamercornerapp.ui.Screens.chatDetail.ChatDetailViewModel
 
 @Composable
 fun AppNavigation(
@@ -174,6 +180,12 @@ fun AppNavigation(
                     ) {
                         launchSingleTop = true
                     }
+                },
+                onAgentClick = {
+                    navController.navigate(Screen.AgentChat.route)
+                },
+                onInboxClick = {
+                    navController.navigate(Screen.ChatList.route)
                 }
             )
         }
@@ -427,6 +439,11 @@ fun AppNavigation(
                                 tabIndex = 1
                             )
                         )
+                    },
+                    onMessageClick = { targetUserId ->
+                        navController.navigate(
+                            Screen.ChatDetail.createRoute(targetUserId)
+                        )
                     }
                 )
             } else {
@@ -541,6 +558,49 @@ fun AppNavigation(
                         }
                     }
                 }
+            )
+        }
+
+        // AGENT CHAT
+        composable(route = Screen.AgentChat.route) {
+            val viewModel: AgentViewModel = hiltViewModel()
+
+            AgentScreen(
+                viewModel = viewModel,
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // CHAT LIST
+        composable(route = Screen.ChatList.route) {
+            val viewModel: ChatListViewModel = hiltViewModel()
+
+            ChatListScreen(
+                viewModel = viewModel,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onChatClick = { targetUserId ->
+                    navController.navigate(Screen.ChatDetail.createRoute(targetUserId))
+                }
+            )
+        }
+
+        // CHAT DETAIL
+        composable(
+            route = Screen.ChatDetail.route,
+            arguments = listOf(
+                navArgument("userId") {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            val viewModel: ChatDetailViewModel = hiltViewModel()
+            ChatDetailScreen(
+                viewModel = viewModel,
+                onBackClick = { navController.popBackStack() }
             )
         }
     }

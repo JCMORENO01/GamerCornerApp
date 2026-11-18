@@ -10,8 +10,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,6 +42,8 @@ fun FeedScreen(
     onReviewClick: (String) -> Unit = {},
     onUserClick: (String) -> Unit = {},
     onRadarClick: () -> Unit = {},
+    onAgentClick: () -> Unit = {},
+    onInboxClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: FeedViewModel = hiltViewModel(),
     notesViewModel: NotesViewModel = hiltViewModel()
@@ -62,6 +69,8 @@ fun FeedScreen(
         onReviewClick = onReviewClick,
         onUserClick = onUserClick,
         onRadarClick = onRadarClick,
+        onAgentClick = onAgentClick,
+        onInboxClick = onInboxClick,
 
         onLikeClick = viewModel::toggleReviewLike,
         onBookmarkClick = viewModel::toggleSaveReview,
@@ -91,6 +100,8 @@ fun FeedScreenContent(
     onReviewClick: (String) -> Unit = {},
     onUserClick: (String) -> Unit = {},
     onRadarClick: () -> Unit = {},
+    onAgentClick: () -> Unit = {},
+    onInboxClick: () -> Unit = {},
     onLikeClick: (String) -> Unit = {},
     onBookmarkClick: (String) -> Unit = {},
 
@@ -106,18 +117,35 @@ fun FeedScreenContent(
     modifier: Modifier = Modifier
 ) {
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onAgentClick,
+                containerColor = com.example.gamercornerapp.ui.theme.BrandPrimary,
+                contentColor = androidx.compose.ui.graphics.Color.White
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AutoAwesome,
+                    contentDescription = "Asistente IA"
+                )
+            }
+        },
+        modifier = modifier.fillMaxSize()
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .background(MaterialTheme.colorScheme.background)
+        ) {
 
         // =====================================
         // ENCABEZADO ORIGINAL + RADAR
         // =====================================
 
         FeedTopBar(
-            onRadarClick = onRadarClick
+            onRadarClick = onRadarClick,
+            onInboxClick = onInboxClick
         )
 
         // =====================================
@@ -252,6 +280,7 @@ fun FeedScreenContent(
             }
         }
     }
+}
 }
 
 @Preview(showBackground = true)

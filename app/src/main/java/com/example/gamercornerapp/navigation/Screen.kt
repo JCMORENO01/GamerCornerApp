@@ -89,4 +89,14 @@ sealed class Screen(
     data object RecoverPassword : Screen("recover_password")
 
     data object SelectGame : Screen("select_game")
+    
+    data object AgentChat : Screen("agent_chat")
+
+    data object ChatList : Screen("chat_list")
+
+    data object ChatDetail : Screen("chat_detail/{userId}") {
+        fun createRoute(userId: String): String {
+            return "chat_detail/${Uri.encode(userId)}"
+        }
+    }
 }
