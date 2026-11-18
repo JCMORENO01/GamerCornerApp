@@ -17,32 +17,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.example.gamercornerapp.R
 import com.example.gamercornerapp.data.Chat
 import java.util.concurrent.TimeUnit
 
 @Composable
 fun ChatListScreen(
     onBackClick: () -> Unit,
-    onChatClick: (String) -> Unit, // Pasamos el ID del OTRO usuario
+    onChatClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ChatListViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 12.dp)
-                    .statusBarsPadding(),
+                    .padding(horizontal = 8.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBackClick) {
@@ -95,7 +93,7 @@ fun ChatListScreen(
                         )
                         HorizontalDivider(
                             modifier = Modifier.padding(start = 72.dp),
-                            color = MaterialTheme.colorScheme.surfaceVariant
+                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                         )
                     }
                 }

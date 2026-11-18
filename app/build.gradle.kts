@@ -32,7 +32,7 @@ android {
 
         testInstrumentationRunner =
             "com.example.gamercornerapp.CustomTestRunner"
-            
+
         buildConfigField("String", "GEMINI_API_KEY", "\"$geminiApiKey\"")
     }
 
@@ -151,9 +151,11 @@ dependencies {
     )
 
     // ==========================================
-    // GEMINI SDK
+    // FIREBASE AI LOGIC - GEMINI
     // ==========================================
-    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+
+    implementation("com.google.firebase:firebase-ai:18.2.0")
+    implementation("com.google.firebase:firebase-appcheck-debug")
 
     // ==========================================
     // TESTS

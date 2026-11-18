@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,56 +44,54 @@ fun ChatDetailScreen(
     }
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
-            Surface(shadowElevation = 4.dp, color = MaterialTheme.colorScheme.surface) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 8.dp)
-                        .statusBarsPadding(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Volver",
-                            tint = MaterialTheme.colorScheme.onSurface
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Volver",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+                Spacer(modifier = Modifier.width(4.dp))
+                
+                if (uiState.isLoadingUser) {
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                } else if (uiState.otherUser != null) {
+                    val other = uiState.otherUser!!
+                    if (!other.profilePictureUrl.isNullOrBlank()) {
+                        AsyncImage(
+                            model = other.profilePictureUrl,
+                            contentDescription = "Avatar",
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
                         )
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    
-                    if (uiState.isLoadingUser) {
-                        CircularProgressIndicator(modifier = Modifier.size(24.dp))
-                    } else if (uiState.otherUser != null) {
-                        val other = uiState.otherUser!!
-                        if (!other.profilePictureUrl.isNullOrBlank()) {
-                            AsyncImage(
-                                model = other.profilePictureUrl,
-                                contentDescription = "Avatar",
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .clip(CircleShape),
-                                contentScale = ContentScale.Crop
-                            )
-                        } else {
-                            Box(
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .clip(CircleShape)
-                                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(Icons.Default.Person, contentDescription = null, tint = BrandPrimary)
-                            }
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(Icons.Default.Person, contentDescription = null, tint = BrandPrimary)
                         }
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = other.username.ifBlank { other.nickName },
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
                     }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(
+                        text = other.username.ifBlank { other.nickName },
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
                 }
             }
         },
@@ -131,29 +130,39 @@ fun ChatDetailScreen(
                 }
             }
 
-            // Input inferior
+            // Input inferior elegante sin bordes ni cajas grises toscas
             Surface(
-                color = MaterialTheme.colorScheme.surface,
-                shadowElevation = 8.dp,
+                color = MaterialTheme.colorScheme.background,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                        .padding(horizontal = 12.dp, vertical = 8.dp)
                         .navigationBarsPadding(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    OutlinedTextField(
+                    TextField(
                         value = uiState.inputText,
                         onValueChange = viewModel::onInputTextChanged,
-                        placeholder = { Text("Escribe un mensaje...") },
-                        modifier = Modifier.weight(1f),
+                        placeholder = {
+                            Text(
+                                "Escribe un mensaje...",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                            )
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(24.dp)),
                         maxLines = 4,
-                        shape = RoundedCornerShape(24.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = BrandPrimary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent,
+                            focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onBackground
                         )
                     )
 
@@ -164,14 +173,14 @@ fun ChatDetailScreen(
                         enabled = uiState.inputText.isNotBlank(),
                         colors = IconButtonDefaults.iconButtonColors(
                             containerColor = BrandPrimary,
-                            disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant
+                            disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
                         ),
                         modifier = Modifier.size(48.dp)
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Send,
                             contentDescription = "Enviar",
-                            tint = if (uiState.inputText.isNotBlank()) androidx.compose.ui.graphics.Color.White else MaterialTheme.colorScheme.onSurfaceVariant
+                            tint = if (uiState.inputText.isNotBlank()) Color.White else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                         )
                     }
                 }
@@ -184,7 +193,7 @@ fun ChatDetailScreen(
 fun MessageBubble(message: ChatMessage, isFromMe: Boolean) {
     val alignment = if (isFromMe) Alignment.CenterEnd else Alignment.CenterStart
     val bgColor = if (isFromMe) BrandPrimary else MaterialTheme.colorScheme.surfaceVariant
-    val textColor = if (isFromMe) androidx.compose.ui.graphics.Color.White else MaterialTheme.colorScheme.onSurfaceVariant
+    val textColor = if (isFromMe) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
     val shape = if (isFromMe) {
         RoundedCornerShape(20.dp, 20.dp, 4.dp, 20.dp)
     } else {

@@ -12,9 +12,6 @@ import com.example.gamercornerapp.data.repository.AgentRepository
 import com.example.gamercornerapp.data.repository.AuthRepository
 import com.example.gamercornerapp.data.repository.GameRepository
 import com.example.gamercornerapp.data.repository.ReviewRepository
-import com.google.ai.client.generativeai.Chat
-import com.google.ai.client.generativeai.type.FunctionResponsePart
-import com.google.ai.client.generativeai.type.content
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +19,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,16 +33,14 @@ class AgentViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(AgentUiState())
     val uiState: StateFlow<AgentUiState> = _uiState.asStateFlow()
 
-    private val chat: Chat = agentRepository.generativeModel.startChat()
     private var speechRecognizer: SpeechRecognizer? = null
 
     init {
-        // Mensaje inicial de bienvenida
         _uiState.update { state ->
             state.copy(
                 messages = listOf(
                     ChatMessage(
-                        text = "¡Hola! Soy tu asistente IA de GamerCorner. ¿En qué puedo ayudarte hoy?",
+                        text = "¡Hola! Soy tu asistente IA de GamerCorner. ¿En qué puedo ayudarte hoy? Puedes pedirme opiniones de juegos o pedirme que publique una reseña por ti.",
                         isFromUser = false
                     )
                 )
@@ -64,157 +58,273 @@ class AgentViewModel @Inject constructor(
 
     fun sendMessage() {
         val userText = _uiState.value.inputText
+
         if (userText.isBlank()) return
 
-        // Agregamos mensaje de usuario e indicamos carga
         _uiState.update { state ->
-            val userMsg = ChatMessage(text = userText, isFromUser = true)
-            val loadingMsg = ChatMessage(text = "", isFromUser = false, isLoading = true)
+            val userMsg = ChatMessage(
+                text = userText,
+                isFromUser = true
+            )
+
+            val loadingMsg = ChatMessage(
+                text = "",
+                isFromUser = false,
+                isLoading = true
+            )
+
             state.copy(
                 inputText = "",
                 messages = state.messages + userMsg + loadingMsg
             )
         }
 
+        executeChatRequest(userText)
+    }
+
+    private fun executeChatRequest(userText: String) {
         viewModelScope.launch {
             try {
-                var response = chat.sendMessage(userText)
-                
-                // Mientras Gemini pida ejecutar funciones, lo hacemos y le respondemos
-                while (response.functionCalls.isNotEmpty()) {
-                    val functionCall = response.functionCalls.first()
-                    
-                    if (functionCall.name == "create_review") {
-                        val resultMsg = handleCreateReviewFunction(functionCall.args)
-                        
-                        // Mandamos el resultado a Gemini para que continue la conversación
-                        response = chat.sendMessage(
-                            content {
-                                part(FunctionResponsePart(functionCall.name, JSONObject(mapOf("result" to resultMsg))))
-                            }
-                        )
-                    } else {
-                        // Función desconocida
-                        response = chat.sendMessage(
-                            content {
-                                part(FunctionResponsePart(functionCall.name, JSONObject(mapOf("error" to "Función no encontrada"))))
-                            }
-                        )
-                    }
+                val promptToSend = buildEnrichedPrompt(userText)
+                val rawReplyText = agentRepository.sendMessage(promptToSend)
+
+                val (cleanReplyText, actionMessage) = processActionIfPresent(rawReplyText)
+                val finalMessage = if (!actionMessage.isNullOrBlank()) {
+                    "$cleanReplyText\n\n$actionMessage"
+                } else {
+                    cleanReplyText
                 }
 
-                // Finalmente mostramos la respuesta de texto de Gemini
-                val replyText = response.text ?: "No tengo nada más que decir."
                 _uiState.update { state ->
-                    val filteredMessages = state.messages.filter { !it.isLoading }
-                    state.copy(messages = filteredMessages + ChatMessage(text = replyText, isFromUser = false))
+                    val filteredMessages =
+                        state.messages.filter { !it.isLoading }
+
+                    state.copy(
+                        messages = filteredMessages + ChatMessage(
+                            text = finalMessage,
+                            isFromUser = false
+                        )
+                    )
                 }
 
             } catch (e: Exception) {
+
                 _uiState.update { state ->
-                    val filteredMessages = state.messages.filter { !it.isLoading }
+                    val filteredMessages =
+                        state.messages.filter { !it.isLoading }
+
                     state.copy(
                         messages = filteredMessages,
-                        errorMessage = "Error al conectar con la IA: ${e.message}"
+                        errorMessage = "No se pudo conectar con el asistente IA. " +
+                                "Revisa tu conexión y la configuración de Firebase AI Logic. " +
+                                "Detalle: ${e.localizedMessage ?: e.javaClass.simpleName}"
                     )
                 }
             }
         }
     }
 
-    private suspend fun handleCreateReviewFunction(args: Map<String, String?>): String {
-        val gameName = args["gameName"] ?: return "Error: Falta el nombre del juego."
-        val ratingStr = args["rating"] ?: return "Error: Falta la calificación."
-        val opinion = args["opinion"] ?: return "Error: Falta la opinión."
+    private suspend fun processActionIfPresent(rawText: String): Pair<String, String?> {
+        val regex = Regex("""\[ACCION_CREAR_RESEÑA:\s*JUEGO="([^"]+)",\s*CALIFICACION="([^"]+)",\s*OPINION="([^"]+)"]""")
+        val match = regex.find(rawText) ?: return Pair(rawText, null)
 
-        val rating = ratingStr.toFloatOrNull() ?: return "Error: La calificación no es un número válido."
+        val gameName = match.groupValues[1]
+        val ratingStr = match.groupValues[2]
+        val opinion = match.groupValues[3]
 
+        val cleanText = rawText.replace(match.value, "").trim()
+        val actionResult = handleCreateReview(gameName, ratingStr, opinion)
+
+        return Pair(cleanText, actionResult)
+    }
+
+    private suspend fun handleCreateReview(gameName: String, ratingStr: String, opinion: String): String {
+        val rating = ratingStr.toFloatOrNull() ?: 5.0f
         val userId = authRepository.currentUser?.uid
-            ?: return "Error: El usuario no ha iniciado sesión."
+            ?: return "⚠️ No se pudo publicar automáticamente porque no has iniciado sesión."
 
-        try {
-            // 1. Buscar juego por nombre (buscamos en todos los juegos)
-            val allGamesResult = gameRepository.getGames()
-            if (allGamesResult.isFailure) return "Error buscando el juego: ${allGamesResult.exceptionOrNull()?.message}"
-            
-            val allGames = allGamesResult.getOrNull() ?: emptyList()
-            val game = allGames.find { it.title.contains(gameName, ignoreCase = true) }
-            
-            if (game == null) return "No se encontró ningún juego llamado '$gameName'. Dile al usuario que verifique el nombre."
-            
+        val gamesResult = gameRepository.getGames()
+        val games = gamesResult.getOrNull() ?: emptyList()
+        val game = games.find { it.title.contains(gameName, ignoreCase = true) }
+            ?: return "⚠️ No se encontró el videojuego '$gameName' en el catálogo para publicar la reseña."
 
-            // 2. Crear reseña
-            val reviewResult = reviewRepository.createReview(
-                description = opinion,
-                rating = rating,
-                tags = listOf("IA-Created"),
-                userId = userId,
-                gameId = game.id
-            )
+        val result = reviewRepository.createReview(
+            description = opinion,
+            rating = rating,
+            tags = listOf("IA-Assistant"),
+            userId = userId,
+            gameId = game.id
+        )
 
-            return if (reviewResult.isSuccess) {
-                "Éxito: Se ha publicado la reseña para '${game.title}' con $rating estrellas. Dile al usuario que fue exitoso."
-            } else {
-                "Error al guardar la reseña en la base de datos: ${reviewResult.exceptionOrNull()?.message}"
-            }
-        } catch (e: Exception) {
-            return "Excepción inesperada: ${e.localizedMessage}"
+        return if (result.isSuccess) {
+            "✅ Reseña publicada con éxito en GamerCorner para '${game.title}' con $rating ⭐ estrellas."
+        } else {
+            "⚠️ Error al guardar la reseña en Firestore: ${result.exceptionOrNull()?.message}"
         }
     }
 
-    // --- Manejo de Voz (SpeechRecognizer) ---
+    private suspend fun buildEnrichedPrompt(userText: String): String {
+        try {
+            val reviewsResult = reviewRepository.getAllReviewsAsFeed()
+            val reviews = reviewsResult.getOrNull() ?: emptyList()
+
+            val gamesResult = gameRepository.getGames()
+            val games = gamesResult.getOrNull() ?: emptyList()
+
+            val formattedReviews = if (reviews.isNotEmpty()) {
+                reviews.take(15).joinToString("\n") { post ->
+                    "- Juego: '${post.game.title}', Autor: @${post.author.nickName} (${post.author.username}), Puntuación: ${post.rating}/5, Fecha: ${post.relativeTime}, Opinión: '${post.description}'"
+                }
+            } else {
+                "No hay reseñas guardadas en la base de datos."
+            }
+
+            val formattedGames = if (games.isNotEmpty()) {
+                games.take(15).joinToString("\n") { game ->
+                    "- Juego: '${game.title}', Desarrollador: ${game.developer}, Calificación promedio: ${game.rating}/5"
+                }
+            } else {
+                "No hay juegos guardados."
+            }
+
+            return """
+            [SISTEMA - DATOS DE FIRESTORE EN TIEMPO REAL DE GAMERCORNER]
+            TIENES ACCESO DIRECTO A LA BASE DE DATOS EN VIVO DE GAMERCORNER.
+            A continuación se encuentran las reseñas y juegos actuales consultados directamente de Firestore:
+
+            --- CATÁLOGO DE JUEGOS DISPONIBLES ---
+            $formattedGames
+
+            --- RESEÑAS PUBLICADAS EN EL FEED (De más reciente a más antigua) ---
+            $formattedReviews
+
+            [INSTRUCCIONES OBLIGATORIAS]
+            1. TIENES ACCESO A LA BASE DE DATOS DE FIRESTORE. NUNCA digas que no tienes acceso a la base de datos o al servidor.
+            2. Usa los datos reales de arriba para responder a la consulta del usuario.
+            3. Si el usuario pregunta por la última reseña publicada, identifica la primera de la lista de reseñas anteriores.
+            4. FORMATO LIMPIO: Escribe respuestas muy limpias, fluidas y fáciles de leer en pantalla móvil. NO USES encabezados de markdown con símbolos de almohadilla (como ### o ##). NO USES hashtags al azar. Usa negrita (**texto**) o viñetas simples (•) para estructurar el contenido.
+            5. PUBLICAR / CREAR RESEÑAS: Si el usuario te pide crear, publicar, subir o redactar una reseña (o si te pide ayuda para construirla y confirma que la publique), DEBES publicar la reseña incluyendo al FINAL de tu respuesta la siguiente etiqueta exacta:
+               [ACCION_CREAR_RESEÑA: JUEGO="NombreExactoDelJuego", CALIFICACION="Número1a5", OPINION="TextoDeLaOpinion"]
+
+               Ejemplo:
+               "¡Excelente bro! Ya redactamos tu reseña para Elden Ring.
+               [ACCION_CREAR_RESEÑA: JUEGO="Elden Ring", CALIFICACION="5", OPINION="Un juego de mundo abierto espectacular."]"
+
+            6. Responde siempre con un tono muy amigable, entusiasta y gamer.
+
+            Mensaje del usuario: $userText
+            """.trimIndent()
+        } catch (_: Exception) {
+            return userText
+        }
+    }
+
+    // -----------------------------
+    // RECONOCIMIENTO DE VOZ
+    // -----------------------------
 
     fun startListening() {
+
         if (!SpeechRecognizer.isRecognitionAvailable(context)) {
-            _uiState.update { it.copy(errorMessage = "Reconocimiento de voz no disponible en este dispositivo.") }
+            _uiState.update {
+                it.copy(
+                    errorMessage = "Reconocimiento de voz no disponible en este dispositivo."
+                )
+            }
             return
         }
 
         if (speechRecognizer == null) {
-            speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context).apply {
-                setRecognitionListener(object : RecognitionListener {
-                    override fun onReadyForSpeech(params: Bundle?) {}
-                    override fun onBeginningOfSpeech() {}
-                    override fun onRmsChanged(rmsdB: Float) {}
-                    override fun onBufferReceived(buffer: ByteArray?) {}
-                    override fun onEndOfSpeech() {}
-                    override fun onError(error: Int) {
-                        _uiState.update { it.copy(isRecording = false) }
-                    }
-                    override fun onResults(results: Bundle?) {
-                        val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                        if (!matches.isNullOrEmpty()) {
-                            val spokenText = matches[0]
-                            _uiState.update { 
-                                it.copy(
-                                    inputText = if (it.inputText.isBlank()) spokenText else "${it.inputText} $spokenText",
-                                    isRecording = false
-                                )
+
+            speechRecognizer =
+                SpeechRecognizer.createSpeechRecognizer(context).apply {
+
+                    setRecognitionListener(object : RecognitionListener {
+
+                        override fun onReadyForSpeech(params: Bundle?) {}
+
+                        override fun onBeginningOfSpeech() {}
+
+                        override fun onRmsChanged(rmsdB: Float) {}
+
+                        override fun onBufferReceived(buffer: ByteArray?) {}
+
+                        override fun onEndOfSpeech() {}
+
+                        override fun onError(error: Int) {
+                            _uiState.update {
+                                it.copy(isRecording = false)
                             }
                         }
-                    }
-                    override fun onPartialResults(partialResults: Bundle?) {}
-                    override fun onEvent(eventType: Int, params: Bundle?) {}
-                })
-            }
+
+                        override fun onResults(results: Bundle?) {
+
+                            val matches = results?.getStringArrayList(
+                                SpeechRecognizer.RESULTS_RECOGNITION
+                            )
+
+                            if (!matches.isNullOrEmpty()) {
+
+                                val spokenText = matches[0]
+
+                                _uiState.update {
+                                    it.copy(
+                                        inputText = if (it.inputText.isBlank()) {
+                                            spokenText
+                                        } else {
+                                            "${it.inputText} $spokenText"
+                                        },
+                                        isRecording = false
+                                    )
+                                }
+                            }
+                        }
+
+                        override fun onPartialResults(
+                            partialResults: Bundle?
+                        ) {}
+
+                        override fun onEvent(
+                            eventType: Int,
+                            params: Bundle?
+                        ) {}
+                    })
+                }
         }
 
-        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-ES") // Español
+        val intent = Intent(
+            RecognizerIntent.ACTION_RECOGNIZE_SPEECH
+        ).apply {
+
+            putExtra(
+                RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+            )
+
+            putExtra(
+                RecognizerIntent.EXTRA_LANGUAGE,
+                "es-ES"
+            )
         }
 
-        _uiState.update { it.copy(isRecording = true) }
+        _uiState.update {
+            it.copy(isRecording = true)
+        }
+
         speechRecognizer?.startListening(intent)
     }
 
     fun stopListening() {
         speechRecognizer?.stopListening()
-        _uiState.update { it.copy(isRecording = false) }
+
+        _uiState.update {
+            it.copy(isRecording = false)
+        }
     }
 
     override fun onCleared() {
         super.onCleared()
+
         speechRecognizer?.destroy()
         speechRecognizer = null
     }

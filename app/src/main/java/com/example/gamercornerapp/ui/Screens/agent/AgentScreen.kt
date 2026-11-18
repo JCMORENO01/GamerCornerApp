@@ -18,7 +18,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -32,7 +35,6 @@ fun AgentScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
 
     // Para scroll automático cuando hay un nuevo mensaje
     LaunchedEffect(uiState.messages.size) {
@@ -50,12 +52,12 @@ fun AgentScreen(
     }
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 12.dp)
-                    .statusBarsPadding(),
+                    .padding(horizontal = 8.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBackClick) {
@@ -75,44 +77,47 @@ fun AgentScreen(
                     )
                     Text(
                         text = "Powered by Gemini",
-                        style = MaterialTheme.typography.labelSmall,
+                        style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
         },
-        containerColor = MaterialTheme.colorScheme.background,
-        modifier = modifier
+        modifier = modifier.fillMaxSize()
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .imePadding()
+                .background(MaterialTheme.colorScheme.background)
         ) {
-            
-            if (uiState.errorMessage != null) {
+            // Banner de error si existe
+            uiState.errorMessage?.let { errorMsg ->
                 Surface(
                     color = MaterialTheme.colorScheme.errorContainer,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
-                        modifier = Modifier.padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = uiState.errorMessage!!,
+                            text = errorMsg,
                             color = MaterialTheme.colorScheme.onErrorContainer,
+                            style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.weight(1f)
                         )
-                        TextButton(onClick = { viewModel.clearError() }) {
-                            Text("OK")
+                        TextButton(onClick = viewModel::clearError) {
+                            Text("OK", color = MaterialTheme.colorScheme.onErrorContainer)
                         }
                     }
                 }
             }
 
+            // Lista de mensajes
             LazyColumn(
                 state = listState,
                 modifier = Modifier
@@ -129,27 +134,37 @@ fun AgentScreen(
 
             // Barra de input
             Surface(
-                color = MaterialTheme.colorScheme.surface,
-                shadowElevation = 8.dp,
+                color = MaterialTheme.colorScheme.background,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                        .padding(horizontal = 12.dp, vertical = 8.dp)
                         .navigationBarsPadding(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    OutlinedTextField(
+                    TextField(
                         value = uiState.inputText,
                         onValueChange = viewModel::onInputTextChanged,
-                        placeholder = { Text("Escribe o mantén presionado el mic...") },
-                        modifier = Modifier.weight(1f),
+                        placeholder = {
+                            Text(
+                                "Escribe o mantén presionado el mic...",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                            )
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(24.dp)),
                         maxLines = 4,
-                        shape = RoundedCornerShape(24.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = MaterialTheme.colorScheme.primary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+                            focusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
+                            unfocusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
+                            disabledIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
+                            focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onBackground
                         )
                     )
 
@@ -226,10 +241,10 @@ fun ChatMessageBubble(message: ChatMessage) {
             Surface(
                 color = bgColor,
                 shape = shape,
-                modifier = Modifier.widthIn(max = 280.dp)
+                modifier = Modifier.widthIn(max = 290.dp)
             ) {
                 Text(
-                    text = message.text,
+                    text = cleanAndFormatMarkdown(message.text),
                     color = textColor,
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
@@ -237,4 +252,38 @@ fun ChatMessageBubble(message: ChatMessage) {
             }
         }
     }
+}
+
+fun cleanAndFormatMarkdown(rawText: String): AnnotatedString {
+    // 1. Quitar hashtags de títulos ### o ## al inicio de líneas
+    var text = rawText.replace(Regex("""(?m)^#{1,6}\s*"""), "")
+
+    // 2. Reemplazar viñetas de asteriscos * por viñetas elegantes •
+    text = text.replace(Regex("""(?m)^\s*[*+]\s+"""), "• ")
+
+    // 3. Quitar asteriscos sueltos
+    text = text.replace(" * ", " • ")
+
+    // 4. Procesar **negrita**
+    val builder = AnnotatedString.Builder()
+    val boldRegex = Regex("""\*\*(.*?)\*\*""")
+    var lastIndex = 0
+
+    boldRegex.findAll(text).forEach { matchResult ->
+        val start = matchResult.range.first
+        val end = matchResult.range.last + 1
+
+        builder.append(text.substring(lastIndex, start))
+        builder.pushStyle(SpanStyle(fontWeight = FontWeight.Bold))
+        builder.append(matchResult.groupValues[1])
+        builder.pop()
+
+        lastIndex = end
+    }
+
+    if (lastIndex < text.length) {
+        builder.append(text.substring(lastIndex))
+    }
+
+    return builder.toAnnotatedString()
 }

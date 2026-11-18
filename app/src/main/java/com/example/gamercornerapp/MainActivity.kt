@@ -1,4 +1,3 @@
-
 package com.example.gamercornerapp
 
 import android.Manifest
@@ -20,14 +19,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Funcion para solicitar permiso de notificaciones (Comentada para tests UI)
-        /*
+        // Solicitar permiso de notificaciones POST_NOTIFICATIONS en Android 13+ (API 33+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             notificationPermissionLauncher.launch(
                 Manifest.permission.POST_NOTIFICATIONS
             )
         }
-        */
 
         setContent {
             GamerCornerApp()
